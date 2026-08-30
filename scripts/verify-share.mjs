@@ -9,23 +9,40 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 
 const script = `
-import { encodeSharePayload, decodeSharePayload } from './src/lib/shareSession.ts';
+import { buildSharePayload, encodeSharePayload, decodeSharePayload } from './src/lib/shareSession.ts';
+import { importShopifyFeed, toShopifyCatalog } from './src/integrations/shopify-catalog.ts';
+import { isBuiltinStore } from './src/data/stores.ts';
 
 const payload = {
-  v: 1,
   storeId: 'ember-oak',
   order: { lines: [{ lineId: 'l1', productId: 'sku-espresso', quantity: 2, addedBy: 'human', updatedAt: 1 }], currency: 'USD' },
   merchant: { storeName: 'Test', checkoutRequiresCaptcha: true, checkoutRequiresAccount: false },
   funnel: [{ step: 'add_to_order', actor: 'agent', timestamp: 1 }],
 };
 
-const enc = encodeSharePayload(payload);
+const built = buildSharePayload(payload);
+const enc = encodeSharePayload(built);
 const dec = decodeSharePayload(enc);
 console.log('encode length:', enc.length);
 console.log('roundtrip storeId:', dec?.storeId === payload.storeId);
 console.log('roundtrip line count:', dec?.order.lines.length === 1);
 console.log('roundtrip qty:', dec?.order.lines[0]?.quantity === 2);
-console.log('under 8kb:', enc.length < 8192);
+console.log('builtin omits store:', !built.store);
+console.log('under 16kb:', enc.length < 16384);
+
+const imported = importShopifyFeed(toShopifyCatalog('neon-matcha'), { storeId: 'share-test-import' });
+const importPayload = buildSharePayload({
+  storeId: imported.id,
+  order: { lines: [], currency: 'USD' },
+  merchant: imported.merchant,
+  funnel: [],
+});
+const importEnc = encodeSharePayload(importPayload);
+const importDec = decodeSharePayload(importEnc);
+console.log('import embeds store:', !!importPayload.store);
+console.log('import roundtrip catalog:', importDec?.store?.products.length === imported.products.length);
+console.log('import not builtin:', !isBuiltinStore(imported.id));
+console.log('import encoded under 32kb:', importEnc.length < 32768);
 `;
 
 const tmp = path.join(root, '.verify-share-tmp.mts');

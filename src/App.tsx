@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { DevToolPanel } from './components/DevToolPanel';
 import { IntegrationsPanel } from './components/IntegrationsPanel';
 import { hasSeenHero, LandingHero, markHeroSeen } from './components/LandingHero';
 import { OrderPanel } from './components/OrderPanel';
@@ -9,6 +8,7 @@ import { StoreSwitcher } from './components/StoreSwitcher';
 import { ToolActivityToast } from './components/ToolActivityToast';
 import { useRoomSync } from './hooks/useRoomSync';
 import { registerWebMCPTools } from './webmcp/registerTools';
+import { WEBMCP_TOOL_COUNT } from './webmcp/toolManifest';
 import './App.css';
 
 type Tab = 'shop' | 'merchant' | 'integrations';
@@ -36,9 +36,10 @@ function App() {
     return () => controller.abort();
   }, []);
 
-  const startCoShop = () => {
+  const enterApp = (nextTab: Tab = 'shop') => {
     markHeroSeen();
     setShowHero(false);
+    setTab(nextTab);
   };
 
   if (showHero) {
@@ -46,12 +47,14 @@ function App() {
       <div className="app app--landing">
         <header className="app-header app-header--center">
           <h1>ReadyCounter</h1>
-          <p className="tagline">Agent-ready storefront · use instantly</p>
+          <p className="tagline">Agent-ready commerce for merchants and shoppers</p>
         </header>
-        <LandingHero onStart={startCoShop} />
+        <LandingHero onShop={() => enterApp('shop')} onReadiness={() => enterApp('merchant')} />
       </div>
     );
   }
+
+  const toolCount = webmcpStatus.registered.length || WEBMCP_TOOL_COUNT;
 
   return (
     <div className="app">
@@ -59,42 +62,42 @@ function App() {
         <div>
           <h1>ReadyCounter</h1>
           <p className="tagline">
-            Agent-ready storefront · Co-shop order · Merchant readiness
+            Co-shop with your assistant · Readiness score for your storefront
           </p>
         </div>
         <div
           className={`webmcp-badge${webmcpStatus.available ? ' webmcp-badge--live' : ''}`}
         >
           {webmcpStatus.available ? (
-            <>WebMCP live · {webmcpStatus.registered.length} tools</>
+            <>Assistant tools active · {toolCount} connected</>
           ) : (
-            <>WebMCP off — use judge harness below</>
+            <>Assistant tools ready · open Connect to test</>
           )}
         </div>
         <StoreSwitcher />
       </header>
 
-      <nav className="tabs" aria-label="Store views">
+      <nav className="tabs" aria-label="Main navigation">
         <button
           type="button"
           className={`tabs__btn${tab === 'shop' ? ' tabs__btn--active' : ''}`}
           onClick={() => setTab('shop')}
         >
-          Shop + order
+          Shop
         </button>
         <button
           type="button"
           className={`tabs__btn${tab === 'merchant' ? ' tabs__btn--active' : ''}`}
           onClick={() => setTab('merchant')}
         >
-          Merchant readiness
+          Readiness
         </button>
         <button
           type="button"
           className={`tabs__btn${tab === 'integrations' ? ' tabs__btn--active' : ''}`}
           onClick={() => setTab('integrations')}
         >
-          Integrations
+          Connect
         </button>
       </nav>
 
@@ -105,20 +108,19 @@ function App() {
             <OrderPanel />
           </>
         ) : tab === 'merchant' ? (
-          <ReadinessDashboard registeredToolCount={webmcpStatus.registered.length || 13} />
+          <ReadinessDashboard registeredToolCount={toolCount} />
         ) : (
           <IntegrationsPanel />
         )}
       </main>
 
-      <DevToolPanel />
       <ToolActivityToast />
 
       <footer className="app-footer">
         <p>
-          Structured WebMCP tools beat scrape. Shopify reports 2× conversion on
-          Catalog vs scraped data. Toggle CAPTCHA in Merchant to see agent funnel
-          drop.
+          Humans confirm payment in the browser. Shopping assistants can search, add to cart,
+          and prepare checkout — never charge a card. Built on structured catalog data, not
+          screen scraping.
         </p>
       </footer>
     </div>

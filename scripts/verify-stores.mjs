@@ -15,7 +15,7 @@ const script = `
 import { STORES, STORE_IDS } from './src/data/stores.ts';
 import { computeReadinessChecks, readinessScore } from './src/lib/readiness.ts';
 
-const TOOL_COUNT = 10;
+const TOOL_COUNT = 16;
 const MIN_SKUS = 6;
 
 for (const id of STORE_IDS) {

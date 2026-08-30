@@ -48,9 +48,9 @@ export function computeReadinessChecks(
     },
     {
       id: 'webmcp_tools',
-      label: 'WebMCP tool surface',
+      label: 'Shopping assistant tools',
       status: registeredToolCount >= 6 ? 'pass' : 'fail',
-      detail: `${registeredToolCount} tools registered. Structured tools beat scrape — Shopify reports 2× conversion on Catalog vs scraped data.`,
+      detail: `${registeredToolCount} structured tools connected. Catalog-backed tools convert 2× vs scraped data (Shopify).`,
       stat: `${registeredToolCount} tools`,
     },
     {

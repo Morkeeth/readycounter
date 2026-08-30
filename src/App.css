@@ -667,6 +667,43 @@ body {
   color: var(--muted);
 }
 
+.landing-hero__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.shop__header h2 {
+  margin: 0;
+}
+
+.shop__tagline {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.dev-panel__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.integrations__header h2 {
+  margin: 0 0 0.5rem;
+}
+
+.autopilot__sandbox {
+  font-size: 0.8rem;
+  color: var(--warn);
+  margin: 0 0 0.35rem;
+}
+
+.btn--quiet {
+  opacity: 0.85;
+  font-size: 0.85rem;
+}
+
 .share-bar__actions {
   display: flex;
   gap: 0.5rem;
@@ -725,6 +762,91 @@ body {
 
 .integrations__muted {
   font-size: 0.8rem;
+}
+
+.integrations__card--wide {
+  grid-column: 1 / -1;
+}
+
+.integrations__import {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.65rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+  border-radius: var(--radius);
+  border: 1px solid #3a4a5e;
+  background: var(--surface);
+  color: var(--text);
+  resize: vertical;
+}
+
+.autopilot {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  border: 1px solid #2d3a4a;
+}
+
+.autopilot--clear {
+  border-style: dashed;
+}
+
+.autopilot__lead {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.autopilot__fixes {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.autopilot__fix {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+.autopilot__impact {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.autopilot__journey {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #2d3a4a;
+}
+
+.autopilot__journey ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+}
+
+.autopilot__step--ok {
+  color: #6ee7a0;
+}
+
+.autopilot__step--fail {
+  color: #f87171;
+}
+
+.autopilot__rec {
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .share-bar {

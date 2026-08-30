@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { apiCreateRoom } from '../api/client';
 import { buildShareUrl } from '../lib/shareSession';
+import { isBuiltinStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
 
 export function ShareCoShopBar() {
@@ -13,28 +14,23 @@ export function ShareCoShopBar() {
 
   const lineCount = order.lines.length;
   const roomId = new URLSearchParams(window.location.search).get('room');
+  const importedStore = !isBuiltinStore(storeId);
 
   const share = async () => {
-    const url = buildShareUrl({
-      v: 1,
-      storeId,
-      order,
-      merchant,
-      funnel,
-    });
+    const url = buildShareUrl({ storeId, order, merchant, funnel });
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2500);
     } catch {
-      window.prompt('Copy co-shop link:', url);
+      window.prompt('Copy link to share this cart:', url);
     }
   };
 
   const startLiveRoom = async () => {
     const created = await apiCreateRoom(storeId, merchant);
     if (!created) {
-      setRoomMsg('API offline — use static link (local dev) or deploy to Vercel.');
+      setRoomMsg('Live sync is in preview on deploy — cart links work everywhere now.');
       return;
     }
     const url = new URL(window.location.href);
@@ -43,37 +39,39 @@ export function ShareCoShopBar() {
     window.history.replaceState({}, '', url.toString());
     try {
       await navigator.clipboard.writeText(url.toString());
-      setRoomMsg(`Live room ${created.roomId} — link copied`);
+      setRoomMsg('Preview session started — link copied (may reset on cold start).');
     } catch {
-      setRoomMsg(`Live room: ${url.toString()}`);
+      setRoomMsg(`Preview session: ${url.toString()}`);
     }
   };
 
   return (
     <div className="share-bar">
       <div>
-        <strong>Share this co-shop</strong>
+        <strong>Share this cart</strong>
         <p>
           {roomId
-            ? `Live API room · ${roomId} — polling sync`
-            : 'Static link (encoded) or live API room on Vercel.'}
+            ? 'Preview live sync — prefer cart link for reliable sharing.'
+            : importedStore
+              ? 'Link includes your imported catalog — works in incognito, no account.'
+              : 'Anyone with the link sees this cart and can keep shopping.'}
         </p>
       </div>
       <div className="share-bar__actions">
         <button
           type="button"
           className="btn btn--primary"
-          onClick={() => void startLiveRoom()}
-        >
-          Start live room
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
           onClick={() => void share()}
           disabled={lineCount === 0}
         >
-          {copied ? 'Link copied' : 'Copy static link'}
+          {copied ? 'Link copied' : 'Copy cart link'}
+        </button>
+        <button
+          type="button"
+          className="btn btn--secondary btn--quiet"
+          onClick={() => void startLiveRoom()}
+        >
+          Live sync (preview)
         </button>
       </div>
       {roomMsg && <p className="share-bar__msg">{roomMsg}</p>}

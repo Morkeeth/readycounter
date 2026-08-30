@@ -1,4 +1,4 @@
-import { getStore } from '../data/stores';
+import { getStore, type StoreDefinition } from '../data/stores';
 import type { Product } from '../types/commerce';
 
 export interface ShopifyCatalogProduct {
@@ -111,4 +111,50 @@ export function validateStoreCatalog(storeId: string): {
   issues: FeedValidationIssue[];
 } {
   return validateShopifyCatalog(toShopifyCatalog(storeId));
+}
+
+function shopifyToProduct(row: ShopifyCatalogProduct): Product {
+  const variant = row.variants[0];
+  const price = variant ? parseFloat(variant.price) : 0;
+  const category = (row.product_type || 'merch') as Product['category'];
+  return {
+    id: variant?.sku ?? row.id,
+    name: row.title,
+    description: row.body_html.replace(/<[^>]+>/g, ' ').trim(),
+    price: Number.isFinite(price) ? price : 0,
+    currency: 'USD',
+    tags: row.tags
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean),
+    category,
+    inStock: (variant?.inventory_quantity ?? 0) > 0,
+    ...(variant?.barcode ? { gtin: variant.barcode } : {}),
+    feedPrice: price,
+  };
+}
+
+export function importShopifyFeed(
+  feed: ShopifyCatalogExport,
+  opts?: { storeId?: string; name?: string },
+): StoreDefinition {
+  const slug =
+    opts?.storeId ??
+    `import-${feed.store.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`;
+  const products = feed.products.map(shopifyToProduct);
+  const categories = [...new Set(products.map((p) => p.category))];
+  const name = opts?.name ?? feed.store;
+
+  return {
+    id: slug,
+    name,
+    tagline: 'Imported Shopify catalog — agent-ready feed',
+    products,
+    merchant: {
+      storeName: name,
+      checkoutRequiresCaptcha: false,
+      checkoutRequiresAccount: false,
+    },
+    categories,
+  };
 }

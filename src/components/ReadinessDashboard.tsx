@@ -1,6 +1,6 @@
 import { computeReadinessChecks, readinessScore } from '../lib/readiness';
-import { getStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
+import { AutopilotPanel } from './AutopilotPanel';
 
 interface ReadinessDashboardProps {
   registeredToolCount: number;
@@ -49,11 +49,10 @@ export function ReadinessDashboard({
   registeredToolCount,
 }: ReadinessDashboardProps) {
   const merchant = useShopStore((s) => s.merchant);
-  const storeId = useShopStore((s) => s.storeId);
   const setMerchantFlag = useShopStore((s) => s.setMerchantFlag);
   const funnel = useShopStore((s) => s.funnel);
 
-  const products = getStore(storeId).products;
+  const products = useShopStore((s) => s.getCatalogProducts());
   const checks = computeReadinessChecks(merchant, registeredToolCount, products);
   const score = readinessScore(checks);
 
@@ -79,8 +78,8 @@ export function ReadinessDashboard({
     <section className="readiness" aria-label="Merchant readiness dashboard">
       <header className="readiness__header">
         <div>
-          <h2>Agent readiness</h2>
-          <p>{merchant.storeName} — merchant view</p>
+          <h2>Store readiness</h2>
+          <p>{merchant.storeName} — agent-readiness audit (sandbox)</p>
         </div>
         <ScoreRing score={score} />
       </header>
@@ -100,8 +99,10 @@ export function ReadinessDashboard({
         ))}
       </ul>
 
+      <AutopilotPanel toolCount={registeredToolCount} />
+
       <div className="readiness__toggles">
-        <h3>Fix agent path (demo)</h3>
+        <h3>Checkout settings</h3>
         <label className="toggle">
           <input
             type="checkbox"
@@ -110,7 +111,7 @@ export function ReadinessDashboard({
               setMerchantFlag('checkoutRequiresCaptcha', e.target.checked)
             }
           />
-          CAPTCHA on checkout (blocks ~24% of agents)
+          Require CAPTCHA at checkout
         </label>
         <label className="toggle">
           <input
@@ -120,12 +121,12 @@ export function ReadinessDashboard({
               setMerchantFlag('checkoutRequiresAccount', e.target.checked)
             }
           />
-          Require account login
+          Require account to checkout
         </label>
       </div>
 
       <div className="readiness__funnel">
-        <h3>Agent funnel (this session)</h3>
+        <h3>Shopping assistant activity</h3>
         <ul className="funnel-strip">
           {funnelSteps.map((step) => {
             const count = funnelCounts[step] ?? 0;

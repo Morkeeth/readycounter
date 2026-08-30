@@ -1,0 +1,106 @@
+openapi: 3.1.0
+info:
+  title: ReadyCounter API
+  version: '1'
+  description: Agent-ready storefront — catalog, readiness, co-shop rooms, WebMCP tool manifest.
+servers:
+  - url: /api/v1
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /catalog:
+    get:
+      summary: Store catalog + Shopify export
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: string
+            default: ember-oak
+      responses:
+        '200':
+          description: Catalog payload
+  /readiness:
+    get:
+      summary: Merchant readiness score
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: string
+        - name: tools
+          in: query
+          schema:
+            type: integer
+            default: 16
+      responses:
+        '200':
+          description: Score and checks
+  /tools:
+    get:
+      summary: WebMCP tool manifest
+      responses:
+        '200':
+          description: Tool list and count
+  /stores/custom:
+    get:
+      summary: Custom store registration hint
+    post:
+      summary: Register custom store from Shopify feed or StoreDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Store registered
+  /rooms:
+    post:
+      summary: Create co-shop room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                storeId:
+                  type: string
+                merchant:
+                  type: object
+      responses:
+        '201':
+          description: Room created
+  /rooms/{roomId}:
+    get:
+      summary: Get room state
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+    patch:
+      summary: Patch room state
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+  /rooms/{roomId}/events:
+    get:
+      summary: SSE stream of room patches
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: text/event-stream

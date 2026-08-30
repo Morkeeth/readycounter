@@ -17,10 +17,11 @@ export function markHeroSeen(): void {
 }
 
 interface LandingHeroProps {
-  onStart: () => void;
+  onShop: () => void;
+  onReadiness: () => void;
 }
 
-export function LandingHero({ onStart }: LandingHeroProps) {
+export function LandingHero({ onShop, onReadiness }: LandingHeroProps) {
   return (
     <section className="landing-hero" aria-label="Welcome">
       <div className="landing-hero__ring" aria-hidden>
@@ -28,15 +29,20 @@ export function LandingHero({ onStart }: LandingHeroProps) {
         <span className="landing-hero__label">agent readiness</span>
       </div>
       <div className="landing-hero__copy">
-        <h2>Co-shop in one tab</h2>
+        <h2>Shop with your AI assistant. You stay in control.</h2>
         <p>
-          Two demo merchants, one platform. Open a link, add items with your agent
-          or your hands, share the same order — no account. Switch stores to see
-          CAPTCHA vs account walls kill agent checkout.
+          ReadyCounter scores how agent-ready your storefront is, then lets humans and
+          assistants build the same cart in one tab. No signup to start. You confirm
+          payment — agents never charge a card.
         </p>
-        <button type="button" className="btn btn--primary btn--wide" onClick={onStart}>
-          Start co-shopping
-        </button>
+        <div className="landing-hero__actions">
+          <button type="button" className="btn btn--primary btn--wide" onClick={onShop}>
+            Start shopping
+          </button>
+          <button type="button" className="btn btn--secondary btn--wide" onClick={onReadiness}>
+            Check store readiness
+          </button>
+        </div>
       </div>
     </section>
   );

@@ -1,13 +1,16 @@
-import { getStore } from '../data/stores';
+import { getStore, registerCustomStore } from '../data/stores';
 import { apiCreateRoom } from '../api/client';
 import {
+  importShopifyFeed,
   toShopifyCatalog,
   validateStoreCatalog,
+  type ShopifyCatalogExport,
 } from '../integrations/shopify-catalog';
+import { simulateAgentJourney } from '../lib/agent-journey';
+import type { AutopilotFix } from '../lib/autopilot';
 import { computeReadinessChecks, readinessScore } from '../lib/readiness';
 import { getShopStoreState, useShopStore } from '../store/shopStore';
-
-const TOOL_COUNT = 13;
+import { WEBMCP_TOOL_COUNT } from './toolManifest';
 
 function jsonResult(value: unknown): string {
   return JSON.stringify(value, null, 2);
@@ -234,7 +237,8 @@ export async function registerWebMCPTools(
       execute: () => {
         const store = getShopStoreState();
         const def = getStore(store.storeId);
-        const checks = computeReadinessChecks(store.merchant, TOOL_COUNT, def.products);
+        const products = store.getCatalogProducts();
+        const checks = computeReadinessChecks(store.merchant, WEBMCP_TOOL_COUNT, products);
         store.recordToolActivity({ toolName: 'get_readiness_score' });
         return jsonResult({
           storeId: store.storeId,
@@ -335,6 +339,78 @@ export async function registerWebMCPTools(
       },
       annotations: { readOnlyHint: true },
     },
+    {
+      name: 'apply_readiness_fix',
+      description:
+        'Autopilot: apply a readiness fix — disable_captcha, disable_account_wall, or sync_feed_prices. Returns score before/after.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          fix: {
+            type: 'string',
+            enum: ['disable_captcha', 'disable_account_wall', 'sync_feed_prices'],
+          },
+        },
+        required: ['fix'],
+        additionalProperties: false,
+      },
+      execute: (input: Record<string, unknown>) => {
+        const store = getShopStoreState();
+        const fix = String(input.fix ?? '') as AutopilotFix;
+        const result = store.applyReadinessFix(fix);
+        store.recordToolActivity({ toolName: 'apply_readiness_fix' });
+        return jsonResult(result);
+      },
+    },
+    {
+      name: 'simulate_agent_journey',
+      description:
+        'Simulate full agent path: search → get_product → add_to_order → get_order → prepare_checkout. Returns per-step pass/fail.',
+      inputSchema: {
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      },
+      execute: () => {
+        const store = getShopStoreState();
+        const journey = simulateAgentJourney(store, WEBMCP_TOOL_COUNT);
+        store.recordToolActivity({ toolName: 'simulate_agent_journey' });
+        return jsonResult(journey);
+      },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: 'import_shopify_catalog',
+      description:
+        'Import Shopify Catalog JSON as a new store. Persists in browser; switches to imported store.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          feed: { type: 'object', description: 'Shopify Catalog export JSON' },
+          store_id: { type: 'string' },
+          store_name: { type: 'string' },
+        },
+        required: ['feed'],
+        additionalProperties: false,
+      },
+      execute: (input: Record<string, unknown>) => {
+        const store = getShopStoreState();
+        const feed = input.feed as ShopifyCatalogExport;
+        const def = importShopifyFeed(feed, {
+          storeId: typeof input.store_id === 'string' ? input.store_id : undefined,
+          name: typeof input.store_name === 'string' ? input.store_name : undefined,
+        });
+        registerCustomStore(def);
+        store.switchStore(def.id);
+        store.recordToolActivity({ toolName: 'import_shopify_catalog' });
+        return jsonResult({
+          ok: true,
+          storeId: def.id,
+          name: def.name,
+          productCount: def.products.length,
+        });
+      },
+    },
   ];
 
   try {
@@ -422,8 +498,8 @@ export async function invokeToolLocally(
       return jsonResult(store.prepareCheckout('agent'));
     }
     case 'get_readiness_score': {
-      const def = getStore(store.storeId);
-      const checks = computeReadinessChecks(store.merchant, TOOL_COUNT, def.products);
+      const products = store.getCatalogProducts();
+      const checks = computeReadinessChecks(store.merchant, WEBMCP_TOOL_COUNT, products);
       store.recordToolActivity({ toolName: name });
       return jsonResult({
         storeId: store.storeId,
@@ -456,6 +532,31 @@ export async function invokeToolLocally(
         return jsonResult({ ok: false, error: 'Room API unavailable' });
       }
       return jsonResult({ ok: true, roomId: created.roomId });
+    }
+    case 'apply_readiness_fix': {
+      const fix = String(args.fix ?? '') as AutopilotFix;
+      const result = store.applyReadinessFix(fix);
+      store.recordToolActivity({ toolName: name });
+      return jsonResult(result);
+    }
+    case 'simulate_agent_journey': {
+      store.recordToolActivity({ toolName: name });
+      return jsonResult(simulateAgentJourney(store, WEBMCP_TOOL_COUNT));
+    }
+    case 'import_shopify_catalog': {
+      const feed = args.feed as ShopifyCatalogExport;
+      const def = importShopifyFeed(feed, {
+        storeId: typeof args.store_id === 'string' ? args.store_id : undefined,
+        name: typeof args.store_name === 'string' ? args.store_name : undefined,
+      });
+      registerCustomStore(def);
+      store.switchStore(def.id);
+      store.recordToolActivity({ toolName: name });
+      return jsonResult({
+        ok: true,
+        storeId: def.id,
+        productCount: def.products.length,
+      });
     }
     default:
       return jsonResult({ error: `Unknown tool: ${name}` });

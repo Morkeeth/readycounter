@@ -1,21 +1,27 @@
-import { STORES, STORE_IDS } from '../data/stores';
+import { useState } from 'react';
+import { listStoreIds, getStore, STORES } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
 
 export function StoreSwitcher() {
   const storeId = useShopStore((s) => s.storeId);
   const switchStore = useShopStore((s) => s.switchStore);
+  const [ids, setIds] = useState(listStoreIds);
+
+  const refreshIds = () => setIds(listStoreIds());
 
   return (
     <label className="store-switcher">
-      <span className="store-switcher__label">Demo store</span>
+      <span className="store-switcher__label">Store</span>
       <select
         value={storeId}
         onChange={(e) => switchStore(e.target.value)}
-        aria-label="Switch demo merchant"
+        onFocus={refreshIds}
+        aria-label="Switch store"
       >
-        {STORE_IDS.map((id) => (
+        {ids.map((id) => (
           <option key={id} value={id}>
-            {STORES[id].name}
+            {getStore(id).name}
+            {STORES[id] ? '' : ' · yours'}
           </option>
         ))}
       </select>

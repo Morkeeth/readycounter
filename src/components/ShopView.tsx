@@ -27,9 +27,12 @@ export function ShopView() {
 
   return (
     <section className="shop" aria-label="Product catalog">
-      <h2>Catalog</h2>
+      <header className="shop__header">
+        <h2>{store.name}</h2>
+        <p className="shop__tagline">{store.tagline}</p>
+      </header>
       <p className="shop__hint">
-        You and your agent share one order. Add items here or via WebMCP tools.
+        Build one cart with your hands or your shopping assistant — same order, same tab.
       </p>
       <div className="product-grid">
         {products.map((product) => (
