@@ -36,16 +36,11 @@ Constraint: every cart mutation flows through `stage_*` → human approve → `c
 
 ## NOW
 
-**Slice 1** — Scaffold Vite+React app, seed catalog, register core WebMCP tools:
-
-- `search_products` — query catalog by recipient, budget, tags
-- `get_product` — details by id
-- `stage_for_recipient` — add to staging tray (pending)
-- `get_staging_board` — full board state
-- `approve_staged` — move staged → cart for recipient
-- `reject_staged` — remove from staging
-- `get_budget_status` — remaining per recipient
+**Slice 3** — Budget enforcement: block `stage_for_recipient` when it would exceed remaining budget; surface overspend in UI.
 
 ## LOG
 
 - 2026-08-30 — Repo + hack.md created. Novelty gate PASS. Cloud lane launching.
+- 2026-08-30 — **Slice 1+2 shipped.** Vite+React+TS scaffold; 12-product catalog; 7 WebMCP tools via `registerTool`; Zustand shared state; 3-column staging board with approve/reject, budget bars, tool-activity toast, dev harness for judges without WebMCP.
+  - **Failed first:** infinite render loop from `getStagingBoard()` / `getBudgetStatus()` in Zustand selectors (new object every tick). Fixed by selecting raw `staged`/`cart` arrays and `useMemo` for derived views.
+  - **Not verified:** real Chrome WebMCP agent invocation (no WebMCP flag in this VM). Dev harness + store path verified in browser.
