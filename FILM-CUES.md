@@ -12,7 +12,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | Merchant tab · Ember & Oak · score ~50/100 · CAPTCHA ON |
+| Screen | Merchant tab · Ember & Oak · score 70/100 · CAPTCHA ON |
 | Say | "AI traffic is up 8×. Most stores lose agents silently." |
 | Don't | Open README. Stay in the product. |
 
@@ -84,7 +84,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | `src/webmcp/registerTools.ts` OR badge "WebMCP live · 10 tools" |
+| Screen | `src/webmcp/registerTools.ts` OR badge "WebMCP live · 13 tools" |
 | Say | "Ten structured tools. Fork your catalog in five minutes." |
 | Point | [`FORK.md`](./FORK.md) in repo |
 

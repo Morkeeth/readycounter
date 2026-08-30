@@ -33,7 +33,7 @@ See [`DEVPOST.md`](./DEVPOST.md) for full text.
 4. **Copy co-shop link** → open in incognito → same order
 5. Switch store to **Neon Matcha Lab** → Merchant tab → different readiness failure (account wall)
 6. Expand **Judge harness** → run `get_readiness_score` + `prepare_checkout`
-7. Optional: Chrome `chrome://flags/#enable-webmcp-testing` → 10 tools register live
+7. Optional: Chrome `chrome://flags/#enable-webmcp-testing` → 13 tools register live
 
 ## Video spine
 

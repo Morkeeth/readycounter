@@ -1,7 +1,11 @@
 # Devpost submission copy — ReadyCounter
 
-Paste-ready fields for [WebMCP Challenge](https://webmcp.devpost.com/).  
-Stats sourced in [`research.md`](./research.md).
+Paste-ready fields for the [WebMCP Challenge](https://webmcp.devpost.com/).
+Every figure below resolves to a row in [`src/data/sources.ts`](./src/data/sources.ts)
+and a quoted sentence in [`research.md`](./research.md). `npm run verify` fails
+the build if a figure loses its source.
+
+**Oscar: the only unfilled fields are the two live URLs.** Everything else is final.
 
 ---
 
@@ -9,10 +13,10 @@ Stats sourced in [`research.md`](./research.md).
 
 ```text
 https://YOUR-APP.vercel.app
-https://YOUR-APP.vercel.app/?store=neon-matcha
+https://YOUR-APP.vercel.app/?view=merchant&store=neon-matcha
 ```
 
-_(Oscar: replace with Vercel URL after deploy.)_
+_(Replace with the Vercel URL after deploy. `vercel.json` is committed.)_
 
 ---
 
@@ -24,15 +28,23 @@ ReadyCounter
 
 ## Tagline (≤60 characters)
 
-Agent-ready storefront with readiness score + co-shop
+The counter prints the score — agent readiness, itemised
 
-*(59 characters)*
+*(55 characters)*
 
 ---
 
-## Elevator pitch (one paragraph)
+## Elevator pitch
 
-AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—stale feeds, CAPTCHA walls, thin catalog schema. **ReadyCounter** is a **forkable platform**: duplicate one entry in `src/data/stores.ts`, ship **10 structured WebMCP tools**, and let merchants see a data-backed **readiness score** (why agents abandon). Two demo stores prove different failure modes—**Ember & Oak** (CAPTCHA) vs **Neon Matcha Lab** (`?store=neon-matcha`, account wall). Humans and agents **co-edit the same order** in-tab; `prepare_checkout` never charges a card.
+Agent traffic to Shopify storefronts is up **8× year over year** and **78.6% of
+agent carts are abandoned** — and merchants cannot see why. **ReadyCounter**
+scores a storefront out of 100 for agent shoppers and prints the score as an
+**itemised bill**: every point traced to a named check, its arithmetic, its one-line
+fix, and the page the weight came from — publisher, date published, date read.
+Two of the five weights are published shares of abandoned agent carts; the other
+three are ours, and the receipt says so on the line rather than in a footnote.
+The store itself exposes **13 WebMCP tools**, so a human and an agent co-edit one
+order in one tab, and `prepare_checkout` never charges a card.
 
 ---
 
@@ -40,26 +52,57 @@ AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—
 
 ### The problem
 
-| Signal | Source |
-|--------|--------|
-| Shopify: AI traffic **8×** YoY, AI orders **~13×** (Q1 2026) | [Shopify](https://www.shopify.com/enterprise/blog/ai-search-insights) |
-| Catalog-powered AI searches convert **2×** vs scraped data | [Shopify earnings](https://stockanalysis.com/stocks/shop/transcripts/555081-q1-2026/) |
-| AI conversion went from **38% worse → 42% better** in 12 months | [Adobe](https://business.adobe.com/blog/ai-traffic-surge-retail-sites-not-machine-readable) |
-| Agent cart abandon **~78.6%**; stale price **26%**, CAPTCHA **24%** | [Presenc AI](https://presenc.ai/research/agent-cart-abandonment-statistics-2026) |
-| **81%** of Product-schema pages lack Offer object | [DigitalApplied 5k audit](https://www.digitalapplied.com/blog/schema-markup-adoption-5k-site-audit-2026) |
-| **65%** trust compare · **14%** auto-buy | [YouGov / Checkout.com](https://yougov.com/en-us/articles/53808-american-trust-in-ai-for-retail-consumer-sentiment-in-2025) |
+Merchants are told agents are coming. Nobody tells them **which door is locked**.
+
+| Signal | Figure | Source (read 2026-08-30) |
+|--------|--------|--------|
+| AI-referred sessions to Shopify storefronts, YoY | **8×**; orders **13×** | [Shopify Enterprise, 2026-05-11](https://www.shopify.com/enterprise/blog/ai-search-insights) |
+| Catalog-powered AI search vs scraped | **2× conversion** | [Shopify Q1 2026 earnings call](https://stockanalysis.com/stocks/shop/transcripts/555081-q1-2026/) |
+| AI traffic conversion, Mar 2025 → Mar 2026 | **−38% → +42%** | [Adobe Digital Insights, 2026-04-16](https://business.adobe.com/blog/ai-traffic-surge-retail-sites-not-machine-readable) |
+| Agent cart abandonment | **78.6%** — stale feed **26%**, verification wall **24%** | [Presenc AI, 2026-06](https://presenc.ai/research/agent-cart-abandonment-statistics-2026) |
+| Product schemas carrying the Offer object | **19%** | [Digital Applied, 5,000-site audit, 2026-04-26](https://www.digitalapplied.com/blog/schema-markup-adoption-5k-site-audit-2026) |
+| Trust AI to compare prices vs to place the order | **65% vs 14%** | [YouGov US for Checkout.com, 2025-12-04](https://yougov.com/en-us/articles/53808-american-trust-in-ai-for-retail-consumer-sentiment-in-2025) |
 
 ### What we built
 
-**ReadyCounter** = agent-ready commerce **platform** for the WebMCP era:
+**A readiness score you can audit line by line, on a store an agent can actually use.**
 
-1. **Two demo stores** — Ember & Oak Coffee (CAPTCHA default ON) · Neon Matcha Lab (`?store=neon-matcha`, account wall). Switch via header dropdown or URL param.
-2. **10 WebMCP tools** — commerce suite plus `get_readiness_score` and `get_merchant_config`. JSON schemas in `src/webmcp/registerTools.ts`.
-3. **Merchant readiness dashboard** — score /100, failure-mode checks, CAPTCHA/account toggles, live agent funnel.
-4. **Co-shop + share links** — `?co=` hydrates order across tabs; localStorage persist on refresh.
-5. **Judge harness** — invoke every tool without `chrome://flags/#enable-webmcp-testing`.
+1. **The tape.** The score is not a gauge — it is a printed receipt. Five line
+   items, a measured column and an allocated column, a total, and a red
+   **CHECKOUT VOID** stamp when the agent path is walled. Open any line and it
+   prints the check, the arithmetic, the fix, and the source with its dates.
+2. **A weighting that admits what it does not know.** 100 points: **26** for a
+   stale price feed and **24** for a walled checkout, because those are the
+   shares Presenc AI publishes. The remaining **50** we allocated ourselves, and
+   every surface that prints the score says so.
+3. **Co-shop.** 13 WebMCP tools; a human and an agent edit the same order in the
+   same tab. `prepare_checkout` validates and returns totals — it never charges.
+4. **Two merchants, two failure modes.** Ember & Oak Coffee scores **70/100**,
+   blocked by a CAPTCHA. Neon Matcha Lab scores **57/100**, blocked by a forced
+   account with a catalog agents mostly cannot identify (**5/20**).
+5. **Judge harness.** Invoke every tool without `chrome://flags`.
+6. **Instant use.** No signup. Order survives refresh. `?co=` share links,
+   live API rooms on Vercel, `?view=` deep-links a tab.
 
-### WebMCP tools (10)
+### Why the score is defensible
+
+Most readiness scores are a number with a nice ring around it. This one ships
+its own audit:
+
+- **A figure with no row in `src/data/sources.ts` cannot be printed anywhere in
+  the product.** Eight rows, each with publisher, figure, URL, publish date,
+  read date, and the honest limit of the source (Presenc is a vendor page and
+  says its metrics are modelled; the "81% lack Offer" line is our subtraction).
+- **`scripts/verify-score.mjs`** fails `npm run verify` if the budget stops
+  summing to 100, a weight names a source that does not exist, a source is
+  under-cited, a URL is not quoted in `research.md`, the tool count in the UI
+  drifts from `registerTools.ts`, or — the important one — **a measured weight
+  stops equalling the figure its source publishes.**
+- **Observable consequence:** clearing the CAPTCHA moves Ember & Oak from
+  **70 to 94**. A delta of exactly **24**, which is Presenc AI's 24%.
+  `scripts/verify-readiness.mjs` fails the build if it is ever anything else.
+
+### WebMCP tools (13)
 
 | Tool | Role |
 |------|------|
@@ -70,26 +113,30 @@ AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—
 | `remove_line` | Remove line |
 | `get_order` | Shared order state |
 | `get_delivery_quote` | Shipping quote |
-| `prepare_checkout` | Validate — never charges |
-| `get_readiness_score` | Score /100 + checks |
+| `prepare_checkout` | Validate — **never charges** |
+| `get_readiness_score` | Score /100 with itemised checks |
 | `get_merchant_config` | CAPTCHA / account flags |
+| `validate_catalog_feed` | Feed issues an agent would hit |
+| `export_shopify_catalog` | Shopify-shaped catalog export |
+| `create_coshop_room` | Live shared room via the REST API |
 
 ### Fork path
 
-Duplicate a `src/data/stores.ts` entry → open `?store=your-id`. Five-minute guide: [`FORK.md`](./FORK.md).
+Duplicate one entry in `src/data/stores.ts`, open `?store=your-id`, and your
+store gets its own bill. Five-minute guide: [`FORK.md`](./FORK.md).
 
 ### Human-in-the-loop constraint
 
-`prepare_checkout` validates the order and returns totals—it **never charges a card**. Checkout blocked when CAPTCHA or account wall is on (demo of Presenc abandon drivers).
+`prepare_checkout` validates the order and returns totals. **It never charges a
+card.** When a wall is up it refuses and the refusal names the wall, its point
+cost, and the page that priced it — a diagnosis, not a dead end.
 
 ---
 
 ## Built with
 
-- React 19 + TypeScript + Vite
-- Zustand (shared order state + persist)
-- WebMCP `document.modelContext.registerTool`
-- MIT license
+React 19 · TypeScript · Vite · Zustand · WebMCP `document.modelContext.registerTool`
+· Vercel serverless functions for live co-shop rooms · MIT.
 
 ---
 
@@ -99,46 +146,52 @@ Duplicate a `src/data/stores.ts` entry → open `?store=your-id`. Five-minute gu
 git clone https://github.com/Morkeeth/tooltruth-webmcp.git
 cd tooltruth-webmcp
 npm install
+npm run build && npm run verify   # both exit 0
 npm run dev
 ```
 
 Open `http://localhost:5173`. **No API keys. No WebMCP flag required.**
-
-Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md)
+Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 
 ### 5-minute judge path
 
-1. **Shop + order** — Start co-shopping → add item → appears in order panel (<10s).
-2. **Judge harness** — Run `add_to_order` → `get_order`. Same shared order, `human` / `agent` badges.
-3. **Merchant readiness (Ember & Oak)** — Score <70 with CAPTCHA on. Toggle off → score rises; `prepare_checkout` succeeds.
-4. **Switch store** — Demo store → Neon Matcha Lab (or `?store=neon-matcha`). Different score; account wall blocks checkout.
-5. **Readiness tools** — Harness `get_readiness_score` + `get_merchant_config` on each store.
+1. **The tape** — landing screen shows Ember & Oak at **70/100** with a
+   CHECKOUT VOID stamp. Click any line: arithmetic, fix, source, dates.
+2. **Co-shop** — *Open the counter* → add an item → judge harness →
+   `add_to_order`, then `get_order`. One order, `HUMAN` and `AGENT` chips.
+3. **The refusal** — *Prepare checkout*. It refuses and cites Presenc AI.
+4. **The fix** — Merchant readiness → uncheck CAPTCHA → **70 → 94**, delta 24.
+5. **Second merchant** — `?store=neon-matcha` → **57/100**, account wall, 5/20 catalog.
+6. **The audit** — `npm run verify`, or the *Every source this tape can cite*
+   panel. Try changing a weight in `src/lib/readiness.ts` and re-run verify.
 
 ### Optional: native WebMCP
 
-Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → badge shows "WebMCP live · 10 tools".
+Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → the header badge reads
+**WebMCP live · 13 tools**.
 
 ---
 
-## Demo steps (video spine, no flag)
+## Demo video spine
 
-See [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md) · [`FILM-CUES.md`](./FILM-CUES.md). Summary:
+Full one-take script with the exact numbers: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Time | Beat |
 |------|------|
-| 0:00 | Merchant tab: Ember & Oak score ~50/100, CAPTCHA ON |
-| 0:20 | Human adds item; harness `add_to_order` — co-shop order |
-| 0:50 | Readiness checks: stale feed, missing GTIN, funnel counters |
-| 1:10 | **Switch to Neon Matcha** — compare readiness scores |
-| 1:35 | `prepare_checkout` blocked → toggle CAPTCHA → succeeds |
-| 2:00 | Share link + 10 tools in `registerTools.ts` |
-| 2:30 | Pitch: platform strangers fork |
+| 0:00 | The tape — Ember & Oak, 70/100, CHECKOUT VOID |
+| 0:25 | Open a line: 0/24, measured, Presenc AI, read 2026-08-30 |
+| 0:55 | Co-shop — human item + `add_to_order` in one order |
+| 1:20 | `prepare_checkout` refuses, and says exactly why |
+| 1:45 | Clear the CAPTCHA — 70 → 94, a delta of exactly 24 |
+| 2:10 | Neon Matcha — 57/100, account wall, 5/20 catalog |
+| 2:30 | Eight sources, every one dated |
 
 ---
 
 ## Links
 
 - Repo: https://github.com/Morkeeth/tooltruth-webmcp
+- Score derivation + every weight: [`research.md`](./research.md)
 - Fork guide: [`FORK.md`](./FORK.md)
-- Research citations: [`research.md`](./research.md)
+- Screenshots (1440px + 390px): [`docs/shots/`](./docs/shots/)
 - Challenge: https://webmcp.devpost.com/

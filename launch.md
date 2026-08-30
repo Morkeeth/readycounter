@@ -2,7 +2,7 @@
 
 ## THE PROMISE
 
-Merchants see why AI shoppers abandon their store — and fix it — without leaving the browser. Developers fork one URL-ready storefront with 10 WebMCP tools.
+Merchants see why AI shoppers abandon their store — and fix it — without leaving the browser. Developers fork one URL-ready storefront with 13 WebMCP tools.
 
 ## THE NAMED FIRST TEN
 

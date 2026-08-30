@@ -2,15 +2,20 @@
 
 **Agent-ready commerce platform for the WebMCP era.**
 
-AI traffic is here. Most stores lose it silently. ReadyCounter gives **merchants** a readiness score (data-backed), **developers** a forkable multi-store WebMCP platform, and **shoppers** co-shop where humans and agents share one order.
+AI traffic is here. Most stores lose it silently, and no dashboard tells them
+which door is locked. ReadyCounter gives **merchants** a readiness score they can
+audit line by line, **developers** a forkable multi-store WebMCP platform, and
+**shoppers** a co-shop where a human and an agent share one order.
 
-**Try it:** `https://YOUR-APP.vercel.app` · second store: `?store=neon-matcha` _(Oscar: Vercel URL after deploy)_
+**Try it:** `https://YOUR-APP.vercel.app` · second store: `?store=neon-matcha` · a tab directly: `?view=merchant` _(Vercel URL after deploy)_
+
+![ReadyCounter merchant readiness — the tape](./docs/shots/03-merchant-1440.png)
 
 [WebMCP Challenge](https://webmcp.devpost.com/) · [Devpost copy](./DEVPOST.md) · [Fork in 5 min](./FORK.md) · [Judge 60s](./JUDGE-60s.md) · [Research](./research.md) · MIT
 
 ## Pitch
 
-> Shopify proved catalog beats scrape 2×. ReadyCounter is the merchant-ready storefront strangers fork: **10 structured WebMCP tools**, a live readiness score, two demo merchants (CAPTCHA vs account wall), and co-shop so humans never leave the tab—because 65% trust AI to compare prices but only 14% trust it to buy autonomously ([YouGov/Checkout.com](./research.md#checkoutcom--yougov-65-trust-compare--14-auto-buy-51pt-gap)).
+> **The counter prints the score.** ReadyCounter rates a storefront out of 100 for agent shoppers and prints the rating as an **itemised bill** — every point traced to a named check, its arithmetic, its one-line fix, and the page the weight came from, with the date it was read. Two of the five weights are published shares of abandoned agent carts; the other three are ours, and the receipt says so on the line. The store itself ships **13 structured WebMCP tools**, so a human and an agent co-edit one order in one tab — because 65% trust AI to compare prices but only 14% trust it to place the order ([YouGov / Checkout.com](./research.md)).
 
 ## Demo stores
 
@@ -41,15 +46,36 @@ ReadyCounter addresses the **infrastructure gap**: structured WebMCP tools + mer
 | View | Audience | Features |
 |------|----------|----------|
 | **Shop + order** | Shopper + agent | Multi-store catalog, shared co-shop order, share links |
-| **Merchant readiness** | Store owner / dev | Score ring /100, failure-mode checks, agent funnel, CAPTCHA/account toggles |
+| **Merchant readiness** | Store owner / dev | The readiness tape — itemised score /100, per-line source + fix, CHECKOUT VOID stamp, agent funnel, CAPTCHA/account toggles |
+| **Integrations** | Developer | REST API status, Shopify-shaped catalog export with feed issues, live co-shop rooms |
 
-## WebMCP tools (10)
+### How the score is built
+
+100 points across five checks. **26** and **24** are *measured* — they are the
+shares of abandoned agent carts Presenc AI attributes to a stale price feed and
+to a verification wall. The remaining **50** are *allocated by us*, and every
+surface that prints the score says which is which.
+
+`npm run verify` fails the build if a measured weight stops equalling the figure
+its source publishes, if a source loses its URL or its read date, or if a source
+URL is not quoted in [`research.md`](./research.md). Full derivation and the
+list of assertions: [`research.md` § How the readiness score is weighted](./research.md).
+
+Observable consequence: clearing the CAPTCHA on Ember & Oak moves the score
+**70 → 94** — a delta of exactly **24**, the published figure.
+
+## WebMCP tools (13)
 
 All via `document.modelContext.registerTool` in [`src/webmcp/registerTools.ts`](./src/webmcp/registerTools.ts):
 
 - `search_catalog` · `get_product` · `add_to_order` · `update_line_quantity`
 - `remove_line` · `get_order` · `get_delivery_quote` · `prepare_checkout`
-- `get_readiness_score` · `get_merchant_config`
+- `get_readiness_score` · `get_merchant_config` · `validate_catalog_feed`
+- `export_shopify_catalog` · `create_coshop_room`
+
+`prepare_checkout` validates and returns totals. **It never charges a card.**
+When a wall is up it refuses, and the refusal names the wall, its point cost,
+and the page that priced it.
 
 ## Quick start
 

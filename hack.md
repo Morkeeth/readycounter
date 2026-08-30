@@ -46,15 +46,30 @@
 |---|-------|-----------|------|
 | 1 | **Co-shop core** — catalog, shared order, 8 WebMCP tools | `npm run build` · tools in `registerTools.ts` | M |
 | 2 | **Merchant readiness** — score, checks, CAPTCHA toggle, funnel | Merchant tab shows score & blocked checkout | M |
-| 3 | **Research + pitch** — `research.md`, `DEVPOST.md`, README, brand | All stats primary-sourced · score-ring identity | S |
+| 3 | **Research + pitch** — `research.md`, `DEVPOST.md`, README, brand | All stats primary-sourced · receipt-tape identity | S |
 | 4 | **Instant use** — persist, share link, landing, JSON-LD, deploy prep | Share link + refresh eval passes | M |
 | 5 | **Outward** — film + Devpost with live URL | Submit Wed 22:00 CEST | S — Oscar |
 
 ## NOW
 
-**Overnight platform polish (Slices A–C)** — docs, verify-stores, film assist. Oscar still owns deploy + Devpost + video.
+**Slice 5 shipped (night run, 31 Aug):** brand ruled and built (THE COUNTER —
+the readiness tape), the score made traceable point-by-point, and a pre-existing
+white-screen on the Shop tab fixed. `npm run build` and `npm run verify` exit 0.
 
-**Oscar next:** Vercel deploy · film with **share link + store switch** · Devpost Wed 22:00.
+**Everything left is Oscar's click:** Vercel deploy · film `DEMO-SCRIPT.md`
+(one take, 2:45, every number pre-verified) · paste `DEVPOST.md` · submit
+Wed 3 Sep 22:00 CEST.
+
+**Live numbers, read 2026-08-31 from `npm run verify`:** Ember & Oak **70/100**
+(CAPTCHA), 94 with it cleared, delta **24** = the published figure. Neon Matcha
+**57/100** (account wall). **13** WebMCP tools. **8** sources on file.
+
+**Defensibility eval (the moonshot bar):**
+```text
+open the merchant tab → click any tape line → it prints points, basis, fix and
+a source with publisher + date read → uncheck CAPTCHA → score moves by exactly
+24 → edit a weight in src/lib/readiness.ts → `npm run verify` exits 1
+```
 
 **Instant-use eval (moonshot):**
 ```text
@@ -74,3 +89,17 @@ open <live-url> → Start co-shopping → add item → refresh → order remains
 - 2026-08-31 — **Slice 4 shipped (moonshot):** localStorage persist, shareable co-shop links (`?co=`), landing hero, JSON-LD catalog, `vercel.json`.
 - 2026-08-31 — **Slice 4b (platform):** 2 demo stores, 10 WebMCP tools (`get_readiness_score`, `get_merchant_config`), SUBMISSION-PACK, DEPLOY, launch.md, `npm run verify`.
 - 2026-08-31 — **Overnight platform polish:** `FORK.md`, `FILM-CUES.md`, `JUDGE-60s.md`; DEVPOST + README + DEMO-SCRIPT updated for 2 stores + 10 tools; `scripts/verify-stores.mjs` wired into `npm run verify`; `npm run build && npm run verify` exit 0.
+- 2026-08-31 — **Slice 5 shipped (night run L3, worktree `nightrun/l3-readycounter`):**
+  brand RULED and built — **THE COUNTER**, signature device = the readiness tape
+  (score ring rejected: a ring is a component, a bill is an argument). Score is
+  now **100 points, 50 measured / 50 admitted as ours**, each line printing its
+  arithmetic, its fix and its source with publisher + date read;
+  `src/data/sources.ts` (8 rows) is the only place a figure may come from.
+  New `scripts/verify-score.mjs` fails the build if a measured weight stops
+  equalling its published figure (proven red at 24→30). `verify-readiness` and
+  `verify-stores` now assert and exit non-zero instead of printing `false` and
+  passing. **Fixed a pre-existing white-screen on the Shop tab** (React #185,
+  present at `dd90f26`) — the co-shop flow, i.e. the demo, was dead in `main`.
+  Landing screen scored a hardcoded 72; it scores the live store now. Docs
+  corrected from 10 tools to **13**. `docs/shots/` holds 1440px and true-390px
+  renders of every surface. `npm run build` + `npm run verify` exit 0.

@@ -4,7 +4,7 @@ Add your merchant without touching auth, payments, or deploy config.
 
 ## What you get
 
-- **10 WebMCP tools** in `src/webmcp/registerTools.ts` (including `get_readiness_score`, `get_merchant_config`)
+- **13 WebMCP tools** in `src/webmcp/registerTools.ts` (including `get_readiness_score`, `get_merchant_config`)
 - **Readiness dashboard** — score /100, failure-mode checks, agent funnel
 - **Co-shop order** — human + agent share one cart; `prepare_checkout` never charges a card
 - **Share links** — `?co=` encodes order + merchant flags (no backend)

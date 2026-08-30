@@ -1,111 +1,166 @@
-# ReadyCounter — demo film spine (< 3 min)
+# ReadyCounter — one-take film script (2:45)
 
-**Audience:** WebMCP judges (Shopify merchant story, Vercel fork, Chrome WebMCP, co-shop trust gap).
-
-**Setup:** `npm run dev` locally OR deployed Vercel URL. Chrome with WebMCP flag optional — judge harness works without it.
-
----
-
-## 0:00–0:20 — Hook (problem)
-
-**On screen:** Merchant readiness tab, score ~60/100, CAPTCHA ON.
-
-**Voiceover:**
-
-> AI traffic is up 8× on Shopify. But 78% of agent carts still abandon — stale prices, CAPTCHA, thin catalog. ReadyCounter is the merchant-ready storefront: structured WebMCP tools, a readiness score, and co-shop so humans never leave the tab.
-
-**Show:** Data callouts in README or readiness cite block (2× catalog vs scrape, 65% compare vs 14% auto-buy).
+**You should not need to rehearse this.** Every number below is the number the
+app actually prints — read from `npm run verify` on 2026-08-31, not estimated.
+Beats do not overlap. Nothing needs a browser flag.
 
 ---
 
-## 0:20–0:50 — Co-shop (shopper + agent)
+## Before you press record — 90 seconds of setup
 
-**On screen:** Shop + order tab. Ember & Oak Coffee catalog.
+```bash
+npm install
+npm run build && npm run verify     # both must exit 0
+npm run preview                     # or open the deployed URL
+```
 
-1. Human clicks **Add** on a bag of beans — order panel updates.
-2. Open **Judge harness** → run `add_to_order` for `sku-pour-over`.
-3. Run `get_order` — same shared order, both lines visible, `addedBy: human` / `agent` badges.
+Then, in the browser you will film:
 
-**Voiceover:**
+1. Open the site and **clear site data once** (DevTools → Application → Clear
+   site data). The landing screen only shows on a first visit; you want it.
+2. Close DevTools. Zoom to 100%. Window at least 1280px wide.
+3. Do **not** touch the merchant toggles yet — Ember & Oak ships with the
+   CAPTCHA on, which is the whole first beat.
 
-> One order, two actors. The agent proposes via tools; the human stays in the tab. That's the 51-point trust gap — compare, don't auto-buy.
+**The three URLs you will use, in order:**
 
----
-
-## 0:50–1:20 — Merchant readiness (why stores lose agent traffic)
-
-**On screen:** Merchant readiness tab — **Ember & Oak Coffee**.
-
-**Show:**
-- Score drops with CAPTCHA on
-- Price feed mismatch on Brew Scale (stale feed stat)
-- Missing GTIN on some SKUs
-- Agent funnel counters increment as harness runs
-
-**Voiceover:**
-
-> Merchants see *why* agents fail — not a black box. Toggle CAPTCHA: 24% of abandonments. Stale feed: 26%. Fix the path, score goes up.
+| Beat | URL |
+|---|---|
+| Open | `/` |
+| Store B | `/?view=merchant&store=neon-matcha` |
+| Back to A | `/?view=merchant&store=ember-oak` |
 
 ---
 
-## 1:05–1:25 — Platform pivot: two stores, one fork ★
+## 0:00 – 0:25 · The bill (cold open on the tape)
 
-**On screen:** Header **Demo store** dropdown → **Neon Matcha Lab** (URL shows `?store=neon-matcha`).
+**On screen:** the landing screen. The receipt tape, **EMBER & OAK COFFEE**,
+**70 / 100**, and a red **CHECKOUT VOID** stamp.
 
-1. Merchant tab — score changes; **account wall** check fails (not CAPTCHA).
-2. Harness → `get_readiness_score` on Ember & Oak, then switch store and run again.
-3. Harness → `get_merchant_config` — show `checkoutRequiresAccount: true` vs CAPTCHA on store A.
+> Agent traffic to Shopify storefronts is up eight times year over year, and
+> nearly four in five agent carts are abandoned. Merchants cannot see why.
+> This store scores seventy out of a hundred to an agent — and here is the
+> itemised bill.
 
-**Voiceover:**
-
-> Same platform, different failure mode. Fork your merchant in five minutes — duplicate one entry in stores.ts, open your URL. That's the wedge: readiness OS strangers can ship.
-
-**Show:** [`FORK.md`](./FORK.md) or `src/data/stores.ts` briefly.
+**Do:** point the cursor down the tape. Do not click yet.
 
 ---
 
-## 1:25–1:55 — Checkout gate (human-in-the-loop)
+## 0:25 – 0:55 · Every point is traceable
 
-**On screen:** Harness → `prepare_checkout` with CAPTCHA ON → blocked message with Presenc stat.
+**On screen:** still the tape. **Click the `Checkout path an agent can finish`
+line** so it opens.
 
-Toggle CAPTCHA off in Merchant → run `prepare_checkout` again → succeeds.
+It prints: `0/24` · `measured weight` · the detail · the fix · and the source
+row — **Presenc AI, published 2026-06, read 2026-08-30**, with the URL live.
 
-Human clicks **Prepare checkout** in order panel → "Ready for human payment."
+> Twenty-four points, and the twenty-four is not ours. It is the share of
+> abandoned agent carts Presenc AI attributes to a verification wall. Two of
+> the five weights are published figures. The other three we allocated
+> ourselves — and the tape says which is which on the line, not in a footnote.
 
-**Voiceover:**
-
-> `prepare_checkout` never charges a card. Agents validate; humans pay. That's WebMCP co-shopping done right.
-
----
-
-## 1:55–2:25 — Developer story (optional WebMCP live)
-
-**If Chrome WebMCP flag on:** badge shows "WebMCP live · 10 tools". ChatGPT/browser agent discovers tools natively.
-
-**If not:** point at `src/webmcp/registerTools.ts` — 10 tools, structured schemas, forkable Vite app.
-
-**Voiceover:**
-
-> Fork it. Ship your catalog as tools, not scrape targets. Shopify proved structured catalog wins 2×.
+**Do:** click `Catalog an agent can read` too — `18/20`, seven of eight SKUs
+carry a GTIN, and the fix names the SKU count to fix.
 
 ---
 
-## 2:25–2:50 — Close
+## 0:55 – 1:20 · Co-shop — one order, two actors
 
-**On screen:** README pitch line + repo URL.
+**Do:** click **Open the counter**, land on **Shop + order**.
 
-**Voiceover:**
+1. Click **Add to order** on *House Espresso Blend*. It appears in the order
+   panel with a solid `HUMAN` chip.
+2. Open **Judge harness** at the bottom → click **add_to_order: first SKU**,
+   then **get_order**.
 
-> ReadyCounter — agent-ready commerce for the WebMCP era. Merchants get readiness. Developers get tools. Shoppers get co-shop.
+**On screen:** the same order, now with a dashed `AGENT` chip on the second
+line, and the raw tool JSON in the harness output.
+
+> One order, two actors. The agent proposes through structured tools; you never
+> leave the tab. Sixty-five percent of people trust AI to compare prices.
+> Fourteen percent trust it to place the order. That gap is the product.
 
 ---
 
-## Stranger test (before you film)
+## 1:20 – 1:45 · The refusal is legible, not a dead end
 
-1. Fresh browser, no prior context — can you add an item and see it in the order in < 10s?
-2. Harness `add_to_order` without reading docs — does the order update?
-3. Merchant tab — does toggling CAPTCHA change score and block checkout?
-4. **Store switch** — does Neon Matcha show a different score and account-wall blocker?
-5. Can you explain the pitch in one sentence without saying "MCP" three times?
+**On screen:** still Shop + order. The order panel already shows a red
+**WILL VOID** panel naming the CAPTCHA and citing Presenc AI.
 
-All five yes → film.
+**Do:** click **Prepare checkout (human confirms)**. It refuses, and says why.
+
+> `prepare_checkout` never charges a card — it validates, and a human pays.
+> Here it refuses, and the refusal names the wall, the cost, and the page the
+> cost came from. That is the difference between a sad path and a diagnosis.
+
+---
+
+## 1:45 – 2:10 · Fix it, and watch the bill reprint
+
+**Do:** go to **Merchant readiness** → uncheck **CAPTCHA on checkout**.
+
+**On screen:** the tape reprints. **70 → 94.** The VOID stamp disappears. The
+`Checkout path` line goes `0/24` → `24/24`.
+
+> Twenty-four points back — exactly the published figure, because the weight is
+> the figure. Our test suite fails the build if that delta ever stops being
+> twenty-four.
+
+**Do:** re-check the CAPTCHA before moving on, so store A stays comparable.
+
+---
+
+## 2:10 – 2:30 · A second merchant, a different failure
+
+**Do:** switch the **Demo store** dropdown to **Neon Matcha Lab**
+(or open `/?view=merchant&store=neon-matcha`).
+
+**On screen:** **NEON MATCHA LAB**, **57 / 100**, a VOID stamp that says
+**a forced account** — not a CAPTCHA — and `Catalog an agent can read` at
+**5/20** instead of 18/20.
+
+> Same platform, a different store, a different failure. Fifty-seven, blocked
+> by an account wall, with a catalog agents mostly cannot identify. Duplicate
+> one entry in `stores.ts` and your own store gets its own bill.
+
+---
+
+## 2:30 – 2:45 · Close
+
+**On screen:** scroll the merchant page to the **Every source this tape can
+cite** panel — eight rows, publisher, figure, published date, read date.
+
+> Eight sources. A figure with no row here cannot be printed anywhere in the
+> product, and the build fails if a row is not quoted in research.md.
+> ReadyCounter — the counter prints the score.
+
+---
+
+## The numbers you will say out loud
+
+Read from `npm run verify`, 2026-08-31. If any of these differ when you film,
+**stop and re-run verify** — the app changed.
+
+| Claim | Value | Where it is asserted |
+|---|---|---|
+| Ember & Oak, CAPTCHA on | **70 / 100** | `verify-stores.mjs` |
+| Ember & Oak, CAPTCHA off | **94 / 100** | `verify-readiness.mjs` |
+| The delta | **24**, = Presenc AI's 24% | `verify-readiness.mjs` |
+| Neon Matcha | **57 / 100**, account wall | `verify-stores.mjs` |
+| WebMCP tools registered | **13** | `verify-score.mjs` |
+| Sources on file | **8** | `verify-score.mjs` |
+| GTIN coverage, Ember & Oak | **7 / 8** | `verify-readiness.mjs` |
+
+---
+
+## Stranger test — all six yes before you record
+
+1. Fresh browser, no context: does the landing screen explain the product
+   without you saying anything?
+2. Can you add an item and see it in the order in under ten seconds?
+3. Does the judge harness update the same order without reading any docs?
+4. Does unchecking the CAPTCHA visibly move 70 → 94?
+5. Does Neon Matcha show a **different score and a different blocker**?
+6. Can you say the pitch in one sentence without using the letters M-C-P?
+
+Screenshots of every surface, at 1440px and 390px: `docs/shots/`.

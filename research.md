@@ -117,13 +117,62 @@ Primary sources for every stat in `hack.md` DATA ANCHORS.
 
 ---
 
+## How the readiness score is weighted — and where we stop being able to cite
+
+This is the section a judge should read first, because it is the part most
+readiness scores do not have: **the derivation of every weight, including the
+ones we made up.**
+
+ReadyCounter allocates **100 points across five checks**. The allocation is the
+claim, so it is stated in full:
+
+| Check | Points | Basis | Where the number comes from |
+|---|---|---|---|
+| Price feed agrees with the shelf | **26** | **measured** | Presenc AI attributes **26%** of abandoned agent carts to stale price or stock data at checkout. The weight *is* that share. |
+| Checkout path an agent can finish | **24** | **measured** | Presenc AI attributes **24%** of abandoned agent carts to a CAPTCHA or verification wall. The weight *is* that share. |
+| Catalog an agent can read | **20** | *allocated* | No source itemises schema gaps as an abandonment cause. We allocate 20 because an agent that cannot read price and availability never reaches a cart to abandon. Context: only **19%** of Product schemas carry the Offer object (Digital Applied, 5,000 sites). |
+| Structured tool surface | **20** | *allocated* | Allocated, not measured. Shopify reports catalog-powered AI search converts **2×** scraped search; a WebMCP tool surface is that same bet made explicit. |
+| Availability stated, not implied | **10** | *allocated* | Presenc groups stock **with** price in one 26% figure. We split off 10 points for explicit availability flags rather than double-count the measured share. |
+| **Total** | **100** | 50 measured · 50 allocated | |
+
+**The honest limit.** Half of this score is a judgement call. The product does
+not hide that: the tape prints a `measured weight` or `allocated weight` tag on
+every line, the header reads *"50 priced by a published figure · 50 allocated by
+ReadyCounter"*, and the account-wall case says out loud that no published figure
+prices it separately, so it is charged the same 24 as a CAPTCHA.
+
+**The check that keeps this honest.** `scripts/verify-score.mjs` runs on every
+`npm run verify` and fails the run if:
+
+1. the point budget stops summing to 100;
+2. a weight names a source id that does not exist;
+3. any source row is missing a publisher, figure, URL, publish date or read date;
+4. a source URL is not quoted in this file;
+5. **a measured weight stops equalling the figure its source publishes** — 26 pts
+   must match `26%`, 24 pts must match `24%`;
+6. the tool count printed in `App.tsx` drifts from the tools in `registerTools.ts`.
+
+Proven red, not just green: setting `agent_checkout_path` to 30 points fails
+checks 1 and 5 and exits 1.
+
+**Observable consequence.** Clearing the CAPTCHA on Ember & Oak moves the score
+from **70 to 94** — a delta of exactly **24**, the published figure. That is
+asserted in `scripts/verify-readiness.mjs`, not eyeballed.
+
+---
+
 ## How ReadyCounter uses these stats
 
 | Product surface | Stat applied |
 |-----------------|--------------|
-| Merchant readiness checks | Presenc 26% stale / 24% CAPTCHA |
-| Readiness cite block | Shopify 2× Catalog; Adobe 38→42% |
+| Readiness weights (26 / 24) | Presenc 26% stale feed · 24% verification wall |
+| Readiness line detail | Digital Applied 19% Offer; Shopify 2× Catalog |
+| Landing screen facts | Shopify 8×/13×; Presenc 78.6%; YouGov 65/14 |
 | Co-shop / `prepare_checkout` gate | YouGov 65% compare vs 14% buy |
 | README / Devpost pitch | Full table above |
 
-Do not hardcode figures in UI without linking here. Re-derive scores from live catalog + merchant flags at runtime.
+**The rule, enforced in code:** a figure with no row in `src/data/sources.ts`
+cannot be printed anywhere in the product, and a row in that file whose URL is
+not quoted on this page fails `npm run verify`. Scores are re-derived from the
+live catalog and merchant flags on every render — nothing is a constant typed
+into a component.
