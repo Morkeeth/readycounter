@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ShareCoShopBar } from './ShareCoShopBar';
 import { useShopStore } from '../store/shopStore';
 
 export function OrderPanel() {
@@ -86,6 +87,8 @@ export function OrderPanel() {
           })}
         </ul>
       )}
+
+      <ShareCoShopBar />
 
       <div className="order-summary">
         <div>

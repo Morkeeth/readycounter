@@ -1,9 +1,23 @@
+import { useEffect } from 'react';
 import { PRODUCTS } from '../data/catalog';
+import { catalogJsonLd } from '../lib/catalogSchema';
 import { useShopStore } from '../store/shopStore';
 
 export function ShopView() {
   const addToOrder = useShopStore((s) => s.addToOrder);
   const order = useShopStore((s) => s.order);
+
+  useEffect(() => {
+    const id = 'readycounter-catalog-jsonld';
+    let el = document.getElementById(id) as HTMLScriptElement | null;
+    if (!el) {
+      el = document.createElement('script');
+      el.id = id;
+      el.type = 'application/ld+json';
+      document.head.appendChild(el);
+    }
+    el.textContent = JSON.stringify(catalogJsonLd());
+  }, []);
 
   const inOrder = (productId: string) =>
     order.lines.some((l) => l.productId === productId);

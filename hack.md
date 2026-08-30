@@ -47,16 +47,17 @@
 | 1 | **Co-shop core** — catalog, shared order, 8 WebMCP tools | `npm run build` · tools in `registerTools.ts` | M |
 | 2 | **Merchant readiness** — score, checks, CAPTCHA toggle, funnel | Merchant tab shows score & blocked checkout | M |
 | 3 | **Research + pitch** — `research.md`, `DEVPOST.md`, README, brand | All stats primary-sourced · score-ring identity | S |
-| 4 | **Instant use** — persist session, landing UX, deploy | Stranger: open URL → shop → refresh → order remains | M |
+| 4 | **Instant use** — persist, share link, landing, JSON-LD, deploy prep | Share link + refresh eval passes | M |
 | 5 | **Outward** — film + Devpost with live URL | Submit Wed 22:00 CEST | S — Oscar |
 
 ## NOW
 
-**Slice 4** — persist `shopStore` (order, funnel, merchant flags) to localStorage; hero CTA "start co-shopping"; deploy to Vercel (Oscar).
+**Slice 5** — Oscar: Vercel deploy · film with **share link** demo · Devpost Wed 22:00.
 
-**Instant-use eval:**
+**Instant-use eval (moonshot):**
 ```text
-open <live-url> → add sku-espresso → refresh → line still in order → merchant tab shows funnel +1
+open <live-url> → Start co-shopping → add item → refresh → order remains
+→ Copy co-shop link → incognito → same order → merchant funnel visible
 ```
 
 ## LOG
@@ -67,3 +68,4 @@ open <live-url> → add sku-espresso → refresh → line still in order → mer
 - 2026-08-30 — **Slice 3 shipped:** `research.md`, `DEVPOST.md`, README pitch + judge steps, score-ring + funnel-strip visual pass, `npm run build` + `npm run lint` exit 0, verify script for CAPTCHA score delta.
 - 2026-08-31 — **Name ruled:** ReadyCounter (Devpost). Repo `tooltruth-webmcp` unchanged.
 - 2026-08-31 — **Scope ruled:** Product track — ambitious, instant use (live URL, no signup to shop).
+- 2026-08-31 — **Slice 4 shipped (moonshot):** localStorage persist, shareable co-shop links (`?co=`), landing hero, JSON-LD catalog, `vercel.json`.

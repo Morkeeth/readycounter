@@ -1,5 +1,7 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { MERCHANT_DEFAULTS, PRODUCTS } from '../data/catalog';
+import { clearShareParam, readShareFromLocation } from '../lib/shareSession';
 import type {
   FunnelEvent,
   FunnelStep,
@@ -65,7 +67,10 @@ export interface ShopStore {
   clearToolActivity: () => void;
 }
 
-export const useShopStore = create<ShopStore>((set, get) => ({
+const storeLogic = (
+  set: (fn: (state: ShopStore) => Partial<ShopStore>) => void,
+  get: () => ShopStore,
+): ShopStore => ({
   merchant: { ...MERCHANT_DEFAULTS },
   order: { lines: [], currency: 'USD' },
   funnel: [],
@@ -224,11 +229,31 @@ export const useShopStore = create<ShopStore>((set, get) => ({
   },
 
   recordToolActivity: (activity) => {
-    set({ lastToolActivity: { ...activity, timestamp: Date.now() } });
+    set(() => ({ lastToolActivity: { ...activity, timestamp: Date.now() } }));
   },
 
-  clearToolActivity: () => set({ lastToolActivity: null }),
-}));
+  clearToolActivity: () => set(() => ({ lastToolActivity: null })),
+});
+
+export const useShopStore = create<ShopStore>()(
+  persist(storeLogic, {
+    name: 'readycounter-v1',
+    storage: createJSONStorage(() => localStorage),
+    partialize: (state) => ({
+      merchant: state.merchant,
+      order: state.order,
+      funnel: state.funnel,
+    }),
+    onRehydrateStorage: () => (state) => {
+      const shared = readShareFromLocation();
+      if (!shared || !state) return;
+      state.merchant = shared.merchant;
+      state.order = shared.order;
+      state.funnel = shared.funnel;
+      clearShareParam();
+    },
+  }),
+);
 
 export function getShopStoreState() {
   return useShopStore.getState();

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DevToolPanel } from './components/DevToolPanel';
+import { hasSeenHero, LandingHero, markHeroSeen } from './components/LandingHero';
 import { OrderPanel } from './components/OrderPanel';
 import { ReadinessDashboard } from './components/ReadinessDashboard';
 import { ShopView } from './components/ShopView';
@@ -11,6 +12,7 @@ type Tab = 'shop' | 'merchant';
 
 function App() {
   const [tab, setTab] = useState<Tab>('shop');
+  const [showHero, setShowHero] = useState(() => !hasSeenHero());
   const [webmcpStatus, setWebmcpStatus] = useState<{
     available: boolean;
     registered: string[];
@@ -28,6 +30,23 @@ function App() {
     });
     return () => controller.abort();
   }, []);
+
+  const startCoShop = () => {
+    markHeroSeen();
+    setShowHero(false);
+  };
+
+  if (showHero) {
+    return (
+      <div className="app app--landing">
+        <header className="app-header app-header--center">
+          <h1>ReadyCounter</h1>
+          <p className="tagline">Agent-ready storefront · use instantly</p>
+        </header>
+        <LandingHero onStart={startCoShop} />
+      </div>
+    );
+  }
 
   return (
     <div className="app">
