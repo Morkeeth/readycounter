@@ -52,14 +52,14 @@
 
 ## NOW
 
-**Overnight platform polish (Slices A–C)** — docs, verify-stores, film assist. Oscar still owns deploy + Devpost + video.
+**Integration polish (Slice 5 docs)** — README architecture + 13 tools + API table, DEVPOST/SUBMISSION-PACK integration paragraph, DEMO-SCRIPT Integrations act, JUDGE-60s `create_coshop_room` deployed path, FORK API step. Done when `npm run verify` green.
 
-**Oscar next:** Vercel deploy · film with **share link + store switch** · Devpost Wed 22:00.
+**Oscar next:** Vercel deploy · film Integrations tab + live room · Devpost Wed 22:00.
 
 **Instant-use eval (moonshot):**
 ```text
 open <live-url> → Start co-shopping → add item → refresh → order remains
-→ Copy co-shop link → incognito → same order → merchant funnel visible
+→ Integrations → Download Shopify JSON → harness create_coshop_room → incognito same room
 → ?store=neon-matcha → readiness score differs from default store
 ```
 
@@ -74,3 +74,5 @@ open <live-url> → Start co-shopping → add item → refresh → order remains
 - 2026-08-31 — **Slice 4 shipped (moonshot):** localStorage persist, shareable co-shop links (`?co=`), landing hero, JSON-LD catalog, `vercel.json`.
 - 2026-08-31 — **Slice 4b (platform):** 2 demo stores, 10 WebMCP tools (`get_readiness_score`, `get_merchant_config`), SUBMISSION-PACK, DEPLOY, launch.md, `npm run verify`.
 - 2026-08-31 — **Overnight platform polish:** `FORK.md`, `FILM-CUES.md`, `JUDGE-60s.md`; DEVPOST + README + DEMO-SCRIPT updated for 2 stores + 10 tools; `scripts/verify-stores.mjs` wired into `npm run verify`; `npm run build && npm run verify` exit 0.
+- 2026-08-31 — **Slice 5 shipped (API + Shopify + 13 tools):** REST v1, IntegrationsPanel, `create_coshop_room`, `export_shopify_catalog`, `validate_catalog_feed`, `verify-integrations.mjs`.
+- 2026-08-31 — **Integration polish docs:** README architecture + API table + `vercel dev`; DEVPOST/SUBMISSION-PACK Shopify+Vercel paragraph; DEMO-SCRIPT Integrations act; JUDGE-60s deployed `create_coshop_room` path; FORK API step; `npm run verify` exit 0.

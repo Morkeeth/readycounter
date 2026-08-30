@@ -64,7 +64,25 @@
 
 ---
 
-## 1:25–1:55 — Checkout gate (human-in-the-loop)
+## 1:25–1:50 — Integrations (Shopify + Vercel) ★
+
+**On screen:** **Integrations** tab.
+
+1. **REST API** card — status shows **live (deployed)** on Vercel URL (or "local dev — use share link" on localhost).
+2. **Shopify Catalog export** card — feed issue count → click **Download Shopify JSON** → open file, show product count matches catalog.
+3. Harness → `export_shopify_catalog` — same JSON shape as download.
+4. **(Deployed only)** Harness → `create_coshop_room` → copy returned URL → open in incognito → same empty order, room sync active.
+5. **(Local fallback)** **Copy co-shop link** → incognito → same order via `?co=`.
+
+**Voiceover:**
+
+> One catalog, three surfaces — WebMCP tools, REST API, Shopify feed. Shopify proved structured catalog wins 2×. We export it; agents consume it; merchants see what's broken before agents bounce.
+
+**Show:** [`INTEGRATIONS.md`](./INTEGRATIONS.md) curl block briefly on deployed URL.
+
+---
+
+## 1:50–2:10 — Checkout gate (human-in-the-loop)
 
 **On screen:** Harness → `prepare_checkout` with CAPTCHA ON → blocked message with Presenc stat.
 
@@ -78,25 +96,25 @@ Human clicks **Prepare checkout** in order panel → "Ready for human payment."
 
 ---
 
-## 1:55–2:25 — Developer story (optional WebMCP live)
+## 2:10–2:35 — Developer story (optional WebMCP live)
 
-**If Chrome WebMCP flag on:** badge shows "WebMCP live · 10 tools". ChatGPT/browser agent discovers tools natively.
+**If Chrome WebMCP flag on:** badge shows "WebMCP live · 13 tools". ChatGPT/browser agent discovers tools natively.
 
-**If not:** point at `src/webmcp/registerTools.ts` — 10 tools, structured schemas, forkable Vite app.
+**If not:** point at `src/webmcp/registerTools.ts` — 13 tools, structured schemas, forkable Vite app.
 
 **Voiceover:**
 
-> Fork it. Ship your catalog as tools, not scrape targets. Shopify proved structured catalog wins 2×.
+> Fork it. Ship your catalog as tools, not scrape targets. Thirteen tools, five API routes, one stores.ts entry.
 
 ---
 
-## 2:25–2:50 — Close
+## 2:35–3:00 — Close
 
-**On screen:** README pitch line + repo URL.
+**On screen:** README pitch line + repo URL + Integrations tab.
 
 **Voiceover:**
 
-> ReadyCounter — agent-ready commerce for the WebMCP era. Merchants get readiness. Developers get tools. Shoppers get co-shop.
+> ReadyCounter — agent-ready commerce for the WebMCP era. Merchants get readiness. Developers get tools and API. Shoppers get co-shop.
 
 ---
 
@@ -106,6 +124,8 @@ Human clicks **Prepare checkout** in order panel → "Ready for human payment."
 2. Harness `add_to_order` without reading docs — does the order update?
 3. Merchant tab — does toggling CAPTCHA change score and block checkout?
 4. **Store switch** — does Neon Matcha show a different score and account-wall blocker?
-5. Can you explain the pitch in one sentence without saying "MCP" three times?
+5. **Integrations tab** — does Shopify JSON download with correct product count?
+6. **(Deployed)** Does `create_coshop_room` return a URL that loads in incognito?
+7. Can you explain the pitch in one sentence without saying "MCP" three times?
 
-All five yes → film.
+All seven yes → film.

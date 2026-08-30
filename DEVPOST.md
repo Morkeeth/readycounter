@@ -32,7 +32,7 @@ Agent-ready storefront with readiness score + co-shop
 
 ## Elevator pitch (one paragraph)
 
-AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—stale feeds, CAPTCHA walls, thin catalog schema. **ReadyCounter** is a **forkable platform**: duplicate one entry in `src/data/stores.ts`, ship **10 structured WebMCP tools**, and let merchants see a data-backed **readiness score** (why agents abandon). Two demo stores prove different failure modes—**Ember & Oak** (CAPTCHA) vs **Neon Matcha Lab** (`?store=neon-matcha`, account wall). Humans and agents **co-edit the same order** in-tab; `prepare_checkout` never charges a card.
+AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—stale feeds, CAPTCHA walls, thin catalog schema. **ReadyCounter** is a **forkable platform**: duplicate one entry in `src/data/stores.ts`, ship **13 structured WebMCP tools**, REST API v1, and Shopify Catalog export, and let merchants see a data-backed **readiness score** (why agents abandon). Two demo stores prove different failure modes—**Ember & Oak** (CAPTCHA) vs **Neon Matcha Lab** (`?store=neon-matcha`, account wall). Humans and agents **co-edit the same order** in-tab; `prepare_checkout` never charges a card.
 
 ---
 
@@ -54,12 +54,21 @@ AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—
 **ReadyCounter** = agent-ready commerce **platform** for the WebMCP era:
 
 1. **Two demo stores** — Ember & Oak Coffee (CAPTCHA default ON) · Neon Matcha Lab (`?store=neon-matcha`, account wall). Switch via header dropdown or URL param.
-2. **10 WebMCP tools** — commerce suite plus `get_readiness_score` and `get_merchant_config`. JSON schemas in `src/webmcp/registerTools.ts`.
-3. **Merchant readiness dashboard** — score /100, failure-mode checks, CAPTCHA/account toggles, live agent funnel.
-4. **Co-shop + share links** — `?co=` hydrates order across tabs; localStorage persist on refresh.
-5. **Judge harness** — invoke every tool without `chrome://flags/#enable-webmcp-testing`.
+2. **13 WebMCP tools** — commerce suite, merchant readiness, Shopify export, and live room creation. JSON schemas in `src/webmcp/registerTools.ts`.
+3. **REST API v1** — `/health`, `/catalog`, `/readiness`, `/rooms` on Vercel serverless. Same catalog surface agents and partners consume.
+4. **Merchant readiness dashboard** — score /100, failure-mode checks, CAPTCHA/account toggles, live agent funnel.
+5. **Co-shop + share links** — `?co=` hydrates order across tabs; API rooms (`?room=`) sync human + agent on deploy.
+6. **Judge harness** — invoke every tool without `chrome://flags/#enable-webmcp-testing`.
 
-### WebMCP tools (10)
+### Deep integrations (Shopify + Vercel)
+
+**For Shopify judges:** ReadyCounter exports a **Shopify Catalog–shaped JSON feed** from the same product data that powers WebMCP tools. Merchants download it from the **Integrations** tab or call `GET /api/v1/catalog?storeId=` — the response includes a `shopify_catalog` object agents can ingest without scraping PDPs. `validate_catalog_feed` and `export_shopify_catalog` tools expose feed issues (missing GTIN, stale price) that drive the readiness score.
+
+**For Vercel judges:** Five serverless API routes in `/api/v1/` deploy with zero config (`vercel.json` SPA rewrite included). `POST /api/v1/rooms` creates a live co-shop session; human and agent tabs sync via polling. The `create_coshop_room` WebMCP tool wraps the same endpoint — one click from the judge harness on the deployed URL. Local dev: `vercel dev` runs UI + API together.
+
+See [`INTEGRATIONS.md`](./INTEGRATIONS.md) for curl examples and architecture.
+
+### WebMCP tools (13)
 
 | Tool | Role |
 |------|------|
@@ -73,6 +82,9 @@ AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—
 | `prepare_checkout` | Validate — never charges |
 | `get_readiness_score` | Score /100 + checks |
 | `get_merchant_config` | CAPTCHA / account flags |
+| `validate_catalog_feed` | Feed issue report |
+| `export_shopify_catalog` | Shopify Catalog JSON |
+| `create_coshop_room` | Live API-backed session |
 
 ### Fork path
 
@@ -89,6 +101,7 @@ Duplicate a `src/data/stores.ts` entry → open `?store=your-id`. Five-minute gu
 - React 19 + TypeScript + Vite
 - Zustand (shared order state + persist)
 - WebMCP `document.modelContext.registerTool`
+- Vercel serverless API routes
 - MIT license
 
 ---
@@ -112,11 +125,19 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md)
 2. **Judge harness** — Run `add_to_order` → `get_order`. Same shared order, `human` / `agent` badges.
 3. **Merchant readiness (Ember & Oak)** — Score <70 with CAPTCHA on. Toggle off → score rises; `prepare_checkout` succeeds.
 4. **Switch store** — Demo store → Neon Matcha Lab (or `?store=neon-matcha`). Different score; account wall blocks checkout.
-5. **Readiness tools** — Harness `get_readiness_score` + `get_merchant_config` on each store.
+5. **Integrations** — Download Shopify JSON; on live URL run `create_coshop_room` → open returned link in incognito.
+6. **Readiness tools** — Harness `get_readiness_score` + `export_shopify_catalog` on each store.
 
 ### Optional: native WebMCP
 
-Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → badge shows "WebMCP live · 10 tools".
+Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → badge shows "WebMCP live · 13 tools".
+
+### Optional: API (deployed or `vercel dev`)
+
+```bash
+curl -s https://YOUR-APP.vercel.app/api/v1/health
+curl -s 'https://YOUR-APP.vercel.app/api/v1/catalog?storeId=ember-oak' | jq '.shopify_catalog.products | length'
+```
 
 ---
 
@@ -130,8 +151,9 @@ See [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md) · [`FILM-CUES.md`](./FILM-CUES.md). Su
 | 0:20 | Human adds item; harness `add_to_order` — co-shop order |
 | 0:50 | Readiness checks: stale feed, missing GTIN, funnel counters |
 | 1:10 | **Switch to Neon Matcha** — compare readiness scores |
+| 1:25 | **Integrations tab** — Shopify JSON download + live room |
 | 1:35 | `prepare_checkout` blocked → toggle CAPTCHA → succeeds |
-| 2:00 | Share link + 10 tools in `registerTools.ts` |
+| 2:00 | Share link + 13 tools in `registerTools.ts` |
 | 2:30 | Pitch: platform strangers fork |
 
 ---
@@ -139,6 +161,7 @@ See [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md) · [`FILM-CUES.md`](./FILM-CUES.md). Su
 ## Links
 
 - Repo: https://github.com/Morkeeth/tooltruth-webmcp
+- Integrations: [`INTEGRATIONS.md`](./INTEGRATIONS.md)
 - Fork guide: [`FORK.md`](./FORK.md)
 - Research citations: [`research.md`](./research.md)
 - Challenge: https://webmcp.devpost.com/

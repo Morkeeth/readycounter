@@ -2,15 +2,39 @@
 
 **Agent-ready commerce platform for the WebMCP era.**
 
-AI traffic is here. Most stores lose it silently. ReadyCounter gives **merchants** a readiness score (data-backed), **developers** a forkable multi-store WebMCP platform, and **shoppers** co-shop where humans and agents share one order.
+AI traffic is here. Most stores lose it silently. ReadyCounter gives **merchants** a readiness score (data-backed), **developers** a forkable multi-store WebMCP platform with REST + Shopify Catalog export, and **shoppers** co-shop where humans and agents share one order.
 
 **Try it:** `https://YOUR-APP.vercel.app` · second store: `?store=neon-matcha` _(Oscar: Vercel URL after deploy)_
 
-[WebMCP Challenge](https://webmcp.devpost.com/) · [Devpost copy](./DEVPOST.md) · [Fork in 5 min](./FORK.md) · [Judge 60s](./JUDGE-60s.md) · [Research](./research.md) · MIT
+[WebMCP Challenge](https://webmcp.devpost.com/) · [Devpost copy](./DEVPOST.md) · [Integrations](./INTEGRATIONS.md) · [Fork in 5 min](./FORK.md) · [Judge 60s](./JUDGE-60s.md) · [Research](./research.md) · MIT
 
 ## Pitch
 
-> Shopify proved catalog beats scrape 2×. ReadyCounter is the merchant-ready storefront strangers fork: **10 structured WebMCP tools**, a live readiness score, two demo merchants (CAPTCHA vs account wall), and co-shop so humans never leave the tab—because 65% trust AI to compare prices but only 14% trust it to buy autonomously ([YouGov/Checkout.com](./research.md#checkoutcom--yougov-65-trust-compare--14-auto-buy-51pt-gap)).
+> Shopify proved catalog beats scrape 2×. ReadyCounter is the merchant-ready storefront strangers fork: **13 structured WebMCP tools**, REST API v1, Shopify Catalog export, a live readiness score, two demo merchants (CAPTCHA vs account wall), and co-shop so humans never leave the tab—because 65% trust AI to compare prices but only 14% trust it to buy autonomously ([YouGov/Checkout.com](./research.md#checkoutcom--yougov-65-trust-compare--14-auto-buy-51pt-gap)).
+
+## Architecture
+
+```
+┌─────────────────┐     registerTool execute      ┌──────────────────────────┐
+│ Agent (WebMCP)  │ ──────────────────────────► │ Zustand shopStore        │
+│ ChatGPT browser │                             │ + optional room sync     │
+└─────────────────┘                             └────────────┬─────────────┘
+                                                             │
+┌─────────────────┐     same store state                   │
+│ Merchant UI     │ ◄──────────────────────────────────────┤
+│ Shop + Order    │                                        │
+│ Integrations    │                                        ▼
+└─────────────────┘                             ┌──────────────────────────┐
+                                                │ REST /api/v1/*           │
+┌─────────────────┐     export_shopify_catalog  │ health · catalog         │
+│ Shopify partner │ ◄───────────────────────────│ readiness · rooms        │
+│ Catalog feed    │     GET /catalog            └──────────────────────────┘
+└─────────────────┘
+```
+
+One surface: WebMCP tools, REST endpoints, and Shopify JSON all read from the same `stores.ts` catalog. Deploy on Vercel → API routes + live co-shop rooms. Local-only → Zustand + `?co=` share links.
+
+Full integration guide: [`INTEGRATIONS.md`](./INTEGRATIONS.md)
 
 ## Demo stores
 
@@ -34,7 +58,7 @@ Full primary sources, exact quotes, and access dates: **[`research.md`](./resear
 | **81%** of Product-schema pages lack Offer object | [DigitalApplied 5k audit](https://www.digitalapplied.com/blog/schema-markup-adoption-5k-site-audit-2026) |
 | **65%** trust AI to compare · **14%** to buy autonomously (**51pt gap**) | [YouGov US / Checkout.com](https://yougov.com/en-us/articles/53808-american-trust-in-ai-for-retail-consumer-sentiment-in-2025) |
 
-ReadyCounter addresses the **infrastructure gap**: structured WebMCP tools + merchant readiness + human-in-the-loop co-shop.
+ReadyCounter addresses the **infrastructure gap**: structured WebMCP tools + merchant readiness + human-in-the-loop co-shop + API-first catalog export.
 
 ## What it does
 
@@ -42,23 +66,47 @@ ReadyCounter addresses the **infrastructure gap**: structured WebMCP tools + mer
 |------|----------|----------|
 | **Shop + order** | Shopper + agent | Multi-store catalog, shared co-shop order, share links |
 | **Merchant readiness** | Store owner / dev | Score ring /100, failure-mode checks, agent funnel, CAPTCHA/account toggles |
+| **Integrations** | Shopify / Vercel judges | REST API status, Shopify JSON download, live room docs |
 
-## WebMCP tools (10)
+## REST API v1
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/v1/health` | GET | Service health |
+| `/api/v1/catalog?storeId=` | GET | Products + `shopify_catalog` export |
+| `/api/v1/readiness?storeId=` | GET | Score + checks + feed validation |
+| `/api/v1/rooms` | POST | Create live co-shop room |
+| `/api/v1/rooms/:roomId` | GET, PATCH | Sync order across human + agent |
+
+Requires Vercel deploy or `vercel dev` (see below). curl examples: [`INTEGRATIONS.md`](./INTEGRATIONS.md)
+
+## WebMCP tools (13)
 
 All via `document.modelContext.registerTool` in [`src/webmcp/registerTools.ts`](./src/webmcp/registerTools.ts):
 
-- `search_catalog` · `get_product` · `add_to_order` · `update_line_quantity`
-- `remove_line` · `get_order` · `get_delivery_quote` · `prepare_checkout`
-- `get_readiness_score` · `get_merchant_config`
+**Commerce:** `search_catalog` · `get_product` · `add_to_order` · `update_line_quantity` · `remove_line` · `get_order` · `get_delivery_quote` · `prepare_checkout`
+
+**Merchant:** `get_readiness_score` · `get_merchant_config` · `validate_catalog_feed` · `export_shopify_catalog`
+
+**Platform:** `create_coshop_room`
 
 ## Quick start
 
 ```bash
 npm install
-npm run dev
+npm run dev          # UI + Zustand + static ?co= share links
 ```
 
 Open `http://localhost:5173` or `http://localhost:5173/?store=neon-matcha`.
+
+### Local API routes (Vercel)
+
+```bash
+npm i -g vercel      # once
+vercel dev           # UI + /api/v1/* on http://localhost:3000
+```
+
+Integrations tab shows **live (deployed)** when `/api/v1/health` responds. Without `vercel dev`, use **Copy co-shop link** (`?co=`) for offline share.
 
 ## Judge test (no WebMCP flag)
 
@@ -69,14 +117,15 @@ Full 60-second path: [`JUDGE-60s.md`](./JUDGE-60s.md)
 3. **Merchant readiness** → Ember & Oak score **< 70** with CAPTCHA on
 4. Toggle CAPTCHA off → score rises → `prepare_checkout` succeeds
 5. Switch to **Neon Matcha Lab** → different score, account wall check fails
-6. Harness `get_readiness_score` on both stores — compare JSON
+6. **Integrations** tab → download Shopify JSON · (deployed) run `create_coshop_room`
+7. Harness `get_readiness_score` + `export_shopify_catalog` on both stores
 
 **With WebMCP:** Chrome 149+ `chrome://flags/#enable-webmcp-testing` or ChatGPT in-app browser.
 
 ## Verify
 
 ```bash
-npm run verify   # readiness + share roundtrip + both stores
+npm run verify   # readiness + share + stores + integrations (Shopify export + rooms)
 npm run build
 npm run lint
 ```
@@ -88,7 +137,8 @@ See [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md) · [`FILM-CUES.md`](./FILM-CUES.md). Qu
 1. Add item → appears in co-shop order in <10s
 2. Harness `add_to_order` → same order updates
 3. Store switch → readiness score + blocker change (CAPTCHA ↔ account)
-4. One-sentence pitch without jargon overload
+4. Integrations tab → Shopify JSON downloads with valid product count
+5. One-sentence pitch without jargon overload
 
 ## License
 
