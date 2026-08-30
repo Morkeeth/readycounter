@@ -4,6 +4,7 @@ import { hasSeenHero, LandingHero, markHeroSeen } from './components/LandingHero
 import { OrderPanel } from './components/OrderPanel';
 import { ReadinessDashboard } from './components/ReadinessDashboard';
 import { ShopView } from './components/ShopView';
+import { StoreSwitcher } from './components/StoreSwitcher';
 import { ToolActivityToast } from './components/ToolActivityToast';
 import { registerWebMCPTools } from './webmcp/registerTools';
 import './App.css';
@@ -66,6 +67,7 @@ function App() {
             <>WebMCP off — use judge harness below</>
           )}
         </div>
+        <StoreSwitcher />
       </header>
 
       <nav className="tabs" aria-label="Store views">
@@ -92,7 +94,7 @@ function App() {
             <OrderPanel />
           </>
         ) : (
-          <ReadinessDashboard registeredToolCount={webmcpStatus.registered.length || 8} />
+          <ReadinessDashboard registeredToolCount={webmcpStatus.registered.length || 10} />
         )}
       </main>
 

@@ -30,8 +30,9 @@ export function LandingHero({ onStart }: LandingHeroProps) {
       <div className="landing-hero__copy">
         <h2>Co-shop in one tab</h2>
         <p>
-          Open this link, add coffee with your agent or your hands, share the same
-          order — no account. Merchants see why agents abandon before checkout.
+          Two demo merchants, one platform. Open a link, add items with your agent
+          or your hands, share the same order — no account. Switch stores to see
+          CAPTCHA vs account walls kill agent checkout.
         </p>
         <button type="button" className="btn btn--primary btn--wide" onClick={onStart}>
           Start co-shopping

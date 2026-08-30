@@ -16,8 +16,8 @@ import { computeReadinessChecks, readinessScore } from './src/lib/readiness.ts';
 import { MERCHANT_DEFAULTS, PRODUCTS } from './src/data/catalog.ts';
 import { useShopStore } from './src/store/shopStore.ts';
 
-const withCaptcha = computeReadinessChecks({ ...MERCHANT_DEFAULTS, checkoutRequiresCaptcha: true }, 8);
-const withoutCaptcha = computeReadinessChecks({ ...MERCHANT_DEFAULTS, checkoutRequiresCaptcha: false }, 8);
+const withCaptcha = computeReadinessChecks({ ...MERCHANT_DEFAULTS, checkoutRequiresCaptcha: true }, 10, PRODUCTS);
+const withoutCaptcha = computeReadinessChecks({ ...MERCHANT_DEFAULTS, checkoutRequiresCaptcha: false }, 10, PRODUCTS);
 const scoreOn = readinessScore(withCaptcha);
 const scoreOff = readinessScore(withoutCaptcha);
 

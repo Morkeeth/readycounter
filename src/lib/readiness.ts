@@ -1,25 +1,25 @@
-import { PRODUCTS } from '../data/catalog';
-import type { MerchantConfig, ReadinessCheck } from '../types/commerce';
+import type { MerchantConfig, Product, ReadinessCheck } from '../types/commerce';
 
 export function computeReadinessChecks(
   config: MerchantConfig,
   registeredToolCount: number,
+  products: Product[],
 ): ReadinessCheck[] {
-  const withGtin = PRODUCTS.filter((p) => p.gtin).length;
-  const gtinPct = Math.round((withGtin / PRODUCTS.length) * 100);
+  const withGtin = products.filter((p) => p.gtin).length;
+  const gtinPct = Math.round((withGtin / products.length) * 100);
 
-  const priceMismatches = PRODUCTS.filter(
+  const priceMismatches = products.filter(
     (p) => p.feedPrice !== undefined && p.feedPrice !== p.price,
   );
 
-  const outOfStock = PRODUCTS.filter((p) => !p.inStock).length;
+  const outOfStock = products.filter((p) => !p.inStock).length;
 
   const checks: ReadinessCheck[] = [
     {
       id: 'catalog_schema',
       label: 'Catalog schema completeness',
       status: gtinPct >= 90 ? 'pass' : gtinPct >= 70 ? 'warn' : 'fail',
-      detail: `${withGtin}/${PRODUCTS.length} products have GTIN identifiers for agent discovery.`,
+      detail: `${withGtin}/${products.length} products have GTIN identifiers for agent discovery.`,
       stat: `${gtinPct}%`,
     },
     {
@@ -58,7 +58,7 @@ export function computeReadinessChecks(
       label: 'Availability signals',
       status: outOfStock <= 1 ? 'pass' : 'warn',
       detail: `${outOfStock} SKU(s) out of stock with explicit availability flags for agents.`,
-      stat: `${PRODUCTS.length - outOfStock} in stock`,
+      stat: `${products.length - outOfStock} in stock`,
     },
   ];
 

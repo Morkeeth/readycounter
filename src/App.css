@@ -40,6 +40,26 @@ body {
   align-items: flex-start;
   gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.store-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.store-switcher__label {
+  color: var(--muted);
+}
+
+.store-switcher select {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
 }
 
 .app-header h1 {

@@ -69,3 +69,4 @@ open <live-url> → Start co-shopping → add item → refresh → order remains
 - 2026-08-31 — **Name ruled:** ReadyCounter (Devpost). Repo `tooltruth-webmcp` unchanged.
 - 2026-08-31 — **Scope ruled:** Product track — ambitious, instant use (live URL, no signup to shop).
 - 2026-08-31 — **Slice 4 shipped (moonshot):** localStorage persist, shareable co-shop links (`?co=`), landing hero, JSON-LD catalog, `vercel.json`.
+- 2026-08-31 — **Slice 4b (platform):** 2 demo stores, 10 WebMCP tools (`get_readiness_score`, `get_merchant_config`), SUBMISSION-PACK, DEPLOY, launch.md, `npm run verify`.

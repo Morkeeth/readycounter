@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { MERCHANT_DEFAULTS, PRODUCTS } from '../data/catalog';
+import { DEFAULT_STORE_ID, getStore, storeIdFromLocation } from '../data/stores';
 import { clearShareParam, readShareFromLocation } from '../lib/shareSession';
 import type {
   FunnelEvent,
@@ -12,17 +12,23 @@ import type {
   ToolActivity,
 } from '../types/commerce';
 
-function lineTotal(line: OrderLine): number {
-  const product = PRODUCTS.find((p) => p.id === line.productId);
+function lineTotal(line: OrderLine, products: Product[]): number {
+  const product = products.find((p) => p.id === line.productId);
   return (product?.price ?? 0) * line.quantity;
 }
 
+function productsFor(storeId: string): Product[] {
+  return getStore(storeId).products;
+}
+
 export interface ShopStore {
+  storeId: string;
   merchant: MerchantConfig;
   order: OrderState;
   funnel: FunnelEvent[];
   lastToolActivity: ToolActivity | null;
 
+  switchStore: (storeId: string) => void;
   searchCatalog: (filters: {
     query?: string;
     category?: string;
@@ -67,17 +73,38 @@ export interface ShopStore {
   clearToolActivity: () => void;
 }
 
+const initialStoreId =
+  typeof window !== 'undefined' ? (storeIdFromLocation() ?? DEFAULT_STORE_ID) : DEFAULT_STORE_ID;
+const initialStore = getStore(initialStoreId);
+
 const storeLogic = (
   set: (fn: (state: ShopStore) => Partial<ShopStore>) => void,
   get: () => ShopStore,
 ): ShopStore => ({
-  merchant: { ...MERCHANT_DEFAULTS },
+  storeId: initialStoreId,
+  merchant: { ...initialStore.merchant },
   order: { lines: [], currency: 'USD' },
   funnel: [],
   lastToolActivity: null,
 
+  switchStore: (storeId) => {
+    const def = getStore(storeId);
+    set(() => ({
+      storeId: def.id,
+      merchant: { ...def.merchant },
+      order: { lines: [], currency: 'USD' },
+      funnel: [],
+      lastToolActivity: null,
+    }));
+    const url = new URL(window.location.href);
+    url.searchParams.set('store', def.id);
+    url.searchParams.delete('co');
+    window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+  },
+
   searchCatalog: ({ query, category, max_price, in_stock_only }) => {
-    return PRODUCTS.filter((product) => {
+    const products = productsFor(get().storeId);
+    return products.filter((product) => {
       if (category && product.category !== category) return false;
       if (max_price !== undefined && product.price > max_price) return false;
       if (in_stock_only && !product.inStock) return false;
@@ -90,10 +117,11 @@ const storeLogic = (
     });
   },
 
-  getProduct: (id) => PRODUCTS.find((p) => p.id === id) ?? null,
+  getProduct: (id) => productsFor(get().storeId).find((p) => p.id === id) ?? null,
 
   addToOrder: (productId, quantity, actor) => {
-    const product = PRODUCTS.find((p) => p.id === productId);
+    const products = productsFor(get().storeId);
+    const product = products.find((p) => p.id === productId);
     if (!product) {
       return { ok: false as const, error: `Product not found: ${productId}` };
     }
@@ -163,8 +191,9 @@ const storeLogic = (
   },
 
   getOrder: () => {
-    const { order } = get();
-    const subtotal = order.lines.reduce((sum, line) => sum + lineTotal(line), 0);
+    const { order, storeId } = get();
+    const products = productsFor(storeId);
+    const subtotal = order.lines.reduce((sum, line) => sum + lineTotal(line, products), 0);
     return {
       ...order,
       subtotal,
@@ -237,9 +266,10 @@ const storeLogic = (
 
 export const useShopStore = create<ShopStore>()(
   persist(storeLogic, {
-    name: 'readycounter-v1',
+    name: 'readycounter-v2',
     storage: createJSONStorage(() => localStorage),
     partialize: (state) => ({
+      storeId: state.storeId,
       merchant: state.merchant,
       order: state.order,
       funnel: state.funnel,
@@ -247,6 +277,7 @@ export const useShopStore = create<ShopStore>()(
     onRehydrateStorage: () => (state) => {
       const shared = readShareFromLocation();
       if (!shared || !state) return;
+      state.storeId = shared.storeId;
       state.merchant = shared.merchant;
       state.order = shared.order;
       state.funnel = shared.funnel;

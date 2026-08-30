@@ -2,6 +2,7 @@ import type { FunnelEvent, MerchantConfig, OrderState } from '../types/commerce'
 
 export interface SharePayload {
   v: 1;
+  storeId: string;
   order: OrderState;
   merchant: MerchantConfig;
   funnel: FunnelEvent[];
@@ -36,6 +37,7 @@ export function decodeSharePayload(encoded: string): SharePayload | null {
     const json = new TextDecoder().decode(fromBase64Url(encoded));
     const data = JSON.parse(json) as SharePayload;
     if (data.v !== 1 || !data.order || !data.merchant) return null;
+    if (!data.storeId) data.storeId = 'ember-oak';
     return data;
   } catch {
     return null;
@@ -45,7 +47,7 @@ export function decodeSharePayload(encoded: string): SharePayload | null {
 export function buildShareUrl(payload: SharePayload): string {
   const co = encodeSharePayload(payload);
   const url = new URL(window.location.href);
-  url.search = '';
+  url.searchParams.set('store', payload.storeId);
   url.searchParams.set('co', co);
   return url.toString();
 }

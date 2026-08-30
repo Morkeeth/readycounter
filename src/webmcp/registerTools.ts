@@ -1,3 +1,5 @@
+import { getStore } from '../data/stores';
+import { computeReadinessChecks, readinessScore } from '../lib/readiness';
 import { getShopStoreState } from '../store/shopStore';
 
 function jsonResult(value: unknown): string {
@@ -29,14 +31,22 @@ export async function registerWebMCPTools(
     {
       name: 'search_catalog',
       description:
-        'Search the coffee catalog by query, category, max_price, or in_stock_only. Returns structured product records for agent discovery.',
+        'Search the store catalog by query, category, max_price, or in_stock_only. Returns structured product records for agent discovery.',
       inputSchema: {
         type: 'object',
         properties: {
           query: { type: 'string', description: 'Free-text search.' },
           category: {
             type: 'string',
-            enum: ['beans', 'kits', 'equipment', 'beverages', 'merch', 'subscription'],
+            enum: [
+              'beans',
+              'kits',
+              'equipment',
+              'beverages',
+              'merch',
+              'subscription',
+              'powder',
+            ],
           },
           max_price: { type: 'number', minimum: 0 },
           in_stock_only: { type: 'boolean' },
@@ -205,6 +215,51 @@ export async function registerWebMCPTools(
       },
       annotations: { readOnlyHint: true },
     },
+    {
+      name: 'get_readiness_score',
+      description:
+        'Return merchant agent-readiness score /100 and per-check breakdown for the active store.',
+      inputSchema: {
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      },
+      execute: () => {
+        const store = getShopStoreState();
+        const def = getStore(store.storeId);
+        const checks = computeReadinessChecks(store.merchant, 10, def.products);
+        store.recordToolActivity({ toolName: 'get_readiness_score' });
+        return jsonResult({
+          storeId: store.storeId,
+          storeName: def.name,
+          score: readinessScore(checks),
+          checks,
+        });
+      },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: 'get_merchant_config',
+      description:
+        'Return active merchant checkout flags (CAPTCHA, account required) and store metadata.',
+      inputSchema: {
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      },
+      execute: () => {
+        const store = getShopStoreState();
+        const def = getStore(store.storeId);
+        store.recordToolActivity({ toolName: 'get_merchant_config' });
+        return jsonResult({
+          storeId: store.storeId,
+          name: def.name,
+          checkoutRequiresCaptcha: store.merchant.checkoutRequiresCaptcha,
+          checkoutRequiresAccount: store.merchant.checkoutRequiresAccount,
+        });
+      },
+      annotations: { readOnlyHint: true },
+    },
   ];
 
   try {
@@ -290,6 +345,26 @@ export async function invokeToolLocally(
     case 'prepare_checkout': {
       store.recordToolActivity({ toolName: name });
       return jsonResult(store.prepareCheckout('agent'));
+    }
+    case 'get_readiness_score': {
+      const def = getStore(store.storeId);
+      const checks = computeReadinessChecks(store.merchant, 10, def.products);
+      store.recordToolActivity({ toolName: name });
+      return jsonResult({
+        storeId: store.storeId,
+        score: readinessScore(checks),
+        checks,
+      });
+    }
+    case 'get_merchant_config': {
+      const def = getStore(store.storeId);
+      store.recordToolActivity({ toolName: name });
+      return jsonResult({
+        storeId: store.storeId,
+        name: def.name,
+        checkoutRequiresCaptcha: store.merchant.checkoutRequiresCaptcha,
+        checkoutRequiresAccount: store.merchant.checkoutRequiresAccount,
+      });
     }
     default:
       return jsonResult({ error: `Unknown tool: ${name}` });

@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
-import { PRODUCTS } from '../data/catalog';
+import { getStore } from '../data/stores';
 import { catalogJsonLd } from '../lib/catalogSchema';
 import { useShopStore } from '../store/shopStore';
 
 export function ShopView() {
   const addToOrder = useShopStore((s) => s.addToOrder);
   const order = useShopStore((s) => s.order);
+  const storeId = useShopStore((s) => s.storeId);
+  const store = getStore(storeId);
+  const products = store.products;
 
   useEffect(() => {
     const id = 'readycounter-catalog-jsonld';
@@ -16,8 +19,8 @@ export function ShopView() {
       el.type = 'application/ld+json';
       document.head.appendChild(el);
     }
-    el.textContent = JSON.stringify(catalogJsonLd());
-  }, []);
+    el.textContent = JSON.stringify(catalogJsonLd(store.name, products));
+  }, [store.name, products]);
 
   const inOrder = (productId: string) =>
     order.lines.some((l) => l.productId === productId);
@@ -29,7 +32,7 @@ export function ShopView() {
         You and your agent share one order. Add items here or via WebMCP tools.
       </p>
       <div className="product-grid">
-        {PRODUCTS.map((product) => (
+        {products.map((product) => (
           <article
             key={product.id}
             className={`product-card${!product.inStock ? ' product-card--oos' : ''}`}

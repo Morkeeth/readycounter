@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { PRODUCTS } from '../data/catalog';
+import { getStore } from '../data/stores';
+import { useShopStore } from '../store/shopStore';
 import { invokeToolLocally } from '../webmcp/registerTools';
 
 const SAMPLE_CALLS = [
@@ -9,9 +10,14 @@ const SAMPLE_CALLS = [
     args: { query: 'espresso' },
   },
   {
-    label: 'add_to_order: pour over kit',
+    label: 'get_readiness_score',
+    tool: 'get_readiness_score',
+    args: {},
+  },
+  {
+    label: 'add_to_order: first SKU',
     tool: 'add_to_order',
-    args: { product_id: 'sku-pour-over', quantity: 1 },
+    args: { product_id: '__FIRST__', quantity: 1 },
   },
   {
     label: 'get_order',
@@ -27,9 +33,16 @@ const SAMPLE_CALLS = [
 
 export function DevToolPanel() {
   const [output, setOutput] = useState('');
+  const storeId = useShopStore((s) => s.storeId);
+  const products = getStore(storeId).products;
+  const firstSku = products.find((p) => p.inStock)?.id ?? products[0]?.id;
 
   const run = async (tool: string, args: Record<string, unknown>) => {
-    setOutput(await invokeToolLocally(tool, args));
+    const resolved = { ...args };
+    if (resolved.product_id === '__FIRST__') {
+      resolved.product_id = firstSku;
+    }
+    setOutput(await invokeToolLocally(tool, resolved));
   };
 
   return (
@@ -57,7 +70,7 @@ export function DevToolPanel() {
                 void e;
               }}
             >
-              {PRODUCTS.filter((p) => p.inStock).map((p) => (
+              {products.filter((p) => p.inStock).map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.id}
                 </option>

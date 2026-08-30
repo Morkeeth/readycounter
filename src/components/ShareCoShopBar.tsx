@@ -4,6 +4,7 @@ import { useShopStore } from '../store/shopStore';
 
 export function ShareCoShopBar() {
   const order = useShopStore((s) => s.order);
+  const storeId = useShopStore((s) => s.storeId);
   const merchant = useShopStore((s) => s.merchant);
   const funnel = useShopStore((s) => s.funnel);
   const [copied, setCopied] = useState(false);
@@ -13,6 +14,7 @@ export function ShareCoShopBar() {
   const share = async () => {
     const url = buildShareUrl({
       v: 1,
+      storeId,
       order,
       merchant,
       funnel,

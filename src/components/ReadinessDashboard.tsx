@@ -1,4 +1,5 @@
 import { computeReadinessChecks, readinessScore } from '../lib/readiness';
+import { getStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
 
 interface ReadinessDashboardProps {
@@ -48,10 +49,12 @@ export function ReadinessDashboard({
   registeredToolCount,
 }: ReadinessDashboardProps) {
   const merchant = useShopStore((s) => s.merchant);
+  const storeId = useShopStore((s) => s.storeId);
   const setMerchantFlag = useShopStore((s) => s.setMerchantFlag);
   const funnel = useShopStore((s) => s.funnel);
 
-  const checks = computeReadinessChecks(merchant, registeredToolCount);
+  const products = getStore(storeId).products;
+  const checks = computeReadinessChecks(merchant, registeredToolCount, products);
   const score = readinessScore(checks);
 
   const funnelSteps = [
