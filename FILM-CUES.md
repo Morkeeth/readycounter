@@ -12,7 +12,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | Merchant tab · Ember & Oak · score 70/100 · CAPTCHA ON |
+| Screen | **Readiness** tab · Ember & Oak · score 70/100 · CAPTCHA ON |
 | Say | "AI traffic is up 8×. Most stores lose agents silently." |
 | Don't | Open README. Stay in the product. |
 
@@ -22,7 +22,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | Landing → **Start co-shopping** → add one bag |
+| Screen | Landing → **Start shopping** → add one bag |
 | Say | "No signup. One tab. Under ten seconds." |
 | Proof | Order panel shows line in <10s |
 
@@ -32,7 +32,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | Judge harness → `add_to_order` → `get_order` |
+| Screen | **Connect** → Agent tool console → `add_to_order` → `get_order` |
 | Say | "Same order — human and agent. Compare, don't auto-buy." |
 | Proof | `addedBy: human` / `agent` badges on both lines |
 
@@ -42,7 +42,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | Merchant tab · Ember & Oak |
+| Screen | **Readiness** tab · Ember & Oak |
 | Point | CAPTCHA check FAIL · stale feed on Brew Scale · GTIN gap |
 | Say | "Merchants see *why* agents abandon — not a black box." |
 
@@ -52,7 +52,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | Header **Demo store** dropdown → Neon Matcha Lab |
+| Screen | Header **Store** dropdown → Neon Matcha Lab |
 | Say | "Two merchants, one fork. Same platform." |
 | Run | Harness → `get_readiness_score` on each store |
 | Proof | Score drops · failure mode switches CAPTCHA → account wall |

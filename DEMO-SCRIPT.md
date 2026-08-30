@@ -114,7 +114,7 @@ fix** in Readiness autopilot, which does the same thing and says it is a sandbox
 
 ## 2:10 – 2:30 · A second merchant, a different failure
 
-**Do:** switch the **Demo store** dropdown to **Neon Matcha Lab**
+**Do:** switch the **Store** dropdown to **Neon Matcha Lab**
 (or open `/?view=merchant&store=neon-matcha`).
 
 **On screen:** **NEON MATCHA LAB**, **57 / 100**, a VOID stamp that says

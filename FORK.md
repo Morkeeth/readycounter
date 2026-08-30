@@ -60,7 +60,7 @@ Visit:
 http://localhost:5173/?store=your-store-id
 ```
 
-Or use the **Demo store** dropdown in the header.
+Or use the **Store** dropdown in the header.
 
 ## Step 3 — Verify (~1 min)
 
@@ -97,7 +97,7 @@ https://tooltruth-webmcp.vercel.app/?store=your-store-id
 
 ## Judge path without WebMCP flag
 
-Expand **Judge harness** at the bottom of the page. Every tool runs locally — no `chrome://flags` required.
+Open the **Connect** tab and expand **Agent tool console**. Every tool runs locally — no `chrome://flags` required.
 
 ## What not to add (constitution)
 
