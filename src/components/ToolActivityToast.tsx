@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useGiftStore } from '../store/giftStore';
+import { useShopStore } from '../store/shopStore';
 
 export function ToolActivityToast() {
-  const activity = useGiftStore((s) => s.lastToolActivity);
-  const clear = useGiftStore((s) => s.clearToolActivity);
+  const activity = useShopStore((s) => s.lastToolActivity);
+  const clear = useShopStore((s) => s.clearToolActivity);
 
   useEffect(() => {
     if (!activity) return;
@@ -13,18 +13,13 @@ export function ToolActivityToast() {
 
   if (!activity) return null;
 
-  const detail = [
-    activity.recipientId && `→ ${activity.recipientId}`,
-    activity.productId && `#${activity.productId}`,
-  ]
-    .filter(Boolean)
-    .join(' ');
-
   return (
     <div className="tool-toast" role="status" aria-live="polite">
       <span className="tool-toast__pulse" />
       <strong>{activity.toolName}</strong>
-      {detail && <span className="tool-toast__detail">{detail}</span>}
+      {activity.productId && (
+        <span className="tool-toast__detail">{activity.productId}</span>
+      )}
     </div>
   );
 }

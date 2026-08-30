@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { DevToolPanel } from './components/DevToolPanel';
-import { StagingBoard } from './components/StagingBoard';
+import { OrderPanel } from './components/OrderPanel';
+import { ReadinessDashboard } from './components/ReadinessDashboard';
+import { ShopView } from './components/ShopView';
 import { ToolActivityToast } from './components/ToolActivityToast';
 import { registerWebMCPTools } from './webmcp/registerTools';
 import './App.css';
 
+type Tab = 'shop' | 'merchant';
+
 function App() {
+  const [tab, setTab] = useState<Tab>('shop');
   const [webmcpStatus, setWebmcpStatus] = useState<{
     available: boolean;
     registered: string[];
@@ -14,7 +19,6 @@ function App() {
 
   useEffect(() => {
     const controller = new AbortController();
-
     registerWebMCPTools(controller.signal).then((result) => {
       setWebmcpStatus({
         available: result.webmcpAvailable,
@@ -22,7 +26,6 @@ function App() {
         error: result.error,
       });
     });
-
     return () => controller.abort();
   }, []);
 
@@ -30,29 +33,48 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div>
-          <h1>Duet</h1>
+          <h1>ReadyCounter</h1>
           <p className="tagline">
-            Agent stages · Human approves · Same board
+            Agent-ready storefront · Co-shop order · Merchant readiness
           </p>
         </div>
         <div
           className={`webmcp-badge${webmcpStatus.available ? ' webmcp-badge--live' : ''}`}
         >
           {webmcpStatus.available ? (
-            <>
-              WebMCP live · {webmcpStatus.registered.length} tools registered
-            </>
+            <>WebMCP live · {webmcpStatus.registered.length} tools</>
           ) : (
-            <>WebMCP unavailable — use dev harness below</>
-          )}
-          {webmcpStatus.error && (
-            <span className="webmcp-badge__error">{webmcpStatus.error}</span>
+            <>WebMCP off — use judge harness below</>
           )}
         </div>
       </header>
 
-      <main>
-        <StagingBoard />
+      <nav className="tabs" aria-label="Store views">
+        <button
+          type="button"
+          className={`tabs__btn${tab === 'shop' ? ' tabs__btn--active' : ''}`}
+          onClick={() => setTab('shop')}
+        >
+          Shop + order
+        </button>
+        <button
+          type="button"
+          className={`tabs__btn${tab === 'merchant' ? ' tabs__btn--active' : ''}`}
+          onClick={() => setTab('merchant')}
+        >
+          Merchant readiness
+        </button>
+      </nav>
+
+      <main className="main-layout">
+        {tab === 'shop' ? (
+          <>
+            <ShopView />
+            <OrderPanel />
+          </>
+        ) : (
+          <ReadinessDashboard registeredToolCount={webmcpStatus.registered.length || 8} />
+        )}
       </main>
 
       <DevToolPanel />
@@ -60,8 +82,9 @@ function App() {
 
       <footer className="app-footer">
         <p>
-          Tools mutate shared in-memory state. Staging tray = pending (yellow).
-          Cart = human-approved (green).
+          Structured WebMCP tools beat scrape. Shopify reports 2× conversion on
+          Catalog vs scraped data. Toggle CAPTCHA in Merchant to see agent funnel
+          drop.
         </p>
       </footer>
     </div>

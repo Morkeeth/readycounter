@@ -1,15 +1,7 @@
-import { getGiftStoreState } from '../store/giftStore';
-import type { RecipientId } from '../types/gift';
+import { getShopStoreState } from '../store/shopStore';
 
 function jsonResult(value: unknown): string {
   return JSON.stringify(value, null, 2);
-}
-
-function parseRecipient(value: unknown): RecipientId | null {
-  if (value === 'mom' || value === 'dad' || value === 'sister') {
-    return value;
-  }
-  return null;
 }
 
 export interface RegisterToolsResult {
@@ -35,197 +27,181 @@ export async function registerWebMCPTools(
 
   const tools = [
     {
-      name: 'search_products',
+      name: 'search_catalog',
       description:
-        'Search the gift catalog. Filter by recipient (mom, dad, sister), max_price, and/or tags.',
+        'Search the coffee catalog by query, category, max_price, or in_stock_only. Returns structured product records for agent discovery.',
       inputSchema: {
         type: 'object',
         properties: {
-          recipient: {
+          query: { type: 'string', description: 'Free-text search.' },
+          category: {
             type: 'string',
-            enum: ['mom', 'dad', 'sister'],
-            description: 'Filter to products suggested for this recipient.',
+            enum: ['beans', 'kits', 'equipment', 'beverages', 'merch', 'subscription'],
           },
-          max_price: {
-            type: 'number',
-            minimum: 0,
-            description: 'Maximum price in USD.',
-          },
-          tags: {
-            type: 'array',
-            items: { type: 'string' },
-            description: 'Match products whose tags contain any of these strings.',
-          },
+          max_price: { type: 'number', minimum: 0 },
+          in_stock_only: { type: 'boolean' },
         },
         additionalProperties: false,
       },
       execute: (input: Record<string, unknown>) => {
-        const store = getGiftStoreState();
-        const tags = Array.isArray(input.tags)
-          ? input.tags.filter((t): t is string => typeof t === 'string')
-          : undefined;
-        const recipient = parseRecipient(input.recipient) ?? undefined;
-        const max_price =
-          typeof input.max_price === 'number' ? input.max_price : undefined;
-
-        const results = store.searchProducts({ recipient, max_price, tags });
-        store.recordToolActivity({ toolName: 'search_products' });
-        return jsonResult({ count: results.length, products: results });
+        const store = getShopStoreState();
+        const results = store.searchCatalog({
+          query: typeof input.query === 'string' ? input.query : undefined,
+          category: typeof input.category === 'string' ? input.category : undefined,
+          max_price: typeof input.max_price === 'number' ? input.max_price : undefined,
+          in_stock_only: input.in_stock_only === true,
+        });
+        store.recordToolActivity({ toolName: 'search_catalog' });
+        store.recordFunnel('catalog_search', 'agent');
+        return jsonResult({
+          count: results.length,
+          products: results.map((p) => ({
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            inStock: p.inStock,
+            category: p.category,
+          })),
+        });
       },
       annotations: { readOnlyHint: true },
     },
     {
       name: 'get_product',
-      description: 'Return full details for one catalog product by id.',
+      description: 'Return full structured product details by SKU id.',
       inputSchema: {
         type: 'object',
-        properties: {
-          id: { type: 'string', description: 'Product id, e.g. p1.' },
-        },
+        properties: { id: { type: 'string' } },
         required: ['id'],
         additionalProperties: false,
       },
       execute: (input: Record<string, unknown>) => {
-        const store = getGiftStoreState();
+        const store = getShopStoreState();
         const id = String(input.id ?? '');
         const product = store.getProduct(id);
         store.recordToolActivity({ toolName: 'get_product', productId: id });
-        if (!product) {
-          return jsonResult({ error: `Product not found: ${id}` });
-        }
+        store.recordFunnel('product_view', 'agent', id);
+        if (!product) return jsonResult({ error: `Not found: ${id}` });
         return jsonResult({ product });
       },
       annotations: { readOnlyHint: true },
     },
     {
-      name: 'stage_for_recipient',
+      name: 'add_to_order',
       description:
-        'Stage a product for a recipient pending human approval. Does NOT add to cart.',
+        'Add a product to the shared co-shop order. Human and agent see the same order. Does not complete checkout.',
       inputSchema: {
         type: 'object',
         properties: {
-          product_id: { type: 'string', description: 'Catalog product id.' },
-          recipient: {
-            type: 'string',
-            enum: ['mom', 'dad', 'sister'],
-            description: 'Recipient to stage the gift for.',
-          },
+          product_id: { type: 'string' },
+          quantity: { type: 'integer', minimum: 1, maximum: 99, default: 1 },
         },
-        required: ['product_id', 'recipient'],
+        required: ['product_id'],
         additionalProperties: false,
       },
       execute: (input: Record<string, unknown>) => {
-        const store = getGiftStoreState();
+        const store = getShopStoreState();
         const productId = String(input.product_id ?? '');
-        const recipient = parseRecipient(input.recipient);
-        if (!recipient) {
-          return jsonResult({ ok: false, error: 'Invalid recipient' });
-        }
-        const result = store.stageForRecipient(productId, recipient);
-        store.recordToolActivity({
-          toolName: 'stage_for_recipient',
-          recipientId: recipient,
-          productId,
-        });
+        const quantity =
+          typeof input.quantity === 'number' ? Math.floor(input.quantity) : 1;
+        const result = store.addToOrder(productId, quantity, 'agent');
+        store.recordToolActivity({ toolName: 'add_to_order', productId });
         return jsonResult(result);
       },
     },
     {
-      name: 'get_staging_board',
+      name: 'update_line_quantity',
+      description: 'Update quantity on an existing order line in the shared co-shop order.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          line_id: { type: 'string' },
+          quantity: { type: 'integer', minimum: 0, maximum: 99 },
+        },
+        required: ['line_id', 'quantity'],
+        additionalProperties: false,
+      },
+      execute: (input: Record<string, unknown>) => {
+        const store = getShopStoreState();
+        const lineId = String(input.line_id ?? '');
+        const quantity = typeof input.quantity === 'number' ? input.quantity : 0;
+        const result = store.updateLineQuantity(lineId, quantity, 'agent');
+        store.recordToolActivity({ toolName: 'update_line_quantity' });
+        return jsonResult(result);
+      },
+    },
+    {
+      name: 'remove_line',
+      description: 'Remove a line from the shared co-shop order.',
+      inputSchema: {
+        type: 'object',
+        properties: { line_id: { type: 'string' } },
+        required: ['line_id'],
+        additionalProperties: false,
+      },
+      execute: (input: Record<string, unknown>) => {
+        const store = getShopStoreState();
+        const lineId = String(input.line_id ?? '');
+        const result = store.removeLine(lineId, 'agent');
+        store.recordToolActivity({ toolName: 'remove_line' });
+        return jsonResult(result);
+      },
+    },
+    {
+      name: 'get_order',
       description:
-        'Return the full gift board: recipients, budgets, staged pending items, and approved cart items.',
+        'Return the current shared order: lines, quantities, subtotal. Same state the human sees.',
       inputSchema: {
         type: 'object',
         properties: {},
         additionalProperties: false,
       },
       execute: () => {
-        const store = getGiftStoreState();
-        const board = store.getStagingBoard();
-        store.recordToolActivity({ toolName: 'get_staging_board' });
-        return jsonResult(board);
+        const store = getShopStoreState();
+        const order = store.getOrder();
+        const lines = order.lines.map((line) => {
+          const product = store.getProduct(line.productId);
+          return {
+            ...line,
+            productName: product?.name,
+            unitPrice: product?.price,
+            lineTotal: (product?.price ?? 0) * line.quantity,
+          };
+        });
+        store.recordToolActivity({ toolName: 'get_order' });
+        return jsonResult({ ...order, lines });
       },
       annotations: { readOnlyHint: true },
     },
     {
-      name: 'approve_staged',
-      description:
-        'Move a staged pending item into the approved cart for its recipient. Requires staging_id.',
+      name: 'get_delivery_quote',
+      description: 'Return shipping quote for the current order. Read-only.',
       inputSchema: {
         type: 'object',
-        properties: {
-          staging_id: {
-            type: 'string',
-            description: 'The stagingId returned by stage_for_recipient.',
-          },
-        },
-        required: ['staging_id'],
+        properties: {},
         additionalProperties: false,
       },
-      execute: (input: Record<string, unknown>) => {
-        const store = getGiftStoreState();
-        const stagingId = String(input.staging_id ?? '');
-        const staged = store.staged.find((s) => s.stagingId === stagingId);
-        const result = store.approveStaged(stagingId);
-        store.recordToolActivity({
-          toolName: 'approve_staged',
-          recipientId: staged?.recipientId,
-          productId: staged?.productId,
-        });
-        return jsonResult(result);
+      execute: () => {
+        const store = getShopStoreState();
+        store.recordToolActivity({ toolName: 'get_delivery_quote' });
+        return jsonResult(store.getDeliveryQuote());
       },
+      annotations: { readOnlyHint: true },
     },
     {
-      name: 'reject_staged',
-      description: 'Remove a pending staged item without adding it to the cart.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          staging_id: {
-            type: 'string',
-            description: 'The stagingId to reject and remove.',
-          },
-        },
-        required: ['staging_id'],
-        additionalProperties: false,
-      },
-      execute: (input: Record<string, unknown>) => {
-        const store = getGiftStoreState();
-        const stagingId = String(input.staging_id ?? '');
-        const staged = store.staged.find((s) => s.stagingId === stagingId);
-        const result = store.rejectStaged(stagingId);
-        store.recordToolActivity({
-          toolName: 'reject_staged',
-          recipientId: staged?.recipientId,
-          productId: staged?.productId,
-        });
-        return jsonResult(result);
-      },
-    },
-    {
-      name: 'get_budget_status',
+      name: 'prepare_checkout',
       description:
-        'Per-recipient budget: spent in cart, pending in staging, and remaining.',
+        'Validate the order for checkout. Returns blocked if merchant config prevents agent checkout (e.g. CAPTCHA). Human must complete payment in UI.',
       inputSchema: {
         type: 'object',
-        properties: {
-          recipient: {
-            type: 'string',
-            enum: ['mom', 'dad', 'sister'],
-            description: 'Optional — omit for all recipients.',
-          },
-        },
+        properties: {},
         additionalProperties: false,
       },
-      execute: (input: Record<string, unknown>) => {
-        const store = getGiftStoreState();
-        const recipient = parseRecipient(input.recipient) ?? undefined;
-        const status = store.getBudgetStatus(recipient);
-        store.recordToolActivity({
-          toolName: 'get_budget_status',
-          recipientId: recipient,
-        });
-        return jsonResult({ budgets: status });
+      execute: () => {
+        const store = getShopStoreState();
+        const result = store.prepareCheckout('agent');
+        store.recordToolActivity({ toolName: 'prepare_checkout' });
+        return jsonResult(result);
       },
       annotations: { readOnlyHint: true },
     },
@@ -246,7 +222,6 @@ export async function registerWebMCPTools(
   }
 }
 
-/** Dev harness: invoke a tool handler without WebMCP (same code path as execute). */
 export async function invokeToolLocally(
   name: string,
   args: Record<string, unknown> = {},
@@ -264,20 +239,18 @@ export async function invokeToolLocally(
     }
   }
 
-  // Fallback: re-register is heavy; call store directly for judge testing
-  const store = getGiftStoreState();
+  const store = getShopStoreState();
   switch (name) {
-    case 'search_products': {
-      const tags = Array.isArray(args.tags)
-        ? args.tags.filter((t): t is string => typeof t === 'string')
-        : undefined;
-      const recipient =
-        parseRecipient(args.recipient) ?? undefined;
-      const max_price =
-        typeof args.max_price === 'number' ? args.max_price : undefined;
-      const products = store.searchProducts({ recipient, max_price, tags });
+    case 'search_catalog': {
+      const results = store.searchCatalog({
+        query: typeof args.query === 'string' ? args.query : undefined,
+        category: typeof args.category === 'string' ? args.category : undefined,
+        max_price: typeof args.max_price === 'number' ? args.max_price : undefined,
+        in_stock_only: args.in_stock_only === true,
+      });
       store.recordToolActivity({ toolName: name });
-      return jsonResult({ count: products.length, products });
+      store.recordFunnel('catalog_search', 'agent');
+      return jsonResult({ count: results.length, products: results });
     }
     case 'get_product': {
       const id = String(args.id ?? '');
@@ -285,48 +258,38 @@ export async function invokeToolLocally(
       store.recordToolActivity({ toolName: name, productId: id });
       return jsonResult(product ? { product } : { error: `Not found: ${id}` });
     }
-    case 'stage_for_recipient': {
+    case 'add_to_order': {
       const productId = String(args.product_id ?? '');
-      const recipient = parseRecipient(args.recipient);
-      if (!recipient) return jsonResult({ ok: false, error: 'Invalid recipient' });
-      const result = store.stageForRecipient(productId, recipient);
-      store.recordToolActivity({
-        toolName: name,
-        recipientId: recipient,
-        productId,
-      });
+      const quantity = typeof args.quantity === 'number' ? args.quantity : 1;
+      const result = store.addToOrder(productId, quantity, 'agent');
+      store.recordToolActivity({ toolName: name, productId });
       return jsonResult(result);
     }
-    case 'get_staging_board': {
+    case 'update_line_quantity': {
+      const result = store.updateLineQuantity(
+        String(args.line_id ?? ''),
+        typeof args.quantity === 'number' ? args.quantity : 0,
+        'agent',
+      );
       store.recordToolActivity({ toolName: name });
-      return jsonResult(store.getStagingBoard());
-    }
-    case 'approve_staged': {
-      const stagingId = String(args.staging_id ?? '');
-      const staged = store.staged.find((s) => s.stagingId === stagingId);
-      const result = store.approveStaged(stagingId);
-      store.recordToolActivity({
-        toolName: name,
-        recipientId: staged?.recipientId,
-        productId: staged?.productId,
-      });
       return jsonResult(result);
     }
-    case 'reject_staged': {
-      const stagingId = String(args.staging_id ?? '');
-      const staged = store.staged.find((s) => s.stagingId === stagingId);
-      const result = store.rejectStaged(stagingId);
-      store.recordToolActivity({
-        toolName: name,
-        recipientId: staged?.recipientId,
-        productId: staged?.productId,
-      });
+    case 'remove_line': {
+      const result = store.removeLine(String(args.line_id ?? ''), 'agent');
+      store.recordToolActivity({ toolName: name });
       return jsonResult(result);
     }
-    case 'get_budget_status': {
-      const recipient = parseRecipient(args.recipient) ?? undefined;
-      store.recordToolActivity({ toolName: name, recipientId: recipient });
-      return jsonResult({ budgets: store.getBudgetStatus(recipient) });
+    case 'get_order': {
+      store.recordToolActivity({ toolName: name });
+      return jsonResult(store.getOrder());
+    }
+    case 'get_delivery_quote': {
+      store.recordToolActivity({ toolName: name });
+      return jsonResult(store.getDeliveryQuote());
+    }
+    case 'prepare_checkout': {
+      store.recordToolActivity({ toolName: name });
+      return jsonResult(store.prepareCheckout('agent'));
     }
     default:
       return jsonResult({ error: `Unknown tool: ${name}` });

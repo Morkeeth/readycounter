@@ -4,40 +4,37 @@ import { invokeToolLocally } from '../webmcp/registerTools';
 
 const SAMPLE_CALLS = [
   {
-    label: 'Search for Mom under $70',
-    tool: 'search_products',
-    args: { recipient: 'mom', max_price: 70 },
+    label: 'search_catalog: espresso',
+    tool: 'search_catalog',
+    args: { query: 'espresso' },
   },
   {
-    label: 'Stage scarf for Mom',
-    tool: 'stage_for_recipient',
-    args: { product_id: 'p1', recipient: 'mom' },
+    label: 'add_to_order: pour over kit',
+    tool: 'add_to_order',
+    args: { product_id: 'sku-pour-over', quantity: 1 },
   },
   {
-    label: 'Board state',
-    tool: 'get_staging_board',
+    label: 'get_order',
+    tool: 'get_order',
     args: {},
   },
   {
-    label: 'Budget status',
-    tool: 'get_budget_status',
+    label: 'prepare_checkout',
+    tool: 'prepare_checkout',
     args: {},
   },
 ] as const;
 
 export function DevToolPanel() {
-  const [output, setOutput] = useState<string>('');
-  const [productId, setProductId] = useState('p1');
-  const [recipient, setRecipient] = useState<'mom' | 'dad' | 'sister'>('mom');
+  const [output, setOutput] = useState('');
 
   const run = async (tool: string, args: Record<string, unknown>) => {
-    const result = await invokeToolLocally(tool, args);
-    setOutput(result);
+    setOutput(await invokeToolLocally(tool, args));
   };
 
   return (
     <details className="dev-panel">
-      <summary>Judge / dev tool harness (no WebMCP required)</summary>
+      <summary>Judge harness — invoke WebMCP tools without browser flag</summary>
       <div className="dev-panel__body">
         <div className="dev-panel__samples">
           {SAMPLE_CALLS.map((sample) => (
@@ -53,42 +50,32 @@ export function DevToolPanel() {
         </div>
         <div className="dev-panel__manual">
           <label>
-            Product
+            SKU
             <select
-              value={productId}
-              onChange={(e) => setProductId(e.target.value)}
+              id="dev-sku"
+              onChange={(e) => {
+                void e;
+              }}
             >
-              {PRODUCTS.map((p) => (
+              {PRODUCTS.filter((p) => p.inStock).map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.id} — {p.name} (${p.price})
+                  {p.id}
                 </option>
               ))}
-            </select>
-          </label>
-          <label>
-            Recipient
-            <select
-              value={recipient}
-              onChange={(e) =>
-                setRecipient(e.target.value as 'mom' | 'dad' | 'sister')
-              }
-            >
-              <option value="mom">mom</option>
-              <option value="dad">dad</option>
-              <option value="sister">sister</option>
             </select>
           </label>
           <button
             type="button"
             className="btn btn--primary"
-            onClick={() =>
-              run('stage_for_recipient', {
-                product_id: productId,
-                recipient,
-              })
-            }
+            onClick={() => {
+              const select = document.getElementById('dev-sku') as HTMLSelectElement;
+              void run('add_to_order', {
+                product_id: select.value,
+                quantity: 1,
+              });
+            }}
           >
-            stage_for_recipient
+            add_to_order
           </button>
         </div>
         {output && (
