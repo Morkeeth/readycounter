@@ -52,12 +52,15 @@
 
 ## NOW
 
-**Slice 5** — Oscar: Vercel deploy · film with **share link** demo · Devpost Wed 22:00.
+**Overnight platform polish (Slices A–C)** — docs, verify-stores, film assist. Oscar still owns deploy + Devpost + video.
+
+**Oscar next:** Vercel deploy · film with **share link + store switch** · Devpost Wed 22:00.
 
 **Instant-use eval (moonshot):**
 ```text
 open <live-url> → Start co-shopping → add item → refresh → order remains
 → Copy co-shop link → incognito → same order → merchant funnel visible
+→ ?store=neon-matcha → readiness score differs from default store
 ```
 
 ## LOG
@@ -70,3 +73,4 @@ open <live-url> → Start co-shopping → add item → refresh → order remains
 - 2026-08-31 — **Scope ruled:** Product track — ambitious, instant use (live URL, no signup to shop).
 - 2026-08-31 — **Slice 4 shipped (moonshot):** localStorage persist, shareable co-shop links (`?co=`), landing hero, JSON-LD catalog, `vercel.json`.
 - 2026-08-31 — **Slice 4b (platform):** 2 demo stores, 10 WebMCP tools (`get_readiness_score`, `get_merchant_config`), SUBMISSION-PACK, DEPLOY, launch.md, `npm run verify`.
+- 2026-08-31 — **Overnight platform polish:** `FORK.md`, `FILM-CUES.md`, `JUDGE-60s.md`; DEVPOST + README + DEMO-SCRIPT updated for 2 stores + 10 tools; `scripts/verify-stores.mjs` wired into `npm run verify`; `npm run build && npm run verify` exit 0.

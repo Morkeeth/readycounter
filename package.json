@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "verify": "node scripts/verify-readiness.mjs && node scripts/verify-share.mjs",
+    "verify": "node scripts/verify-readiness.mjs && node scripts/verify-share.mjs && node scripts/verify-stores.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

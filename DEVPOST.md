@@ -5,6 +5,17 @@ Stats sourced in [`research.md`](./research.md).
 
 ---
 
+## Live demo
+
+```text
+https://YOUR-APP.vercel.app
+https://YOUR-APP.vercel.app/?store=neon-matcha
+```
+
+_(Oscar: replace with Vercel URL after deploy.)_
+
+---
+
 ## Project name
 
 ReadyCounter
@@ -21,7 +32,7 @@ Agent-ready storefront with readiness score + co-shop
 
 ## Elevator pitch (one paragraph)
 
-AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—stale feeds, CAPTCHA walls, thin catalog schema. **ReadyCounter** is a forkable WebMCP storefront where merchants see a data-backed **readiness score** (why agents abandon) and developers ship **8 structured tools** instead of scrape targets. Humans and agents **co-edit the same order** in-tab: the agent proposes via tools; the human confirms checkout—matching the 51-point trust gap (65% trust AI to compare, 14% to buy autonomously). `prepare_checkout` never charges a card.
+AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—stale feeds, CAPTCHA walls, thin catalog schema. **ReadyCounter** is a **forkable platform**: duplicate one entry in `src/data/stores.ts`, ship **10 structured WebMCP tools**, and let merchants see a data-backed **readiness score** (why agents abandon). Two demo stores prove different failure modes—**Ember & Oak** (CAPTCHA) vs **Neon Matcha Lab** (`?store=neon-matcha`, account wall). Humans and agents **co-edit the same order** in-tab; `prepare_checkout` never charges a card.
 
 ---
 
@@ -40,23 +51,43 @@ AI traffic is up 8× on Shopify, but most stores lose agent shoppers silently—
 
 ### What we built
 
-**ReadyCounter** = agent-ready commerce demo for the WebMCP era:
+**ReadyCounter** = agent-ready commerce **platform** for the WebMCP era:
 
-1. **Co-shop order** — Ember & Oak Coffee catalog (8 SKUs, intentional gaps: missing GTIN, stale feed, OOS, CAPTCHA default ON).
-2. **8 WebMCP tools** — `search_catalog`, `get_product`, `add_to_order`, `update_line_quantity`, `remove_line`, `get_order`, `get_delivery_quote`, `prepare_checkout` with JSON schemas in `src/webmcp/registerTools.ts`.
-3. **Merchant readiness dashboard** — score /100, failure-mode checks, CAPTCHA toggle, live agent funnel counters.
-4. **Judge harness** — invoke every tool without `chrome://flags/#enable-webmcp-testing`.
+1. **Two demo stores** — Ember & Oak Coffee (CAPTCHA default ON) · Neon Matcha Lab (`?store=neon-matcha`, account wall). Switch via header dropdown or URL param.
+2. **10 WebMCP tools** — commerce suite plus `get_readiness_score` and `get_merchant_config`. JSON schemas in `src/webmcp/registerTools.ts`.
+3. **Merchant readiness dashboard** — score /100, failure-mode checks, CAPTCHA/account toggles, live agent funnel.
+4. **Co-shop + share links** — `?co=` hydrates order across tabs; localStorage persist on refresh.
+5. **Judge harness** — invoke every tool without `chrome://flags/#enable-webmcp-testing`.
+
+### WebMCP tools (10)
+
+| Tool | Role |
+|------|------|
+| `search_catalog` | Agent product discovery |
+| `get_product` | Full SKU record |
+| `add_to_order` | Co-shop cart |
+| `update_line_quantity` | Line quantity edits |
+| `remove_line` | Remove line |
+| `get_order` | Shared order state |
+| `get_delivery_quote` | Shipping quote |
+| `prepare_checkout` | Validate — never charges |
+| `get_readiness_score` | Score /100 + checks |
+| `get_merchant_config` | CAPTCHA / account flags |
+
+### Fork path
+
+Duplicate a `src/data/stores.ts` entry → open `?store=your-id`. Five-minute guide: [`FORK.md`](./FORK.md).
 
 ### Human-in-the-loop constraint
 
-`prepare_checkout` validates the order and returns totals—it **never charges a card**. Checkout blocked when CAPTCHA is on (demo of Presenc's 24% abandon driver).
+`prepare_checkout` validates the order and returns totals—it **never charges a card**. Checkout blocked when CAPTCHA or account wall is on (demo of Presenc abandon drivers).
 
 ---
 
 ## Built with
 
 - React 19 + TypeScript + Vite
-- Zustand (shared order state)
+- Zustand (shared order state + persist)
 - WebMCP `document.modelContext.registerTool`
 - MIT license
 
@@ -73,36 +104,41 @@ npm run dev
 
 Open `http://localhost:5173`. **No API keys. No WebMCP flag required.**
 
+Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md)
+
 ### 5-minute judge path
 
-1. **Shop + order** — Add a product from the catalog; confirm it appears in the co-shop order panel (<10s).
-2. **Judge harness** (bottom of page) — Run `add_to_order` → `get_order`. Same shared order updates with `human` / `agent` badges.
-3. **Merchant readiness** — Score <70 with CAPTCHA on (default). Toggle CAPTCHA off → score rises; run `prepare_checkout` in harness → succeeds.
-4. **Checkout gate** — With CAPTCHA on, `prepare_checkout` returns blocked + funnel `checkout_blocked` increments.
+1. **Shop + order** — Start co-shopping → add item → appears in order panel (<10s).
+2. **Judge harness** — Run `add_to_order` → `get_order`. Same shared order, `human` / `agent` badges.
+3. **Merchant readiness (Ember & Oak)** — Score <70 with CAPTCHA on. Toggle off → score rises; `prepare_checkout` succeeds.
+4. **Switch store** — Demo store → Neon Matcha Lab (or `?store=neon-matcha`). Different score; account wall blocks checkout.
+5. **Readiness tools** — Harness `get_readiness_score` + `get_merchant_config` on each store.
 
 ### Optional: native WebMCP
 
-Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → badge shows "WebMCP live · 8 tools".
+Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → badge shows "WebMCP live · 10 tools".
 
 ---
 
 ## Demo steps (video spine, no flag)
 
-See [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md). Summary:
+See [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md) · [`FILM-CUES.md`](./FILM-CUES.md). Summary:
 
 | Time | Beat |
 |------|------|
-| 0:00 | Merchant tab: score ~50/100, CAPTCHA ON |
+| 0:00 | Merchant tab: Ember & Oak score ~50/100, CAPTCHA ON |
 | 0:20 | Human adds item; harness `add_to_order` — co-shop order |
 | 0:50 | Readiness checks: stale feed, missing GTIN, funnel counters |
-| 1:20 | `prepare_checkout` blocked → toggle CAPTCHA → succeeds |
-| 1:50 | Point at 8 tools in `registerTools.ts` |
-| 2:20 | Pitch: structured tools + readiness + co-shop |
+| 1:10 | **Switch to Neon Matcha** — compare readiness scores |
+| 1:35 | `prepare_checkout` blocked → toggle CAPTCHA → succeeds |
+| 2:00 | Share link + 10 tools in `registerTools.ts` |
+| 2:30 | Pitch: platform strangers fork |
 
 ---
 
 ## Links
 
 - Repo: https://github.com/Morkeeth/tooltruth-webmcp
+- Fork guide: [`FORK.md`](./FORK.md)
 - Research citations: [`research.md`](./research.md)
 - Challenge: https://webmcp.devpost.com/

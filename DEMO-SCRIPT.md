@@ -34,11 +34,11 @@
 
 ## 0:50–1:20 — Merchant readiness (why stores lose agent traffic)
 
-**On screen:** Merchant readiness tab.
+**On screen:** Merchant readiness tab — **Ember & Oak Coffee**.
 
 **Show:**
 - Score drops with CAPTCHA on
-- Price feed mismatch on Digital Scale (stale feed stat)
+- Price feed mismatch on Brew Scale (stale feed stat)
 - Missing GTIN on some SKUs
 - Agent funnel counters increment as harness runs
 
@@ -48,7 +48,23 @@
 
 ---
 
-## 1:20–1:50 — Checkout gate (human-in-the-loop)
+## 1:05–1:25 — Platform pivot: two stores, one fork ★
+
+**On screen:** Header **Demo store** dropdown → **Neon Matcha Lab** (URL shows `?store=neon-matcha`).
+
+1. Merchant tab — score changes; **account wall** check fails (not CAPTCHA).
+2. Harness → `get_readiness_score` on Ember & Oak, then switch store and run again.
+3. Harness → `get_merchant_config` — show `checkoutRequiresAccount: true` vs CAPTCHA on store A.
+
+**Voiceover:**
+
+> Same platform, different failure mode. Fork your merchant in five minutes — duplicate one entry in stores.ts, open your URL. That's the wedge: readiness OS strangers can ship.
+
+**Show:** [`FORK.md`](./FORK.md) or `src/data/stores.ts` briefly.
+
+---
+
+## 1:25–1:55 — Checkout gate (human-in-the-loop)
 
 **On screen:** Harness → `prepare_checkout` with CAPTCHA ON → blocked message with Presenc stat.
 
@@ -62,11 +78,11 @@ Human clicks **Prepare checkout** in order panel → "Ready for human payment."
 
 ---
 
-## 1:50–2:20 — Developer story (optional WebMCP live)
+## 1:55–2:25 — Developer story (optional WebMCP live)
 
-**If Chrome WebMCP flag on:** badge shows "WebMCP live · 8 tools". ChatGPT/browser agent discovers tools natively.
+**If Chrome WebMCP flag on:** badge shows "WebMCP live · 10 tools". ChatGPT/browser agent discovers tools natively.
 
-**If not:** point at `src/webmcp/registerTools.ts` — 8 tools, structured schemas, forkable Vite app.
+**If not:** point at `src/webmcp/registerTools.ts` — 10 tools, structured schemas, forkable Vite app.
 
 **Voiceover:**
 
@@ -74,7 +90,7 @@ Human clicks **Prepare checkout** in order panel → "Ready for human payment."
 
 ---
 
-## 2:20–2:45 — Close
+## 2:25–2:50 — Close
 
 **On screen:** README pitch line + repo URL.
 
@@ -89,6 +105,7 @@ Human clicks **Prepare checkout** in order panel → "Ready for human payment."
 1. Fresh browser, no prior context — can you add an item and see it in the order in < 10s?
 2. Harness `add_to_order` without reading docs — does the order update?
 3. Merchant tab — does toggling CAPTCHA change score and block checkout?
-4. Can you explain the pitch in one sentence without saying "MCP" three times?
+4. **Store switch** — does Neon Matcha show a different score and account-wall blocker?
+5. Can you explain the pitch in one sentence without saying "MCP" three times?
 
-All four yes → film.
+All five yes → film.
