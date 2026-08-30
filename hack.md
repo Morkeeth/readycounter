@@ -74,7 +74,7 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 | # | Slice | Done when | Size | Risk |
 |---|-------|-----------|------|------|
-| **1** | **Deploy + truth in UI** — Vercel live URL; replace `YOUR-APP` placeholders; demote "live session" until KV; hero/post lead **copy cart link** | Stranger opens URL, shops, copies link, no README | S — Oscar | Wrong channel if live session promoted |
+| **1** | **Deploy + truth in UI** — Vercel live URL; demote live session; lead **copy cart link** | https://tooltruth-webmcp.vercel.app live | S — Oscar | ✅ |
 | **2** | **Stranger gate** — post live URL (opener B: abandon stats); 72h clock for one non-Oscar reply; **freeze features** | Gate running; zero code slices until reply or timeout | S — Oscar | Building past this falsifies demand |
 | **3** | **Import survives share** — `?co=` carries custom store catalog so incognito sees imported SKUs | `npm run verify` share import roundtrip | M | ✅ shipped |
 | **4** | **Merchant-honest copy** — Readiness/Connect say "sandbox audit + checklist"; autopilot labeled sandbox fixes | No UI line implies live Shopify mutation | S | ✅ shipped |
@@ -88,15 +88,8 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-```text
-Oscar: deploy → post URL → stranger test (cart link path)
-Agent: slice 3 (import share) + slice 4 (honest copy) — parallel after deploy URL exists
-Wed: Devpost with live URL only
 ```
-
-**Stranger eval (the product test):**
-```text
-open <live-url> → Start shopping → add item → Copy cart link
+open https://tooltruth-webmcp.vercel.app → Start shopping → add item → Copy cart link
 → incognito → same order + same store catalog
 → Readiness → score + one autopilot fix → re-run journey preview
 → Connect → paste sample Shopify JSON → import → share again → incognito roundtrip
@@ -110,4 +103,4 @@ open <live-url> → Start shopping → add item → Copy cart link
 - 2026-08-31 — Slice 4: persist, share link, landing, JSON-LD.
 - 2026-08-31 — Slice 4b–5: platform, API, 16 tools, integrations, ambition slice.
 - 2026-08-31 — **Product reframe:** UI/copy/README away from hackathon; Connect tab; merchant-first landing.
-- 2026-08-31 — **EYES panel:** plan revised — merchant audit wedge, deploy-first, `?co=` over live rooms, post-gate KV.
+- 2026-08-31 — **Deployed:** https://tooltruth-webmcp.vercel.app · slices 3–4 shipped · `da97b0a`

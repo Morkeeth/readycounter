@@ -8,7 +8,7 @@
 ## Live URL
 
 ```
-PASTE VERCEL URL HERE AFTER DEPLOY
+https://tooltruth-webmcp.vercel.app
 ```
 
 ## Repo

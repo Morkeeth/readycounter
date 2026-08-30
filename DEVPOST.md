@@ -8,8 +8,8 @@ Stats sourced in [`research.md`](./research.md).
 ## Live demo
 
 ```text
-https://YOUR-APP.vercel.app
-https://YOUR-APP.vercel.app/?store=neon-matcha
+https://tooltruth-webmcp.vercel.app
+https://tooltruth-webmcp.vercel.app/?store=neon-matcha
 ```
 
 _(Oscar: replace with Vercel URL after deploy.)_

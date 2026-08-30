@@ -15,7 +15,7 @@ API-first agent commerce. WebMCP tools, REST, and Shopify Catalog feeds share on
 ### Create live room (curl)
 
 ```bash
-curl -sX POST https://YOUR_URL/api/v1/rooms \
+curl -sX POST https://tooltruth-webmcp.vercel.app/api/v1/rooms \
   -H 'Content-Type: application/json' \
   -d '{"storeId":"ember-oak"}' | jq
 ```
@@ -25,7 +25,7 @@ Open returned URL: `?room=room-xxx&store=ember-oak`
 ### Catalog (Shopify partner path)
 
 ```bash
-curl -s 'https://YOUR_URL/api/v1/catalog?storeId=neon-matcha' | jq '.shopify_catalog'
+curl -s 'https://tooltruth-webmcp.vercel.app/api/v1/catalog?storeId=neon-matcha' | jq '.shopify_catalog'
 ```
 
 ## WebMCP tools (16)

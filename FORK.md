@@ -77,7 +77,7 @@ See [`DEPLOY.md`](./DEPLOY.md). Vercel one-click; SPA rewrite already in `vercel
 Live URL pattern:
 
 ```text
-https://YOUR-APP.vercel.app/?store=your-store-id
+https://tooltruth-webmcp.vercel.app/?store=your-store-id
 ```
 
 ## Tool surface (do not trim)

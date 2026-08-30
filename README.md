@@ -4,7 +4,7 @@
 
 AI shoppers are arriving. Most stores lose them at checkout — CAPTCHA walls, login gates, stale catalog feeds. ReadyCounter gives merchants a **readiness score** with one-click fixes, and gives shoppers a **shared cart** where humans and assistants build the same order in one tab.
 
-**Live:** `https://YOUR-APP.vercel.app` _(deploy URL)_
+**Live:** https://tooltruth-webmcp.vercel.app · second store: `?store=neon-matcha`
 
 ## Who it's for
 

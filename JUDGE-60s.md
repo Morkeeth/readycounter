@@ -78,8 +78,8 @@ Full guide: [`FORK.md`](./FORK.md)
 ## Live URL (when deployed)
 
 ```text
-https://YOUR-APP.vercel.app
-https://YOUR-APP.vercel.app/?store=neon-matcha
+https://tooltruth-webmcp.vercel.app
+https://tooltruth-webmcp.vercel.app/?store=neon-matcha
 ```
 
 Constitution: **`prepare_checkout` never charges a card.**

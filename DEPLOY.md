@@ -12,7 +12,7 @@ No env vars required for core product (localStorage + share links).
 ## Verify after deploy
 
 ```bash
-curl -sI https://YOUR_URL.vercel.app | head -5
+curl -sI https://tooltruth-webmcp.vercel.app | head -5
 ```
 
 Manual stranger test:
