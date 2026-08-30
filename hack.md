@@ -23,7 +23,7 @@
 | AI conversion **38% worse → 42% better** (12 mo) | Adobe via Digital Applied |
 | Agent cart abandon **~78.6%**; stale price **26%**, CAPTCHA **24%** | Presenc AI 2026 |
 | **81%** PDPs lack Product+Offer schema | DigitalApplied 5k audit |
-| **65%** trust compare · **14% auto-buy (**51pt gap**) | Checkout.com/YouGov |
+| **65%** trust compare · **14%** auto-buy (**51pt gap**) | Checkout.com/YouGov |
 
 ## OPEN QUESTIONS
 
