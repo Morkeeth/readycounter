@@ -63,16 +63,60 @@ Primary sources for every stat in `hack.md` DATA ANCHORS.
 | **Primary source** | [Agent Cart Abandonment Statistics 2026 — Presenc AI](https://presenc.ai/research/agent-cart-abandonment-statistics-2026) |
 | **Published / updated** | June 2026 |
 
+| **Re-read** | **2026-08-31**, the whole page verbatim — every Presenc figure below carries that read date in `src/data/sources.ts`. See the correction. |
+
 **Exact quotes:**
 
 > The overall agent abandonment rate, defined as carts created that never convert to orders, is **78.6%** across our panel, higher than the human benchmark of about 70%.
 
-| Cause | Share of abandoned carts |
-|-------|--------------------------|
-| Stale price or stock data at checkout | **26%** |
-| Captcha or verification wall | **24%** |
+### The causes table, reproduced in full
 
-**Methodology (same page):** "Abandonment metrics are modeled from observed agent sessions and vendor-reported benchmarks." Presenc AI is a vendor research page, not peer-reviewed—cite as modeled industry benchmark.
+This page previously reproduced two of these six rows, and ReadyCounter printed a
+sentence — "no published figure prices an account wall separately" — that the
+four rows we had not copied out flatly contradicted. A partial reproduction of a
+source is how that happens, so the whole table is here, verbatim, including the
+third column.
+
+**Verbatim, "Causes of Agent Cart Abandonment", read 2026-08-31:**
+
+| Cause | Share of abandoned carts | Fixable by merchant |
+|-------|--------------------------|---------------------|
+| Stale price or stock data at checkout | **26%** | Yes |
+| Captcha or verification wall | **24%** | Yes |
+| Price mismatch vs listed feed | **18%** | Yes |
+| **Required account or login** | **15%** | Yes |
+| Unsupported payment method | **11%** | Yes |
+| Ambiguous page structure | **6%** | Yes |
+
+The six shares sum to 100%. ReadyCounter scores three of them directly — 26, 24
+and 15 — and those three weights **are** these three rows.
+
+The page also publishes a funnel table, quoted here because the 15% row is the
+one it explains:
+
+| Funnel step | Agents entering | Agents continuing | Drop-off at step |
+|---|---|---|---|
+| Product page to cart | 100% | 71% | 29% |
+| Cart to checkout start | 71% | 44% | **38%** |
+| Checkout to payment | 44% | 29% | 34% |
+| Payment to confirmation | 29% | 21% | 28% |
+
+> The biggest drop happens between cart and checkout, the exact step where verification **and login walls** appear.
+
+**Methodology (same page, verbatim):** "Data is compiled from the Presenc AI monitoring platform plus public sources, with Presenc AI estimates used where authoritative figures are unavailable. Abandonment metrics are modeled from observed agent sessions and vendor-reported benchmarks. Projections use compound growth modeling. Findings are reviewed quarterly. Last update June 2026." Presenc AI is a vendor research page, not peer-reviewed—cite as modeled industry benchmark.
+
+### Correction, 2026-08-31
+
+Until 2026-08-31 ReadyCounter charged a forced-account checkout the CAPTCHA's
+**24** points, and printed the reason on four surfaces: *"No published figure
+prices an account wall separately."* That sentence was false about this page —
+its own citation. **"Required account or login — 15%"** is row four of the table
+above, four lines below the 24% the product had already lifted from it.
+
+The fix is not a reworded sentence. The account wall is now its own scored line
+at its own published weight of **15**, a store carrying both walls pays both
+(39), and `scripts/verify-readiness.mjs` asserts each delta against its own
+source row. Nothing about a checkout wall is priced by ReadyCounter any more.
 
 ---
 
@@ -123,23 +167,37 @@ This is the section a judge should read first, because it is the part most
 readiness scores do not have: **the derivation of every weight, including the
 ones we made up.**
 
-ReadyCounter allocates **100 points across five checks**. The allocation is the
+ReadyCounter allocates **100 points across six checks**. The allocation is the
 claim, so it is stated in full:
 
 | Check | Points | Basis | Where the number comes from |
 |---|---|---|---|
 | Price feed agrees with the shelf | **26** | **measured** | Presenc AI attributes **26%** of abandoned agent carts to stale price or stock data at checkout. The weight *is* that share. |
-| Checkout path an agent can finish | **24** | **measured** | Presenc AI attributes **24%** of abandoned agent carts to a CAPTCHA or verification wall. The weight *is* that share. |
-| Catalog an agent can read | **20** | *allocated* | No source itemises schema gaps as an abandonment cause. We allocate 20 because an agent that cannot read price and availability never reaches a cart to abandon. Context: only **19%** of Product schemas carry the Offer object (Digital Applied, 5,000 sites). |
-| Structured tool surface | **20** | *allocated* | Allocated, not measured. Shopify reports catalog-powered AI search converts **2×** scraped search; a WebMCP tool surface is that same bet made explicit. |
-| Availability stated, not implied | **10** | *allocated* | Presenc groups stock **with** price in one 26% figure. We split off 10 points for explicit availability flags rather than double-count the measured share. |
-| **Total** | **100** | 50 measured · 50 allocated | |
+| No CAPTCHA on the checkout path | **24** | **measured** | Row two of the table: **24%**, "Captcha or verification wall". The weight *is* that share. |
+| No forced account on the checkout path | **15** | **measured** | Row four of the table: **15%**, "Required account or login". The weight *is* that share. Until 2026-08-31 this line did not exist and the wall was charged the CAPTCHA's 24 — see the correction above. |
+| Catalog an agent can read | **14** | *allocated* | No source itemises schema gaps as an abandonment cause. We allocate 14 because an agent that cannot read price and availability never reaches a cart to abandon. Context: only **19%** of Product schemas carry the Offer object (Digital Applied, 5,000 sites). |
+| Structured tool surface | **14** | *allocated* | Allocated, not measured. Shopify reports catalog-powered AI search converts **2×** scraped search; a WebMCP tool surface is that same bet made explicit. |
+| Availability stated, not implied | **7** | *allocated* | Presenc groups stock **with** price in one 26% figure. We split off 7 points for explicit availability flags rather than double-count the measured share. |
+| **Total** | **100** | **65 measured · 35 allocated** | |
 
-**The honest limit.** Half of this score is a judgement call. The product does
-not hide that: the tape prints a `measured weight` or `allocated weight` tag on
-every line, the header reads *"50 priced by a published figure · 50 allocated by
-ReadyCounter"*, and the account-wall case says out loud that no published figure
-prices it separately, so it is charged the same 24 as a CAPTCHA.
+**Why 14 / 14 / 7.** The measured block grew 50 → 65 when the account wall took
+its own published weight, so the allocated block shrank 50 → 35 and kept its
+existing 2:2:1 shape (20/20/10 → 14/14/7). The rule is the one worth stating: a
+published figure takes its full share first, and our judgement gets what is left.
+
+**One number that is a coincidence, not a mapping.** The three causes ReadyCounter
+does **not** check — price mismatch vs feed 18%, unsupported payment method 11%,
+ambiguous page structure 6% — happen to total the same **35%** the allocated block
+is worth. That is arithmetic, nothing more. Our three allocated checks are *not*
+those three causes and must not be read as standing in for them.
+
+**The honest limit.** 35 of these 100 points are still a judgement call, and the
+product does not hide it: the tape prints a `measured weight` or `allocated
+weight` tag on every line and the header reads *"65 priced by a published figure
+· 35 allocated by ReadyCounter"*. What is no longer a judgement call is the
+checkout. **Every checkout wall is charged the share its own published row
+states — 24 for a CAPTCHA, 15 for a forced account — and a store carrying both
+pays 39.** Neither figure is ours.
 
 **The check that keeps this honest.** `scripts/verify-score.mjs` runs on every
 `npm run verify` and fails the run if:
@@ -149,15 +207,31 @@ prices it separately, so it is charged the same 24 as a CAPTCHA.
 3. any source row is missing a publisher, figure, URL, publish date or read date;
 4. a source URL is not quoted in this file;
 5. **a measured weight stops equalling the figure its source publishes** — 26 pts
-   must match `26%`, 24 pts must match `24%`;
+   must match `26%`, 24 pts must match `24%`, 15 pts must match `15%`;
 6. the tool count printed in `App.tsx` drifts from the tools in `registerTools.ts`.
 
+And in `scripts/verify-readiness.mjs`, added with the 15-point line:
+
+7. clearing a CAPTCHA must move the score by exactly 24 and clearing a forced
+   account by exactly 15, each against **its own** source row;
+8. a store carrying both walls must lose 39, not 24;
+9. a line scored on a partial ratio must print less than its full weight. (This
+   one is here because the rebalance briefly left the old point values hardcoded
+   at the call sites — `20 * (withGtin / total)` against a 14-point weight — and
+   the clamp turned 17.5 into a perfect 14/14 on a catalog that was 88%
+   identified. Weights are now applied in one place and the call sites pass a
+   fraction.)
+
 Proven red, not just green: setting `agent_checkout_path` to 30 points fails
-checks 1 and 5 and exits 1.
+checks 1 and 5 and exits 1. A budget-neutral tamper is caught too — moving
+`account_wall` 15 → 16 and `stock_signals` 7 → 6 keeps the budget at exactly 100,
+passes check 1, and still fails checks 5, 7 and 8.
 
 **Observable consequence.** Clearing the CAPTCHA on Ember & Oak moves the score
-from **70 to 94** — a delta of exactly **24**, the published figure. That is
-asserted in `scripts/verify-readiness.mjs`, not eyeballed.
+from **70 to 94** — a delta of exactly **24**, the published figure. Clearing the
+forced account on Neon Matcha Lab moves it from **71 to 86** — a delta of exactly
+**15**, a different published figure from the same table. Both are asserted in
+`scripts/verify-readiness.mjs`, not eyeballed.
 
 ---
 
@@ -165,7 +239,7 @@ asserted in `scripts/verify-readiness.mjs`, not eyeballed.
 
 | Product surface | Stat applied |
 |-----------------|--------------|
-| Readiness weights (26 / 24) | Presenc 26% stale feed · 24% verification wall |
+| Readiness weights (26 / 24 / 15) | Presenc 26% stale feed · 24% CAPTCHA · 15% required account — three rows of one table |
 | Readiness line detail | Digital Applied 19% Offer; Shopify 2× Catalog |
 | Landing screen facts | Shopify 8×/13×; Presenc 78.6%; YouGov 65/14 |
 | Co-shop / `prepare_checkout` gate | YouGov 65% compare vs 14% buy |

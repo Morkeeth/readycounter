@@ -111,7 +111,11 @@ source — see Decision 7.
 
 ---
 
-## Decision 5b · Score weighting — RULED (night run)
+## Decision 5b · Score weighting — RULED (night run) · **SUPERSEDED 2026-08-31 by 5c**
+
+> The weights and the account-wall sentence below are the historical record, not
+> the shipped behaviour. **Decision 5c** replaces them. Kept verbatim because the
+> mistake it contains is the point.
 
 **Ruled: 100 points, 50 measured and 50 admitted as ours.**
 
@@ -132,6 +136,70 @@ because no published figure prices it separately.
 
 `scripts/verify-score.mjs` fails the build if a measured weight ever stops
 equalling its published figure. Proven red by tampering 24 → 30.
+
+---
+
+## Decision 5c · The account wall gets its own published price — RULED 2026-08-31
+
+**Ruled: 100 points across SIX checks, 65 measured and 35 admitted as ours.**
+
+**What was wrong.** Decision 5b charged a forced-account checkout the CAPTCHA's
+**24** points and printed the justification on four surfaces: *"No published
+figure prices an account wall separately."* Presenc AI's causes table has **six**
+rows, and **"Required account or login — 15%"** is one of them — four rows below
+the 24% that same table had already given us. The product was asserting the
+absence of a figure that sits in its own citation. `research.md` had reproduced
+**two** of the six rows, so the gap the reasoning relied on was one we made.
+
+Re-read at the source 2026-08-31, all six rows verbatim:
+26% stale price/stock · 24% captcha or verification wall · 18% price mismatch vs
+listed feed · **15% required account or login** · 11% unsupported payment method
+· 6% ambiguous page structure. They sum to 100%.
+
+**The ruling.**
+
+| Check | Points | Basis |
+|---|---|---|
+| Price feed agrees with the shelf | 26 | **measured** — Presenc AI's 26% row |
+| No CAPTCHA on the checkout path | 24 | **measured** — Presenc AI's 24% row |
+| No forced account on the checkout path | 15 | **measured** — Presenc AI's 15% row |
+| Catalog an agent can read | 14 | allocated by us |
+| Structured tool surface | 14 | allocated by us |
+| Availability stated, not implied | 7 | allocated by us |
+
+1. **Each wall is its own line at its own published weight.** A store carrying
+   both pays 39. That was not expressible before, because one line covered both.
+2. **The allocated block shrinks 50 → 35, keeping its 2:2:1 shape** (20/20/10 →
+   14/14/7). The rule: a published figure takes its full share first; our
+   judgement gets the remainder. The three causes we do not check happen to total
+   35% as well — that is arithmetic, not a mapping, and `research.md` says so.
+3. **The pitch gets stronger, not weaker.** Not "half our score is a guess" but
+   *"no checkout wall on this tape is priced by us, and here is the whole table."*
+   The claim is narrower than "nothing is assigned by us" — 35 points still are —
+   and it is narrow because it is true.
+4. **All six rows are reproduced in `research.md`,** with the funnel table and
+   the verbatim methodology sentence. Partial reproduction of a source is the
+   root cause and is treated as the defect.
+5. **A check exists for the class, not just the instance.**
+   `verify-readiness.mjs` now asserts each wall's delta against **its own** source
+   row (24 and 15), that both walls cost 39 together, and that the account line
+   cites `presenc_account_wall` and *not* `presenc_captcha`.
+
+**Second defect, found by the rebalance.** The call sites still multiplied by the
+old point values — `20 * (withGtin / total)` against a 14-point weight — and
+`Math.min(w.max, …)` clamped 17.5 to a **perfect 14/14** on a catalog that was
+88% identified. A wrong number wearing a right number's clothes. `line()` now
+takes a fraction and applies the weight in one place, and there is an assertion
+that a partial ratio can never print a full line.
+
+**Consequences on screen.** Ember & Oak stays **70/100** (94 clear, delta 24
+intact). Neon Matcha Lab moves **57 → 71** and now scores *one point above*
+Ember for entirely different reasons — a better beat than the old one, and every
+doc that said "score drops" on the store switch was corrected.
+
+**Proven red.** A budget-neutral tamper — `account_wall` 15 → 16 with
+`stock_signals` 7 → 6, still summing to exactly 100 — passes the old budget check
+and still fails three assertions.
 
 ---
 
@@ -183,7 +251,7 @@ Cloud was doing a readiness-score signature device. **Superseded 31 Aug.**
 
 Cloud is primary-sourcing `hack.md` stats. Tomorrow:
 
-- Spot-check 2–3 URLs (Shopify 2×, Presenc 24%, 65/14 gap)
+- Spot-check 2–3 URLs (Shopify 2×, Presenc 24% AND 15% — read the whole causes table, not the rows we quote, 65/14 gap)
 - If any stat fails → cut from pitch or soften wording
 
 **Worst case:** keep qualitative "agents abandon on CAPTCHA and stale feeds" without percentages.

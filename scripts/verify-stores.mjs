@@ -25,9 +25,10 @@ import { STORES, STORE_IDS } from './src/data/stores.ts';
 import { computeReadinessChecks, readinessScore } from './src/lib/readiness.ts';
 import { WEBMCP_TOOL_COUNT } from './src/webmcp/toolManifest.ts';
 
-// Matches REGISTERED_TOOL_COUNT in App.tsx; verify-score.mjs pins that to the
-// tools actually registered in src/webmcp/registerTools.ts.
-const TOOL_COUNT = 13;
+// Read from the manifest, not typed here. This literal said 13 while the
+// product registered 16 — harmless only because both clear the floor of 6,
+// which is exactly how a stale constant survives.
+const TOOL_COUNT = WEBMCP_TOOL_COUNT;
 const MIN_SKUS = 6;
 
 let failed = 0;
@@ -51,10 +52,25 @@ const rows = STORE_IDS.map((id) => {
   const blocker = blockerOf(store);
   assert(id + ' has a catalog worth scoring', store.products.length >= MIN_SKUS, store.products.length + ' SKUs');
   assert(id + ' scores in range', score > 0 && score <= 100, 'score ' + score + ', blocker ' + blocker);
+  /*
+   * Each wall has its OWN line and its OWN published price since 2026-08-31.
+   * Asserting one line against both flags would repeat the bug this repo just
+   * fixed, so the blocker names the line it is supposed to have zeroed.
+   */
+  const lineFor = { captcha: 'agent_checkout_path', account: 'account_wall' }[blocker];
+  const captchaLine = checks.find((c) => c.id === 'agent_checkout_path');
+  const accountLine = checks.find((c) => c.id === 'account_wall');
   assert(
-    id + ' prints a checkout line that matches its flags',
-    (checks.find((c) => c.id === 'agent_checkout_path')?.points === 0) === (blocker !== 'none'),
-    checks.find((c) => c.id === 'agent_checkout_path')?.stat,
+    id + ' zeroes exactly the line its blocker names',
+    lineFor === undefined
+      ? captchaLine.points === captchaLine.maxPoints && accountLine.points === accountLine.maxPoints
+      : checks.find((c) => c.id === lineFor).points === 0,
+    'blocker ' + blocker + ' · captcha ' + captchaLine.points + '/' + captchaLine.maxPoints + ' · account ' + accountLine.points + '/' + accountLine.maxPoints,
+  );
+  assert(
+    id + ' charges the blocked wall its own published weight',
+    lineFor === undefined || checks.find((c) => c.id === lineFor).maxPoints === (blocker === 'captcha' ? 24 : 15),
+    blocker + ' costs ' + (lineFor ? checks.find((c) => c.id === lineFor).maxPoints : 0) + ' pts',
   );
   return { id, score, blocker };
 });

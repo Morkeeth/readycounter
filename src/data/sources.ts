@@ -33,9 +33,21 @@ export const SOURCES = {
     publisher: 'Presenc AI',
     url: 'https://presenc.ai/research/agent-cart-abandonment-statistics-2026',
     published: '2026-06',
-    accessed: '2026-08-30',
+    accessed: '2026-08-31',
     caveat:
       'Vendor research page, not peer reviewed. Presenc states the metrics are "modeled from observed agent sessions and vendor-reported benchmarks."',
+  },
+  presenc_account_wall: {
+    id: 'presenc_account_wall',
+    claim:
+      'A required account or login is the cause of 15% of abandoned agent carts — its own row in the same table, separate from the CAPTCHA.',
+    figure: '15%',
+    publisher: 'Presenc AI',
+    url: 'https://presenc.ai/research/agent-cart-abandonment-statistics-2026',
+    published: '2026-06',
+    accessed: '2026-08-31',
+    caveat:
+      'Same modeled panel as the 24% CAPTCHA figure. ReadyCounter charged this wall 24 points until 2026-08-31, when a re-read of the cited table found the row.',
   },
   presenc_stale_feed: {
     id: 'presenc_stale_feed',
@@ -44,7 +56,7 @@ export const SOURCES = {
     publisher: 'Presenc AI',
     url: 'https://presenc.ai/research/agent-cart-abandonment-statistics-2026',
     published: '2026-06',
-    accessed: '2026-08-30',
+    accessed: '2026-08-31',
     caveat: 'Same modeled panel as the CAPTCHA figure; treat as an industry benchmark, not a census.',
   },
   presenc_abandon: {
@@ -54,7 +66,7 @@ export const SOURCES = {
     publisher: 'Presenc AI',
     url: 'https://presenc.ai/research/agent-cart-abandonment-statistics-2026',
     published: '2026-06',
-    accessed: '2026-08-30',
+    accessed: '2026-08-31',
   },
   schema_offer_gap: {
     id: 'schema_offer_gap',

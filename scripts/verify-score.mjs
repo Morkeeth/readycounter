@@ -80,7 +80,7 @@ const weightBlocks = [...readinessSrc.matchAll(
   sourceIds: [...ids.matchAll(/'([a-z0-9_]+)'/g)].map((m) => m[1]),
 }));
 
-check('weights parsed', weightBlocks.length === 5, `${weightBlocks.length} weights`);
+check('weights parsed', weightBlocks.length === 6, `${weightBlocks.length} weights`);
 
 const budget = weightBlocks.reduce((n, w) => n + w.max, 0);
 check('point budget sums to 100', budget === 100, `${budget}/100`);

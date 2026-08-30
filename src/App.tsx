@@ -141,12 +141,16 @@ function App() {
         <p>
           Every figure ReadyCounter prints resolves to a row in{' '}
           <code>src/data/sources.ts</code> and a quoted sentence in{' '}
-          <code>research.md</code>. Two of the five weights are a published share of
-          abandoned agent carts ({getSource('presenc_stale_feed').figure} stale feed,{' '}
-          {getSource('presenc_captcha').figure} verification wall —{' '}
-          {getSource('presenc_captcha').publisher}, read{' '}
-          {getSource('presenc_captcha').accessed}). The other three we allocated
-          ourselves, and the tape says so on the line rather than in a footnote.
+          <code>research.md</code>. Three of the six weights are a published share
+          of abandoned agent carts, one per row of Presenc AI&rsquo;s causes table
+          ({getSource('presenc_stale_feed').figure} stale feed,{' '}
+          {getSource('presenc_captcha').figure} CAPTCHA,{' '}
+          {getSource('presenc_account_wall').figure} required account —{' '}
+          {getSource('presenc_account_wall').publisher}, read{' '}
+          {getSource('presenc_account_wall').accessed}); all six rows of that table
+          are reproduced in <code>research.md</code>. The other three weights we
+          allocated ourselves, and the tape says so on the line rather than in a
+          footnote.
         </p>
         <p>
           Humans confirm payment in the browser. Shopping assistants search, add to

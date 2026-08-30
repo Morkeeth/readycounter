@@ -55,7 +55,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 | Screen | Header **Store** dropdown → Neon Matcha Lab |
 | Say | "Two merchants, one fork. Same platform." |
 | Run | Harness → `get_readiness_score` on each store |
-| Proof | Score drops · failure mode switches CAPTCHA → account wall |
+| Proof | Score 70 → 71 · failure mode switches CAPTCHA (24 pts) → account wall (15 pts) · catalog line 12/14 → 4/14 |
 | URL bar | Flash `?store=neon-matcha` |
 
 ---

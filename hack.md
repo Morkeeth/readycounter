@@ -20,7 +20,7 @@
 |------|--------|
 | Shopify AI traffic **8×** YoY; orders from AI **~13×** | Shopify Q1 2026 |
 | Catalog AI searches **2×** vs scraped | Shopify Finkelstein |
-| Agent cart abandon **~78.6%**; stale price **26%**, CAPTCHA **24%** | Presenc AI 2026 |
+| Agent cart abandon **~78.6%**; stale price **26%**, CAPTCHA **24%**, required account **15%** | Presenc AI 2026 |
 | **65%** trust compare · **14%** auto-buy (**51pt gap**) | Checkout.com/YouGov |
 
 Full citations: `research.md`
@@ -111,12 +111,16 @@ open https://tooltruth-webmcp.vercel.app → Start shopping → add item → Cop
   COUNTER** — receipt-paper palette, one stamp red for refusals, square corners,
   Bricolage Grotesque + JetBrains Mono; three directions were compared and the
   reasoning is in `DECISIONS.md` § Decision 4 for Oscar to veto cheaply.
-  Score reweighted to **100 pts, 50 measured / 50 admitted as ours** — 26 and 24
-  are Presenc AI's published shares, the rest are labelled `allocated` on the
-  line. `src/data/sources.ts` (8 rows) is now the only place a figure may come
-  from, and `scripts/verify-score.mjs` fails the build if a measured weight stops
-  equalling its published figure (proven red at 24→30) or if the tool manifest
-  and `registerTools.ts` disagree.
+  Score reweighted to **100 pts, 65 measured / 35 admitted as ours** — 26, 24 and
+  15 are three rows of Presenc AI's published causes table, the rest are labelled
+  `allocated` on the line. `src/data/sources.ts` (9 rows) is now the only place a
+  figure may come from, and `scripts/verify-score.mjs` fails the build if a
+  measured weight stops equalling its published figure (proven red at 24→30) or
+  if the tool manifest and `registerTools.ts` disagree.
+  **Corrected 2026-08-31:** the account wall had been charged the CAPTCHA's 24 on
+  the claim that no published figure priced it; the figure was row four of the
+  same table (15%). It now has its own line at 15, all six rows are reproduced in
+  `research.md`, and each wall's delta is asserted against its own source row.
   **Fixed a pre-existing white-screen on the Shop tab** — React #185, present at
   `dd90f26`, reproduced in a scratch worktree. The co-shop flow was dead in the
   committed tree and every test still passed, because the verify scripts drive

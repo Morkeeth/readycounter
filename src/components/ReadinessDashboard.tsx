@@ -41,6 +41,7 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
   const lost = pointsLost(checks);
 
   const captchaSource = getSource('presenc_captcha');
+  const accountSource = getSource('presenc_account_wall');
   const block = merchant.checkoutRequiresCaptcha
     ? {
         kind: 'A CAPTCHA',
@@ -51,8 +52,8 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
       ? {
           kind: 'A forced account',
           because:
-            'No published figure prices an account wall separately. It closes the same door as a CAPTCHA, so ReadyCounter charges it the same 24 points and says so.',
-          sourceId: 'presenc_captcha' as SourceId,
+            'Presenc AI gives a required account or login its own row in the same table it prices the CAPTCHA on: 15% of abandoned agent carts. ReadyCounter charges exactly 15 points. Every checkout wall on this tape costs the share its own published row states — none of it is a number we picked.',
+          sourceId: 'presenc_account_wall' as SourceId,
         }
       : null;
 
@@ -107,7 +108,10 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
               />
               <span>
                 Require an account
-                <em>same door, same 24 pts, no separate figure</em>
+                <em>
+                  worth 15 pts — its own row in the same table, Presenc AI, read{' '}
+                  {accountSource.accessed}
+                </em>
               </span>
             </label>
           </article>

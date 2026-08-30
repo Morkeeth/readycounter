@@ -4,19 +4,31 @@ import type { SourceId } from '../data/sources';
 /**
  * The readiness score is an itemised bill, not a gauge.
  *
- * 100 points are allocated across five checks. Two of those allocations are
- * MEASURED — they are the share of abandoned agent carts that Presenc AI
- * attributes to that exact failure mode. The other three are ALLOCATED by us,
- * because no primary source itemises them, and every surface that prints the
- * score says so rather than passing our judgement off as research.
+ * 100 points across six checks. THREE are MEASURED — the weight is literally a
+ * row in Presenc AI's published causes-of-abandonment table, reproduced in full
+ * in `research.md`. The other three are ALLOCATED by us, because no source
+ * itemises them, and every surface that prints the score says which is which.
  *
  *   measured   26  price + stock feed goes stale         presenc_stale_feed
- *   measured   24  checkout path walled off              presenc_captcha
- *   allocated  20  catalog schema an agent can read      schema_offer_gap
- *   allocated  20  structured tool surface               shopify_catalog_2x
- *   allocated  10  availability signals                  presenc_stale_feed
+ *   measured   24  CAPTCHA or verification wall          presenc_captcha
+ *   measured   15  required account or login             presenc_account_wall
+ *   allocated  14  catalog schema an agent can read      schema_offer_gap
+ *   allocated  14  structured tool surface               shopify_catalog_2x
+ *   allocated   7  availability signals                  presenc_stale_feed
  *   ----------------
- *              100
+ *              100      65 measured · 35 allocated
+ *
+ * CORRECTION, 2026-08-31. Until today an account wall was charged the CAPTCHA's
+ * 24 points, and four surfaces printed the reason: "no published figure prices
+ * an account wall separately." That sentence was false about our OWN citation.
+ * The Presenc table has six rows, and "Required account or login — 15%" is one
+ * of them, sitting three lines below the 24% we had already lifted. Each wall
+ * now costs the share its own published row states. Nothing about a checkout
+ * wall is priced by us any more.
+ *
+ * The allocated block shrank 50 -> 35 to make room, keeping its old 2:2:1 shape
+ * (20/20/10 -> 14/14/7). A published figure takes its full share first; our
+ * judgement gets what is left.
  *
  * Nothing here is a constant typed into a component. Change the catalog and the
  * arithmetic moves; every line the merchant reads is recomputed from the store.
@@ -51,16 +63,24 @@ export const WEIGHTS: WeightRow[] = [
       'Presenc AI attributes 24% of abandoned agent carts to a CAPTCHA or verification wall. The weight is that share.',
   },
   {
+    id: 'account_wall',
+    max: 15,
+    basis: 'measured',
+    sourceIds: ['presenc_account_wall'],
+    rationale:
+      'Presenc AI gives a required account or login its own row: 15% of abandoned agent carts. The weight is that share, not the CAPTCHA\'s.',
+  },
+  {
     id: 'catalog_schema',
-    max: 20,
+    max: 14,
     basis: 'allocated',
     sourceIds: ['schema_offer_gap', 'shopify_catalog_2x'],
     rationale:
-      'No source itemises schema gaps as an abandonment cause. We allocate 20 because agents that cannot read price and availability never reach a cart at all.',
+      'No source itemises schema gaps as an abandonment cause. We allocate 14 because agents that cannot read price and availability never reach a cart at all.',
   },
   {
     id: 'webmcp_tools',
-    max: 20,
+    max: 14,
     basis: 'allocated',
     sourceIds: ['shopify_catalog_2x'],
     rationale:
@@ -68,11 +88,11 @@ export const WEIGHTS: WeightRow[] = [
   },
   {
     id: 'stock_signals',
-    max: 10,
+    max: 7,
     basis: 'allocated',
     sourceIds: ['presenc_stale_feed'],
     rationale:
-      'Presenc groups stock with price in one 26% figure. We split off 10 points for explicit availability flags rather than double-count the measured share.',
+      'Presenc groups stock with price in one 26% figure. We split off 7 points for explicit availability flags rather than double-count the measured share.',
   },
 ];
 
@@ -94,16 +114,30 @@ function statusFor(earned: number, max: number): ReadinessCheck['status'] {
   return 'fail';
 }
 
+/**
+ * `earnedShare` is a FRACTION of the line's weight, 0..1 — never a point total.
+ *
+ * It used to be a point total, and every call site multiplied by the weight it
+ * had copied out of the table above: `20 * (withGtin / total)`. When the weights
+ * were rebalanced on 2026-08-31 those literals stayed at 20 and 10 while the
+ * table moved to 14 and 7, and `Math.min(w.max, …)` quietly clamped the result
+ * to a perfect score instead of failing. Two stores printed 14/14 and 7/7 on
+ * catalogs that were 88% and 25% identified.
+ *
+ * A fraction cannot drift from the weight, because the weight is applied here
+ * and stated in exactly one place.
+ */
 function line(
   id: string,
   label: string,
-  earned: number,
+  earnedShare: number,
   detail: string,
   stat: string,
   fix: string,
 ): ReadinessCheck {
   const w = WEIGHT_BY_ID.get(id)!;
-  const points = Math.max(0, Math.min(w.max, Math.round(earned)));
+  const clamped = Math.max(0, Math.min(1, earnedShare));
+  const points = Math.round(w.max * clamped);
   return {
     id,
     label,
@@ -137,18 +171,20 @@ export function computeReadinessChecks(
   const outOfStock = products.filter((p) => !p.inStock).length;
   const inStock = total - outOfStock;
 
-  const walled = config.checkoutRequiresCaptcha || config.checkoutRequiresAccount;
-  const wallKind = config.checkoutRequiresCaptcha
-    ? 'CAPTCHA'
-    : config.checkoutRequiresAccount
-      ? 'account wall'
-      : null;
+  /*
+   * Two walls, two published prices. They are scored on separate lines because
+   * Presenc AI prices them on separate rows — 24% for a CAPTCHA, 15% for a
+   * required account. A store carrying both pays both, which is the honest
+   * result and used to be impossible to express when one line covered both.
+   */
+  const captchaOn = config.checkoutRequiresCaptcha;
+  const accountOn = config.checkoutRequiresAccount;
 
   return [
     line(
       'price_consistency',
       'Price feed agrees with the shelf',
-      26 * (cleanFeed / total),
+      cleanFeed / total,
       mismatched.length === 0
         ? `All ${total} SKUs quote the same price in the feed and on the page.`
         : `${mismatched.length} of ${total} SKUs quote a feed price that is not the shelf price: ${mismatched
@@ -161,20 +197,32 @@ export function computeReadinessChecks(
     ),
     line(
       'agent_checkout_path',
-      'Checkout path an agent can finish',
-      walled ? 0 : 24,
-      walled
-        ? `${wallKind} stands between a prepared order and payment. Presenc AI attributes 24% of abandoned agent carts to a verification wall; an account wall closes the same door and has no separate published figure, so it is scored the same.`
-        : 'No CAPTCHA and no forced account. An agent can carry an order all the way to human payment.',
-      walled ? `${wallKind} ON` : 'CLEAR',
-      walled
-        ? 'Turn the wall off for prepared-order traffic, or move it after payment intent.'
+      'No CAPTCHA on the checkout path',
+      captchaOn ? 0 : 1,
+      captchaOn
+        ? 'A CAPTCHA stands between a prepared order and payment. Presenc AI attributes 24% of abandoned agent carts to a CAPTCHA or verification wall, so this line costs 24.'
+        : 'No CAPTCHA. An agent can carry a prepared order to the point a human pays.',
+      captchaOn ? 'CAPTCHA ON' : 'CLEAR',
+      captchaOn
+        ? 'Turn the CAPTCHA off for prepared-order traffic, or move it after payment intent.'
+        : 'Nothing to fix.',
+    ),
+    line(
+      'account_wall',
+      'No forced account on the checkout path',
+      accountOn ? 0 : 1,
+      accountOn
+        ? 'A forced account or login stands between a prepared order and payment. Presenc AI gives that its own row — 15% of abandoned agent carts — so this line costs 15, not the CAPTCHA\'s 24. Both walls are priced by the same published table; neither price is ours.'
+        : 'No forced account. An agent can reach checkout without creating a login first.',
+      accountOn ? 'ACCOUNT WALL ON' : 'CLEAR',
+      accountOn
+        ? 'Allow guest checkout, or defer account creation until after the order is placed.'
         : 'Nothing to fix.',
     ),
     line(
       'catalog_schema',
       'Catalog an agent can read',
-      20 * (withGtin / total),
+      withGtin / total,
       `${withGtin} of ${total} SKUs carry a GTIN, so ${gtinPct}% of this catalog can be matched to a product an agent already knows. In a 5,000-site audit only 19% of Product schemas carried the Offer object at all.`,
       `${gtinPct}% identified`,
       withGtin === total
@@ -184,7 +232,7 @@ export function computeReadinessChecks(
     line(
       'webmcp_tools',
       'Structured tools an assistant can call',
-      20 * (Math.min(registeredToolCount, TOOL_FLOOR) / TOOL_FLOOR),
+      Math.min(registeredToolCount, TOOL_FLOOR) / TOOL_FLOOR,
       `${registeredToolCount} structured tools connected, against a floor of ${TOOL_FLOOR}. Tools are the catalog-vs-scrape bet made explicit: the assistant asks a typed question instead of reading the page.`,
       `${registeredToolCount} tools`,
       registeredToolCount >= TOOL_FLOOR
@@ -194,7 +242,7 @@ export function computeReadinessChecks(
     line(
       'stock_signals',
       'Availability stated, not implied',
-      10 * (inStock / total),
+      inStock / total,
       outOfStock === 0
         ? `All ${total} SKUs carry an explicit in-stock flag.`
         : `${outOfStock} of ${total} SKUs are out of stock and say so explicitly, which is correct — but every hidden one is a cart an agent builds and cannot fill.`,

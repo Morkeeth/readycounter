@@ -31,7 +31,7 @@ See [`DEVPOST.md`](./DEVPOST.md) for full text.
 2. Click **Start shopping**
 3. Add a product → refresh → order persists
 4. **Copy co-shop link** → open in incognito → same order
-5. Switch store to **Neon Matcha Lab** → **Readiness** tab → different readiness failure (account wall)
+5. Switch store to **Neon Matcha Lab** → **Readiness** tab → **71/100**, a different readiness failure (account wall, 0/15) while the CAPTCHA line passes
 6. Open **Connect** → **Agent tool console** → run `get_readiness_score` + `prepare_checkout`
 7. Optional: Chrome `chrome://flags/#enable-webmcp-testing` → 13 tools register live
 

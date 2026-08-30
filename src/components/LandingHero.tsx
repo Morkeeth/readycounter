@@ -62,8 +62,8 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
       ? {
           kind: 'A forced account',
           because:
-            'No published figure prices an account wall separately. It closes the same door as a CAPTCHA, so ReadyCounter charges it the same 24 points and says so.',
-          sourceId: 'presenc_captcha' as const,
+            'Presenc AI gives a required account or login its own row in the same table it prices the CAPTCHA on: 15% of abandoned agent carts. ReadyCounter charges exactly 15 points. Every checkout wall on this tape costs the share its own published row states — none of it is a number we picked.',
+          sourceId: 'presenc_account_wall' as const,
         }
       : null;
 

@@ -40,6 +40,11 @@ export function OrderPanel() {
 
   const blockedPreview =
     merchant.checkoutRequiresCaptcha || merchant.checkoutRequiresAccount;
+  // The wall that is actually blocking gets cited — a CAPTCHA costs 24, a
+  // forced account 15, and each number comes from its own row of one table.
+  const wallSource = getSource(
+    merchant.checkoutRequiresCaptcha ? 'presenc_captcha' : 'presenc_account_wall',
+  );
 
   return (
     <section className="order-panel" aria-label="Shared co-shop order">
@@ -133,12 +138,14 @@ export function OrderPanel() {
           <strong>Will void</strong>
           {merchant.checkoutRequiresCaptcha
             ? `A CAPTCHA sits on this checkout. ${getSource('presenc_captcha').claim}`
-            : 'A forced account sits on this checkout. It closes the same door as a CAPTCHA, and ReadyCounter charges it the same 24 readiness points.'}{' '}
-          <a href={getSource('presenc_captcha').url} target="_blank" rel="noreferrer">
-            {getSource('presenc_captcha').publisher}
+            : `A forced account sits on this checkout. ${getSource('presenc_account_wall').claim}`}{' '}
+          <a href={wallSource.url} target="_blank" rel="noreferrer">
+            {wallSource.publisher}
           </a>
-          , read {getSource('presenc_captcha').accessed}. Clear it in Merchant
-          readiness and the tape reprints 24 points higher.
+          , read {wallSource.accessed}. Both walls are priced by the same
+          published table, each on its own row, so neither figure is ours. Clear
+          this one in Merchant readiness and the tape reprints{' '}
+          {wallSource.figure.replace('%', '')} points higher.
         </div>
       )}
 
