@@ -1,16 +1,29 @@
 import { useState } from 'react';
 import { ShareCoShopBar } from './ShareCoShopBar';
+import { getSource } from '../data/sources';
 import { useShopStore } from '../store/shopStore';
 
 export function OrderPanel() {
-  const order = useShopStore((s) => s.getOrder());
+  /*
+   * Subscribe to STATE, derive outside the selector.
+   *
+   * `useShopStore((s) => s.getOrder())` builds a fresh object on every call, so
+   * useSyncExternalStore saw a new snapshot each pass and React tore the tab
+   * down with error #185 (maximum update depth). The Shop tab white-screened on
+   * main at dd90f26 — the co-shop flow, i.e. the demo. Selectors below return
+   * stable references; the totals are computed during render, driven by `lines`.
+   */
   const lines = useShopStore((s) => s.order.lines);
+  const getOrder = useShopStore((s) => s.getOrder);
+  const getDeliveryQuote = useShopStore((s) => s.getDeliveryQuote);
   const updateLineQuantity = useShopStore((s) => s.updateLineQuantity);
   const removeLine = useShopStore((s) => s.removeLine);
   const prepareCheckout = useShopStore((s) => s.prepareCheckout);
   const getProduct = useShopStore((s) => s.getProduct);
-  const delivery = useShopStore((s) => s.getDeliveryQuote());
   const merchant = useShopStore((s) => s.merchant);
+
+  const order = getOrder();
+  const delivery = getDeliveryQuote();
 
   const [checkoutMsg, setCheckoutMsg] = useState<string | null>(null);
 
@@ -32,8 +45,8 @@ export function OrderPanel() {
     <section className="order-panel" aria-label="Shared co-shop order">
       <h2>Co-shop order</h2>
       <p className="order-panel__hint">
-        65% trust AI to compare prices. 14% trust it to buy alone. You stay in
-        the tab.
+        {getSource('yougov_trust_gap').claim} That gap is the product: the agent
+        proposes, you pay.
       </p>
 
       {lines.length === 0 ? (
@@ -90,6 +103,8 @@ export function OrderPanel() {
 
       <ShareCoShopBar />
 
+      {/* An empty order must not quote $6.50 shipping on a $0 total — the
+          delivery rule only applies once there is something to deliver. */}
       <div className="order-summary">
         <div>
           <span>Subtotal</span>
@@ -98,19 +113,33 @@ export function OrderPanel() {
         <div>
           <span>Shipping</span>
           <strong>
-            {delivery.price === 0 ? 'Free' : `$${delivery.price.toFixed(2)}`}
+            {order.lineCount === 0
+              ? '—'
+              : delivery.price === 0
+                ? 'Free'
+                : `$${delivery.price.toFixed(2)}`}
           </strong>
         </div>
         <div className="order-summary__total">
           <span>Total</span>
-          <strong>${(order.subtotal + delivery.price).toFixed(2)}</strong>
+          <strong>
+            ${(order.lineCount === 0 ? 0 : order.subtotal + delivery.price).toFixed(2)}
+          </strong>
         </div>
       </div>
 
       {blockedPreview && (
-        <p className="order-panel__blocked" role="status">
-          Agent checkout likely blocked — fix in Merchant → Readiness.
-        </p>
+        <div className="order-panel__blocked" role="status">
+          <strong>Will void</strong>
+          {merchant.checkoutRequiresCaptcha
+            ? `A CAPTCHA sits on this checkout. ${getSource('presenc_captcha').claim}`
+            : 'A forced account sits on this checkout. It closes the same door as a CAPTCHA, and ReadyCounter charges it the same 24 readiness points.'}{' '}
+          <a href={getSource('presenc_captcha').url} target="_blank" rel="noreferrer">
+            {getSource('presenc_captcha').publisher}
+          </a>
+          , read {getSource('presenc_captcha').accessed}. Clear it in Merchant
+          readiness and the tape reprints 24 points higher.
+        </div>
       )}
 
       {checkoutMsg && (

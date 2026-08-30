@@ -1,53 +1,23 @@
-import { computeReadinessChecks, readinessScore } from '../lib/readiness';
 import { getStore } from '../data/stores';
+import { getSource, SOURCE_IDS } from '../data/sources';
+import type { SourceId } from '../data/sources';
+import { computeReadinessChecks, pointsLost, readinessScore } from '../lib/readiness';
 import { useShopStore } from '../store/shopStore';
+import { ReadinessTape } from './ReadinessTape';
 
 interface ReadinessDashboardProps {
   registeredToolCount: number;
 }
 
-function ScoreRing({ score }: { score: number }) {
-  const radius = 52;
-  const stroke = 8;
-  const normalizedRadius = radius - stroke / 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-  const progress = Math.min(Math.max(score, 0), 100) / 100;
-  const strokeDashoffset = circumference - progress * circumference;
-  const tone = score >= 70 ? 'ok' : score >= 50 ? 'mid' : 'low';
+const FUNNEL_STEPS = [
+  'catalog_search',
+  'product_view',
+  'add_to_order',
+  'checkout_prepare',
+  'checkout_blocked',
+] as const;
 
-  return (
-    <div className="score-ring" data-tone={tone} aria-label={`Readiness score ${score} out of 100`}>
-      <svg className="score-ring__svg" viewBox="0 0 120 120" role="img">
-        <circle
-          className="score-ring__track"
-          cx="60"
-          cy="60"
-          r={normalizedRadius}
-          strokeWidth={stroke}
-        />
-        <circle
-          className="score-ring__fill"
-          cx="60"
-          cy="60"
-          r={normalizedRadius}
-          strokeWidth={stroke}
-          strokeDasharray={`${circumference} ${circumference}`}
-          strokeDashoffset={strokeDashoffset}
-          transform="rotate(-90 60 60)"
-        />
-      </svg>
-      <div className="score-ring__center">
-        <span className="score-ring__value">{score}</span>
-        <span className="score-ring__label">/ 100</span>
-        <span className="score-ring__caption">agent ready</span>
-      </div>
-    </div>
-  );
-}
-
-export function ReadinessDashboard({
-  registeredToolCount,
-}: ReadinessDashboardProps) {
+export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardProps) {
   const merchant = useShopStore((s) => s.merchant);
   const storeId = useShopStore((s) => s.storeId);
   const setMerchantFlag = useShopStore((s) => s.setMerchantFlag);
@@ -56,102 +26,130 @@ export function ReadinessDashboard({
   const products = getStore(storeId).products;
   const checks = computeReadinessChecks(merchant, registeredToolCount, products);
   const score = readinessScore(checks);
+  const lost = pointsLost(checks);
 
-  const funnelSteps = [
-    'catalog_search',
-    'product_view',
-    'add_to_order',
-    'checkout_prepare',
-    'checkout_blocked',
-  ] as const;
+  const captchaSource = getSource('presenc_captcha');
+  const block = merchant.checkoutRequiresCaptcha
+    ? {
+        kind: 'A CAPTCHA',
+        because: captchaSource.claim,
+        sourceId: 'presenc_captcha' as SourceId,
+      }
+    : merchant.checkoutRequiresAccount
+      ? {
+          kind: 'A forced account',
+          because:
+            'No published figure prices an account wall separately. It closes the same door as a CAPTCHA, so ReadyCounter charges it the same 24 points and says so.',
+          sourceId: 'presenc_captcha' as SourceId,
+        }
+      : null;
 
-  const funnelCounts = funnel.reduce(
-    (acc, e) => {
-      acc[e.step] = (acc[e.step] ?? 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  const maxFunnel = Math.max(1, ...funnelSteps.map((s) => funnelCounts[s] ?? 0));
+  const counts = funnel.reduce<Record<string, number>>((acc, e) => {
+    acc[e.step] = (acc[e.step] ?? 0) + 1;
+    return acc;
+  }, {});
+  const maxCount = Math.max(1, ...FUNNEL_STEPS.map((s) => counts[s] ?? 0));
+  const totalEvents = funnel.length;
 
   return (
-    <section className="readiness" aria-label="Merchant readiness dashboard">
-      <header className="readiness__header">
-        <div>
-          <h2>Agent readiness</h2>
-          <p>{merchant.storeName} — merchant view</p>
+    <section className="readiness" aria-label="Merchant readiness">
+      <div className="readiness__grid">
+        <ReadinessTape
+          storeName={merchant.storeName}
+          storeId={storeId}
+          checks={checks}
+          score={score}
+          block={block}
+        />
+
+        <div className="readiness__side">
+          <article className="slab">
+            <h3>What the {lost} lost points are</h3>
+            <p className="slab__lead">
+              Open any line on the tape. It prints the check, the arithmetic, the fix,
+              and the page the weight came from — publisher, date published, date read.
+              Nothing on the tape is a number typed into a component.
+            </p>
+          </article>
+
+          <article className="slab">
+            <h3>Change the store, watch the tape</h3>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={merchant.checkoutRequiresCaptcha}
+                onChange={(e) => setMerchantFlag('checkoutRequiresCaptcha', e.target.checked)}
+              />
+              <span>
+                CAPTCHA on checkout
+                <em>worth 24 pts — Presenc AI, read {captchaSource.accessed}</em>
+              </span>
+            </label>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={merchant.checkoutRequiresAccount}
+                onChange={(e) => setMerchantFlag('checkoutRequiresAccount', e.target.checked)}
+              />
+              <span>
+                Require an account
+                <em>same door, same 24 pts, no separate figure</em>
+              </span>
+            </label>
+          </article>
+
+          <article className="slab">
+            <h3>Every source this tape can cite</h3>
+            <p className="slab__lead">
+              {SOURCE_IDS.length} rows in <code>src/data/sources.ts</code>. A figure
+              with no row here cannot be printed anywhere in the product.
+            </p>
+            <ul className="register">
+              {SOURCE_IDS.map((id) => {
+                const src = getSource(id);
+                return (
+                  <li key={id}>
+                    <a href={src.url} target="_blank" rel="noreferrer">
+                      {src.publisher}
+                    </a>
+                    <b>{src.figure}</b>
+                    <span>
+                      published {src.published} · read {src.accessed}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </article>
+
+          <article className="slab">
+            <h3>Agent funnel · {totalEvents} events this session</h3>
+            {totalEvents === 0 ? (
+              <p className="slab__empty">
+                Nothing has happened yet. Add an item, or run a tool in the judge
+                harness, and the steps below start counting.
+              </p>
+            ) : null}
+            <ul className="funnel">
+              {FUNNEL_STEPS.map((step) => {
+                const count = counts[step] ?? 0;
+                return (
+                  <li key={step} className={count === 0 ? 'funnel__row funnel__row--zero' : 'funnel__row'}>
+                    <code>{step}</code>
+                    <span className="funnel__track">
+                      <span
+                        className="funnel__bar"
+                        style={{ width: `${Math.round((count / maxCount) * 100)}%` }}
+                      />
+                    </span>
+                    <span className="funnel__count">{count}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </article>
         </div>
-        <ScoreRing score={score} />
-      </header>
-
-      <ul className="readiness__checks">
-        {checks.map((check) => (
-          <li
-            key={check.id}
-            className={`readiness__check readiness__check--${check.status}`}
-          >
-            <div>
-              <strong>{check.label}</strong>
-              {check.stat && <span className="readiness__stat">{check.stat}</span>}
-            </div>
-            <p>{check.detail}</p>
-          </li>
-        ))}
-      </ul>
-
-      <div className="readiness__toggles">
-        <h3>Fix agent path (demo)</h3>
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={merchant.checkoutRequiresCaptcha}
-            onChange={(e) =>
-              setMerchantFlag('checkoutRequiresCaptcha', e.target.checked)
-            }
-          />
-          CAPTCHA on checkout (blocks ~24% of agents)
-        </label>
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={merchant.checkoutRequiresAccount}
-            onChange={(e) =>
-              setMerchantFlag('checkoutRequiresAccount', e.target.checked)
-            }
-          />
-          Require account login
-        </label>
       </div>
-
-      <div className="readiness__funnel">
-        <h3>Agent funnel (this session)</h3>
-        <ul className="funnel-strip">
-          {funnelSteps.map((step) => {
-            const count = funnelCounts[step] ?? 0;
-            const width = Math.round((count / maxFunnel) * 100);
-            return (
-              <li key={step} className="funnel-strip__row">
-                <code className="funnel-strip__step">{step}</code>
-                <div className="funnel-strip__bar-wrap">
-                  <div
-                    className="funnel-strip__bar"
-                    style={{ width: count === 0 ? '4%' : `${Math.max(width, 8)}%` }}
-                  />
-                </div>
-                <span className="funnel-strip__count">{count}</span>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-
-      <blockquote className="readiness__cite">
-        Shopify: Catalog-powered AI searches convert <strong>2×</strong> vs scraped
-        data. Adobe: AI traffic went from 38% worse to 42% better conversion when
-        stores became agent-ready (Mar 2025 → Mar 2026). See repo{' '}
-        <code>research.md</code>.
-      </blockquote>
     </section>
   );
 }

@@ -15,7 +15,7 @@ export function ToolActivityToast() {
 
   return (
     <div className="tool-toast" role="status" aria-live="polite">
-      <span className="tool-toast__pulse" />
+      <span className="tool-toast__mark" aria-hidden>&gt;</span>
       <strong>{activity.toolName}</strong>
       {activity.productId && (
         <span className="tool-toast__detail">{activity.productId}</span>

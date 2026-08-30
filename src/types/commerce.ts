@@ -59,4 +59,19 @@ export interface ReadinessCheck {
   status: ReadinessStatus;
   detail: string;
   stat?: string;
+  /** Points this store earned on this line, out of `maxPoints`. */
+  points?: number;
+  /** Points this line is worth in the 100-point budget. */
+  maxPoints?: number;
+  /**
+   * `measured` = the weight IS a figure a named source published.
+   * `allocated` = no source itemises this; the weight is ReadyCounter's call.
+   */
+  basis?: 'measured' | 'allocated';
+  /** Rows in `src/data/sources.ts` that back this line. */
+  sourceIds?: string[];
+  /** Why the line is worth this many points. */
+  rationale?: string;
+  /** The one change that moves this line. */
+  fix?: string;
 }
