@@ -1,6 +1,13 @@
 import { getStore } from '../data/stores';
+import { apiCreateRoom } from '../api/client';
+import {
+  toShopifyCatalog,
+  validateStoreCatalog,
+} from '../integrations/shopify-catalog';
 import { computeReadinessChecks, readinessScore } from '../lib/readiness';
-import { getShopStoreState } from '../store/shopStore';
+import { getShopStoreState, useShopStore } from '../store/shopStore';
+
+const TOOL_COUNT = 13;
 
 function jsonResult(value: unknown): string {
   return JSON.stringify(value, null, 2);
@@ -227,7 +234,7 @@ export async function registerWebMCPTools(
       execute: () => {
         const store = getShopStoreState();
         const def = getStore(store.storeId);
-        const checks = computeReadinessChecks(store.merchant, 10, def.products);
+        const checks = computeReadinessChecks(store.merchant, TOOL_COUNT, def.products);
         store.recordToolActivity({ toolName: 'get_readiness_score' });
         return jsonResult({
           storeId: store.storeId,
@@ -257,6 +264,74 @@ export async function registerWebMCPTools(
           checkoutRequiresCaptcha: store.merchant.checkoutRequiresCaptcha,
           checkoutRequiresAccount: store.merchant.checkoutRequiresAccount,
         });
+      },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: 'create_coshop_room',
+      description:
+        'Create a live API-backed co-shop room. Returns roomId and share URL — human and agent sync via /api/v1/rooms (deployed).',
+      inputSchema: {
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      },
+      execute: async () => {
+        const store = getShopStoreState();
+        const created = await apiCreateRoom(store.storeId, store.merchant);
+        store.recordToolActivity({ toolName: 'create_coshop_room' });
+        if (!created) {
+          return jsonResult({
+            ok: false,
+            error: 'Room API unavailable — deploy to Vercel or use copy co-shop link.',
+          });
+        }
+        const url = new URL(window.location.href);
+        url.searchParams.set('room', created.roomId);
+        url.searchParams.set('store', store.storeId);
+        useShopStore.setState({
+          order: created.state.order,
+          merchant: created.state.merchant,
+          funnel: created.state.funnel,
+        });
+        return jsonResult({
+          ok: true,
+          roomId: created.roomId,
+          url: url.toString(),
+        });
+      },
+    },
+    {
+      name: 'export_shopify_catalog',
+      description:
+        'Export active store catalog as Shopify Catalog JSON for agent feeds and partner integrations.',
+      inputSchema: {
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      },
+      execute: () => {
+        const store = getShopStoreState();
+        const feed = toShopifyCatalog(store.storeId);
+        store.recordToolActivity({ toolName: 'export_shopify_catalog' });
+        return jsonResult(feed);
+      },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: 'validate_catalog_feed',
+      description:
+        'Validate Shopify-shaped catalog feed for agent readiness (GTIN, variants, prices).',
+      inputSchema: {
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      },
+      execute: () => {
+        const store = getShopStoreState();
+        const result = validateStoreCatalog(store.storeId);
+        store.recordToolActivity({ toolName: 'validate_catalog_feed' });
+        return jsonResult({ storeId: store.storeId, ...result });
       },
       annotations: { readOnlyHint: true },
     },
@@ -348,7 +423,7 @@ export async function invokeToolLocally(
     }
     case 'get_readiness_score': {
       const def = getStore(store.storeId);
-      const checks = computeReadinessChecks(store.merchant, 10, def.products);
+      const checks = computeReadinessChecks(store.merchant, TOOL_COUNT, def.products);
       store.recordToolActivity({ toolName: name });
       return jsonResult({
         storeId: store.storeId,
@@ -365,6 +440,22 @@ export async function invokeToolLocally(
         checkoutRequiresCaptcha: store.merchant.checkoutRequiresCaptcha,
         checkoutRequiresAccount: store.merchant.checkoutRequiresAccount,
       });
+    }
+    case 'export_shopify_catalog': {
+      store.recordToolActivity({ toolName: name });
+      return jsonResult(toShopifyCatalog(store.storeId));
+    }
+    case 'validate_catalog_feed': {
+      store.recordToolActivity({ toolName: name });
+      return jsonResult({ storeId: store.storeId, ...validateStoreCatalog(store.storeId) });
+    }
+    case 'create_coshop_room': {
+      store.recordToolActivity({ toolName: name });
+      const created = await apiCreateRoom(store.storeId, store.merchant);
+      if (!created) {
+        return jsonResult({ ok: false, error: 'Room API unavailable' });
+      }
+      return jsonResult({ ok: true, roomId: created.roomId });
     }
     default:
       return jsonResult({ error: `Unknown tool: ${name}` });

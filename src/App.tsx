@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { DevToolPanel } from './components/DevToolPanel';
+import { IntegrationsPanel } from './components/IntegrationsPanel';
 import { hasSeenHero, LandingHero, markHeroSeen } from './components/LandingHero';
 import { OrderPanel } from './components/OrderPanel';
 import { ReadinessDashboard } from './components/ReadinessDashboard';
 import { ShopView } from './components/ShopView';
 import { StoreSwitcher } from './components/StoreSwitcher';
 import { ToolActivityToast } from './components/ToolActivityToast';
+import { useRoomSync } from './hooks/useRoomSync';
 import { registerWebMCPTools } from './webmcp/registerTools';
 import './App.css';
 
-type Tab = 'shop' | 'merchant';
+type Tab = 'shop' | 'merchant' | 'integrations';
 
 function App() {
   const [tab, setTab] = useState<Tab>('shop');
@@ -19,6 +21,8 @@ function App() {
     registered: string[];
     error: string | null;
   }>({ available: false, registered: [], error: null });
+
+  useRoomSync();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -85,6 +89,13 @@ function App() {
         >
           Merchant readiness
         </button>
+        <button
+          type="button"
+          className={`tabs__btn${tab === 'integrations' ? ' tabs__btn--active' : ''}`}
+          onClick={() => setTab('integrations')}
+        >
+          Integrations
+        </button>
       </nav>
 
       <main className="main-layout">
@@ -93,8 +104,10 @@ function App() {
             <ShopView />
             <OrderPanel />
           </>
+        ) : tab === 'merchant' ? (
+          <ReadinessDashboard registeredToolCount={webmcpStatus.registered.length || 13} />
         ) : (
-          <ReadinessDashboard registeredToolCount={webmcpStatus.registered.length || 10} />
+          <IntegrationsPanel />
         )}
       </main>
 
