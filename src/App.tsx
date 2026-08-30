@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { getSource } from './data/sources';
-import { DevToolPanel } from './components/DevToolPanel';
 import { IntegrationsPanel } from './components/IntegrationsPanel';
 import { hasSeenHero, LandingHero, markHeroSeen } from './components/LandingHero';
 import { OrderPanel } from './components/OrderPanel';
@@ -10,21 +9,15 @@ import { StoreSwitcher } from './components/StoreSwitcher';
 import { ToolActivityToast } from './components/ToolActivityToast';
 import { useRoomSync } from './hooks/useRoomSync';
 import { registerWebMCPTools } from './webmcp/registerTools';
+import { WEBMCP_TOOL_COUNT } from './webmcp/toolManifest';
 import './App.css';
 
 type Tab = 'shop' | 'merchant' | 'integrations';
 
-/**
- * Tools registered in src/webmcp/registerTools.ts. Used only when the browser
- * has no native WebMCP, so the readiness tape still scores a real surface.
- * scripts/verify-score.mjs fails the build if this drifts from the file.
- */
-const REGISTERED_TOOL_COUNT = 13;
-
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'shop', label: 'Shop + order' },
-  { id: 'merchant', label: 'Merchant readiness' },
-  { id: 'integrations', label: 'Integrations' },
+  { id: 'shop', label: 'Shop' },
+  { id: 'merchant', label: 'Readiness' },
+  { id: 'integrations', label: 'Connect' },
 ];
 
 /**
@@ -63,16 +56,17 @@ function App() {
     return () => controller.abort();
   }, []);
 
-  const startCoShop = () => {
-    markHeroSeen();
-    setShowHero(false);
-  };
-
   const openTab = (next: Tab) => {
     setTab(next);
     const url = new URL(window.location.href);
     url.searchParams.set('view', next);
     window.history.replaceState({}, '', url.toString());
+  };
+
+  const enterApp = (nextTab: Tab = 'shop') => {
+    markHeroSeen();
+    setShowHero(false);
+    openTab(nextTab);
   };
 
   if (showHero) {
@@ -83,12 +77,15 @@ function App() {
           <p className="tagline">an itemised readiness bill for agent shoppers</p>
         </header>
         <LandingHero
-          onStart={startCoShop}
-          registeredToolCount={webmcpStatus.registered.length || REGISTERED_TOOL_COUNT}
+          onShop={() => enterApp('shop')}
+          onReadiness={() => enterApp('merchant')}
+          registeredToolCount={webmcpStatus.registered.length || WEBMCP_TOOL_COUNT}
         />
       </div>
     );
   }
+
+  const toolCount = webmcpStatus.registered.length || WEBMCP_TOOL_COUNT;
 
   return (
     <div className="app">
@@ -103,15 +100,15 @@ function App() {
           className={`webmcp-badge${webmcpStatus.available ? ' webmcp-badge--live' : ''}`}
         >
           {webmcpStatus.available ? (
-            <>WebMCP live · {webmcpStatus.registered.length} tools</>
+            <>Assistant tools active · {toolCount} connected</>
           ) : (
-            <>WebMCP off — use judge harness below</>
+            <>Assistant tools ready · open Connect to test</>
           )}
         </div>
         <StoreSwitcher />
       </header>
 
-      <nav className="tabs" aria-label="Store views">
+      <nav className="tabs" aria-label="Main navigation">
         {TABS.map((t) => (
           <button
             key={t.id}
@@ -132,15 +129,12 @@ function App() {
             <OrderPanel />
           </>
         ) : tab === 'merchant' ? (
-          <ReadinessDashboard
-            registeredToolCount={webmcpStatus.registered.length || REGISTERED_TOOL_COUNT}
-          />
+          <ReadinessDashboard registeredToolCount={toolCount} />
         ) : (
           <IntegrationsPanel />
         )}
       </main>
 
-      <DevToolPanel />
       <ToolActivityToast />
 
       <footer className="app-footer">
@@ -149,13 +143,15 @@ function App() {
           <code>src/data/sources.ts</code> and a quoted sentence in{' '}
           <code>research.md</code>. Two of the five weights are a published share of
           abandoned agent carts ({getSource('presenc_stale_feed').figure} stale feed,{' '}
-          {getSource('presenc_captcha').figure} verification wall — {' '}
+          {getSource('presenc_captcha').figure} verification wall —{' '}
           {getSource('presenc_captcha').publisher}, read{' '}
           {getSource('presenc_captcha').accessed}). The other three we allocated
           ourselves, and the tape says so on the line rather than in a footnote.
         </p>
         <p>
-          <code>prepare_checkout</code> validates an order and never charges a card.
+          Humans confirm payment in the browser. Shopping assistants search, add to
+          the order and prepare checkout — <code>prepare_checkout</code> never
+          charges a card.
         </p>
       </footer>
     </div>

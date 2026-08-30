@@ -15,7 +15,7 @@ API-first agent commerce. WebMCP tools, REST, and Shopify Catalog feeds share on
 ### Create live room (curl)
 
 ```bash
-curl -sX POST https://YOUR_URL/api/v1/rooms \
+curl -sX POST https://tooltruth-webmcp.vercel.app/api/v1/rooms \
   -H 'Content-Type: application/json' \
   -d '{"storeId":"ember-oak"}' | jq
 ```
@@ -25,16 +25,25 @@ Open returned URL: `?room=room-xxx&store=ember-oak`
 ### Catalog (Shopify partner path)
 
 ```bash
-curl -s 'https://YOUR_URL/api/v1/catalog?storeId=neon-matcha' | jq '.shopify_catalog'
+curl -s 'https://tooltruth-webmcp.vercel.app/api/v1/catalog?storeId=neon-matcha' | jq '.shopify_catalog'
 ```
 
-## WebMCP tools (13)
+## WebMCP tools (16)
 
 Commerce: `search_catalog` · `get_product` · `add_to_order` · `update_line_quantity` · `remove_line` · `get_order` · `get_delivery_quote` · `prepare_checkout`
 
-Merchant: `get_readiness_score` · `get_merchant_config` · `validate_catalog_feed` · `export_shopify_catalog`
+Merchant: `get_readiness_score` · `get_merchant_config` · `validate_catalog_feed` · `export_shopify_catalog` · `apply_readiness_fix` · `simulate_agent_journey`
 
-Platform: `create_coshop_room`
+Platform: `create_coshop_room` · `import_shopify_catalog`
+
+## API extras
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/v1/tools` | GET | WebMCP tool manifest |
+| `/api/v1/stores/custom` | POST | Register custom catalog (server memory) |
+| `/api/v1/rooms/:id/events` | GET | SSE room sync |
+| `/openapi.yaml` | GET | OpenAPI 3.1 spec |
 
 ## Architecture
 

@@ -1,8 +1,9 @@
-import { getStore } from '../data/stores';
+import { useMemo } from 'react';
 import { getSource, SOURCE_IDS } from '../data/sources';
 import type { SourceId } from '../data/sources';
 import { computeReadinessChecks, pointsLost, readinessScore } from '../lib/readiness';
 import { useShopStore } from '../store/shopStore';
+import { AutopilotPanel } from './AutopilotPanel';
 import { ReadinessTape } from './ReadinessTape';
 
 interface ReadinessDashboardProps {
@@ -23,7 +24,18 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
   const setMerchantFlag = useShopStore((s) => s.setMerchantFlag);
   const funnel = useShopStore((s) => s.funnel);
 
-  const products = getStore(storeId).products;
+  /*
+   * `useShopStore((s) => s.getCatalogProducts())` returns a NEW array on every
+   * call, so useSyncExternalStore sees a new snapshot each pass and React tears
+   * the tab down with error #185. Subscribe to the state the catalog is derived
+   * from, and call the getter during render instead.
+   */
+  const feedPricePatches = useShopStore((s) => s.feedPricePatches);
+  const getCatalogProducts = useShopStore((s) => s.getCatalogProducts);
+  const products = useMemo(
+    () => getCatalogProducts(),
+    [getCatalogProducts, storeId, feedPricePatches],
+  );
   const checks = computeReadinessChecks(merchant, registeredToolCount, products);
   const score = readinessScore(checks);
   const lost = pointsLost(checks);
@@ -71,6 +83,8 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
               Nothing on the tape is a number typed into a component.
             </p>
           </article>
+
+          <AutopilotPanel toolCount={registeredToolCount} />
 
           <article className="slab">
             <h3>Change the store, watch the tape</h3>

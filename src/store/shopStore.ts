@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { DEFAULT_STORE_ID, getStore, storeIdFromLocation } from '../data/stores';
-import { clearShareParam, readShareFromLocation } from '../lib/shareSession';
+import { applySharePayload, clearShareParam, decodeSharePayload, hydrateShareAtBoot } from '../lib/shareSession';
+import type { AutopilotFix } from '../lib/autopilot';
+import { applyAutopilotFix, previewFixImpact } from '../lib/autopilot';
+import { computeReadinessChecks, readinessScore } from '../lib/readiness';
+import { WEBMCP_TOOL_COUNT } from '../webmcp/toolManifest';
 import type {
   FunnelEvent,
   FunnelStep,
@@ -17,8 +21,19 @@ function lineTotal(line: OrderLine, products: Product[]): number {
   return (product?.price ?? 0) * line.quantity;
 }
 
-function productsFor(storeId: string): Product[] {
-  return getStore(storeId).products;
+function catalogProducts(
+  storeId: string,
+  feedPricePatches: Record<string, number>,
+): Product[] {
+  return getStore(storeId).products.map((product) =>
+    feedPricePatches[product.id] !== undefined
+      ? { ...product, feedPrice: feedPricePatches[product.id] }
+      : product,
+  );
+}
+
+function productsFor(storeId: string, feedPricePatches: Record<string, number>): Product[] {
+  return catalogProducts(storeId, feedPricePatches);
 }
 
 export interface ShopStore {
@@ -27,8 +42,10 @@ export interface ShopStore {
   order: OrderState;
   funnel: FunnelEvent[];
   lastToolActivity: ToolActivity | null;
+  feedPricePatches: Record<string, number>;
 
   switchStore: (storeId: string) => void;
+  getCatalogProducts: () => Product[];
   searchCatalog: (filters: {
     query?: string;
     category?: string;
@@ -68,13 +85,21 @@ export interface ShopStore {
     key: 'checkoutRequiresCaptcha' | 'checkoutRequiresAccount',
     value: boolean,
   ) => void;
+  applyReadinessFix: (fixId: AutopilotFix) => {
+    ok: true;
+    fixId: AutopilotFix;
+    scoreBefore: number;
+    scoreAfter: number;
+  };
   recordFunnel: (step: FunnelStep, actor: 'human' | 'agent', detail?: string) => void;
   recordToolActivity: (activity: Omit<ToolActivity, 'timestamp'>) => void;
   clearToolActivity: () => void;
 }
 
+const bootShare = typeof window !== 'undefined' ? hydrateShareAtBoot() : null;
 const initialStoreId =
-  typeof window !== 'undefined' ? (storeIdFromLocation() ?? DEFAULT_STORE_ID) : DEFAULT_STORE_ID;
+  bootShare?.storeId ??
+  (typeof window !== 'undefined' ? (storeIdFromLocation() ?? DEFAULT_STORE_ID) : DEFAULT_STORE_ID);
 const initialStore = getStore(initialStoreId);
 
 const storeLogic = (
@@ -82,10 +107,13 @@ const storeLogic = (
   get: () => ShopStore,
 ): ShopStore => ({
   storeId: initialStoreId,
-  merchant: { ...initialStore.merchant },
-  order: { lines: [], currency: 'USD' },
-  funnel: [],
+  merchant: bootShare ? { ...bootShare.merchant } : { ...initialStore.merchant },
+  order: bootShare?.order ?? { lines: [], currency: 'USD' },
+  funnel: bootShare?.funnel ?? [],
   lastToolActivity: null,
+  feedPricePatches: {},
+
+  getCatalogProducts: () => catalogProducts(get().storeId, get().feedPricePatches),
 
   switchStore: (storeId) => {
     const def = getStore(storeId);
@@ -95,6 +123,7 @@ const storeLogic = (
       order: { lines: [], currency: 'USD' },
       funnel: [],
       lastToolActivity: null,
+      feedPricePatches: {},
     }));
     const url = new URL(window.location.href);
     url.searchParams.set('store', def.id);
@@ -103,7 +132,7 @@ const storeLogic = (
   },
 
   searchCatalog: ({ query, category, max_price, in_stock_only }) => {
-    const products = productsFor(get().storeId);
+    const products = productsFor(get().storeId, get().feedPricePatches);
     return products.filter((product) => {
       if (category && product.category !== category) return false;
       if (max_price !== undefined && product.price > max_price) return false;
@@ -117,10 +146,11 @@ const storeLogic = (
     });
   },
 
-  getProduct: (id) => productsFor(get().storeId).find((p) => p.id === id) ?? null,
+  getProduct: (id) =>
+    productsFor(get().storeId, get().feedPricePatches).find((p) => p.id === id) ?? null,
 
   addToOrder: (productId, quantity, actor) => {
-    const products = productsFor(get().storeId);
+    const products = productsFor(get().storeId, get().feedPricePatches);
     const product = products.find((p) => p.id === productId);
     if (!product) {
       return { ok: false as const, error: `Product not found: ${productId}` };
@@ -191,8 +221,8 @@ const storeLogic = (
   },
 
   getOrder: () => {
-    const { order, storeId } = get();
-    const products = productsFor(storeId);
+    const { order, storeId, feedPricePatches } = get();
+    const products = productsFor(storeId, feedPricePatches);
     const subtotal = order.lines.reduce((sum, line) => sum + lineTotal(line, products), 0);
     return {
       ...order,
@@ -222,7 +252,7 @@ const storeLogic = (
         ok: false,
         blocked: true,
         reason:
-          'Checkout blocked: CAPTCHA required. 24% of agent carts abandon here (Presenc AI 2026). Toggle off in Merchant → Readiness.',
+          'Checkout blocked: CAPTCHA required. 24% of agent carts abandon here (Presenc AI 2026). Clear it on the Readiness tab and the tape reprints 24 points higher.',
       };
     }
     if (merchant.checkoutRequiresAccount) {
@@ -245,6 +275,49 @@ const storeLogic = (
     set((state) => ({
       merchant: { ...state.merchant, [key]: value },
     }));
+  },
+
+  applyReadinessFix: (fixId) => {
+    const state = get();
+    const products = catalogProducts(state.storeId, state.feedPricePatches);
+    const impact = previewFixImpact(
+      fixId,
+      state.merchant,
+      products,
+      WEBMCP_TOOL_COUNT,
+    );
+
+    if (fixId === 'disable_captcha') {
+      set((s) => ({
+        merchant: { ...s.merchant, checkoutRequiresCaptcha: false },
+      }));
+    } else if (fixId === 'disable_account_wall') {
+      set((s) => ({
+        merchant: { ...s.merchant, checkoutRequiresAccount: false },
+      }));
+    } else if (fixId === 'sync_feed_prices') {
+      const patches = { ...state.feedPricePatches };
+      for (const product of products) {
+        if (product.feedPrice !== undefined && product.feedPrice !== product.price) {
+          patches[product.id] = product.price;
+        }
+      }
+      set(() => ({ feedPricePatches: patches }));
+    }
+
+    const afterState = get();
+    const afterProducts = catalogProducts(afterState.storeId, afterState.feedPricePatches);
+    const applied = applyAutopilotFix(fixId, afterState.merchant, afterProducts);
+    const scoreAfter = readinessScore(
+      computeReadinessChecks(applied.merchant, WEBMCP_TOOL_COUNT, afterProducts),
+    );
+
+    return {
+      ok: true as const,
+      fixId,
+      scoreBefore: impact.before,
+      scoreAfter,
+    };
   },
 
   recordFunnel: (step, actor, detail) => {
@@ -273,14 +346,22 @@ export const useShopStore = create<ShopStore>()(
       merchant: state.merchant,
       order: state.order,
       funnel: state.funnel,
+      feedPricePatches: state.feedPricePatches,
     }),
     onRehydrateStorage: () => (state) => {
-      const shared = readShareFromLocation();
-      if (!shared || !state) return;
+      const co =
+        typeof window !== 'undefined'
+          ? new URLSearchParams(window.location.search).get('co')
+          : null;
+      if (!co || !state) return;
+      const shared = decodeSharePayload(co);
+      if (!shared) return;
+      applySharePayload(shared);
       state.storeId = shared.storeId;
       state.merchant = shared.merchant;
       state.order = shared.order;
       state.funnel = shared.funnel;
+      state.feedPricePatches = {};
       clearShareParam();
     },
   }),

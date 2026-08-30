@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { apiGetRoom, apiPatchRoom } from '../api/client';
+import type { RoomState } from '../server/room-store';
 import { useShopStore } from '../store/shopStore';
 
 function roomIdFromUrl(): string | null {
@@ -10,15 +11,15 @@ function roomIdFromUrl(): string | null {
 export function useRoomSync() {
   const roomId = roomIdFromUrl();
   const syncing = useRef(false);
+  const sseRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
     if (!roomId) return;
 
     let cancelled = false;
+    let pollInterval: number | null = null;
 
-    const pull = async () => {
-      const remote = await apiGetRoom(roomId);
-      if (!remote || cancelled) return;
+    const applyRemote = (remote: RoomState) => {
       syncing.current = true;
       useShopStore.setState({
         storeId: remote.storeId,
@@ -29,8 +30,39 @@ export function useRoomSync() {
       syncing.current = false;
     };
 
+    const pull = async () => {
+      const remote = await apiGetRoom(roomId);
+      if (!remote || cancelled) return;
+      applyRemote(remote);
+    };
+
+    const startPolling = () => {
+      if (pollInterval !== null) return;
+      pollInterval = window.setInterval(() => void pull(), 3000);
+    };
+
+    const eventsUrl = `/api/v1/rooms/${encodeURIComponent(roomId)}/events`;
+
+    try {
+      const es = new EventSource(eventsUrl);
+      sseRef.current = es;
+      es.addEventListener('snapshot', (ev) => {
+        const data = JSON.parse((ev as MessageEvent).data) as { state: RoomState };
+        if (!cancelled) applyRemote(data.state);
+      });
+      es.addEventListener('patch', (ev) => {
+        const data = JSON.parse((ev as MessageEvent).data) as { state: RoomState };
+        if (!cancelled) applyRemote(data.state);
+      });
+      es.onerror = () => {
+        es.close();
+        startPolling();
+      };
+    } catch {
+      startPolling();
+    }
+
     void pull();
-    const interval = window.setInterval(() => void pull(), 3000);
 
     const unsub = useShopStore.subscribe((state) => {
       if (syncing.current || !roomId) return;
@@ -44,7 +76,8 @@ export function useRoomSync() {
 
     return () => {
       cancelled = true;
-      window.clearInterval(interval);
+      sseRef.current?.close();
+      if (pollInterval !== null) window.clearInterval(pollInterval);
       unsub();
     };
   }, [roomId]);

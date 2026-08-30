@@ -183,9 +183,9 @@ export function computeReadinessChecks(
     ),
     line(
       'webmcp_tools',
-      'Structured tool surface',
+      'Structured tools an assistant can call',
       20 * (Math.min(registeredToolCount, TOOL_FLOOR) / TOOL_FLOOR),
-      `${registeredToolCount} WebMCP tools registered against a floor of ${TOOL_FLOOR}. Tools are the catalog-vs-scrape bet made explicit: the agent asks a typed question instead of reading the page.`,
+      `${registeredToolCount} structured tools connected, against a floor of ${TOOL_FLOOR}. Tools are the catalog-vs-scrape bet made explicit: the assistant asks a typed question instead of reading the page.`,
       `${registeredToolCount} tools`,
       registeredToolCount >= TOOL_FLOOR
         ? 'Nothing to fix.'

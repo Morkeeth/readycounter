@@ -20,14 +20,14 @@ const SAMPLE_CALLS = [
     args: { product_id: '__FIRST__', quantity: 1 },
   },
   {
-    label: 'get_order',
-    tool: 'get_order',
+    label: 'simulate_agent_journey',
+    tool: 'simulate_agent_journey',
     args: {},
   },
   {
-    label: 'prepare_checkout',
-    tool: 'prepare_checkout',
-    args: {},
+    label: 'apply_readiness_fix: disable_captcha',
+    tool: 'apply_readiness_fix',
+    args: { fix: 'disable_captcha' },
   },
 ] as const;
 
@@ -47,8 +47,12 @@ export function DevToolPanel() {
 
   return (
     <details className="dev-panel">
-      <summary>Judge harness — invoke WebMCP tools without browser flag</summary>
+      <summary>Agent tool console — test WebMCP tools without the browser flag</summary>
       <div className="dev-panel__body">
+        <p className="dev-panel__hint">
+          Same tools your shopping assistant uses in Chrome. Run calls here to verify catalog,
+          order sync, and readiness before going live.
+        </p>
         <div className="dev-panel__samples">
           {SAMPLE_CALLS.map((sample) => (
             <button

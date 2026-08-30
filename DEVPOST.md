@@ -5,18 +5,19 @@ Every figure below resolves to a row in [`src/data/sources.ts`](./src/data/sourc
 and a quoted sentence in [`research.md`](./research.md). `npm run verify` fails
 the build if a figure loses its source.
 
-**Oscar: the only unfilled fields are the two live URLs.** Everything else is final.
+**Oscar: this is final — nothing left to fill in.** Deploy is live; the remaining
+clicks are the video and the Devpost submit.
 
 ---
 
 ## Live demo
 
 ```text
-https://YOUR-APP.vercel.app
-https://YOUR-APP.vercel.app/?view=merchant&store=neon-matcha
+https://tooltruth-webmcp.vercel.app
+https://tooltruth-webmcp.vercel.app/?view=merchant&store=neon-matcha
 ```
 
-_(Replace with the Vercel URL after deploy. `vercel.json` is committed.)_
+_Live. Second link opens the second merchant's readiness bill directly._
 
 ---
 
@@ -43,7 +44,7 @@ scores a storefront out of 100 for agent shoppers and prints the score as an
 fix, and the page the weight came from — publisher, date published, date read.
 Two of the five weights are published shares of abandoned agent carts; the other
 three are ours, and the receipt says so on the line rather than in a footnote.
-The store itself exposes **13 WebMCP tools**, so a human and an agent co-edit one
+The store itself exposes **16 WebMCP tools**, so a human and an agent co-edit one
 order in one tab, and `prepare_checkout` never charges a card.
 
 ---
@@ -75,12 +76,12 @@ Merchants are told agents are coming. Nobody tells them **which door is locked**
    stale price feed and **24** for a walled checkout, because those are the
    shares Presenc AI publishes. The remaining **50** we allocated ourselves, and
    every surface that prints the score says so.
-3. **Co-shop.** 13 WebMCP tools; a human and an agent edit the same order in the
+3. **Co-shop.** 16 WebMCP tools; a human and an agent edit the same order in the
    same tab. `prepare_checkout` validates and returns totals — it never charges.
 4. **Two merchants, two failure modes.** Ember & Oak Coffee scores **70/100**,
    blocked by a CAPTCHA. Neon Matcha Lab scores **57/100**, blocked by a forced
    account with a catalog agents mostly cannot identify (**5/20**).
-5. **Judge harness.** Invoke every tool without `chrome://flags`.
+5. **Agent tool console.** Under **Connect** — invoke every tool without `chrome://flags`.
 6. **Instant use.** No signup. Order survives refresh. `?co=` share links,
    live API rooms on Vercel, `?view=` deep-links a tab.
 
@@ -102,7 +103,7 @@ its own audit:
   **70 to 94**. A delta of exactly **24**, which is Presenc AI's 24%.
   `scripts/verify-readiness.mjs` fails the build if it is ever anything else.
 
-### WebMCP tools (13)
+### WebMCP tools (16)
 
 | Tool | Role |
 |------|------|
@@ -119,6 +120,9 @@ its own audit:
 | `validate_catalog_feed` | Feed issues an agent would hit |
 | `export_shopify_catalog` | Shopify-shaped catalog export |
 | `create_coshop_room` | Live shared room via the REST API |
+| `apply_readiness_fix` | Apply a sandbox fix and reprint the bill |
+| `simulate_agent_journey` | Walk the whole path and report where it breaks |
+| `import_shopify_catalog` | Bring your own catalog and score it |
 
 ### Fork path
 
@@ -157,10 +161,11 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 
 1. **The tape** — landing screen shows Ember & Oak at **70/100** with a
    CHECKOUT VOID stamp. Click any line: arithmetic, fix, source, dates.
-2. **Co-shop** — *Open the counter* → add an item → judge harness →
-   `add_to_order`, then `get_order`. One order, `HUMAN` and `AGENT` chips.
+2. **Co-shop** — *Start shopping* → add an item → **Connect → Agent tool
+   console** → `add_to_order`, then `get_order`. One order, `HUMAN`/`AGENT` chips.
 3. **The refusal** — *Prepare checkout*. It refuses and cites Presenc AI.
-4. **The fix** — Merchant readiness → uncheck CAPTCHA → **70 → 94**, delta 24.
+4. **The fix** — **Readiness** → uncheck CAPTCHA (or use Readiness autopilot) →
+   **70 → 94**, a delta of exactly 24.
 5. **Second merchant** — `?store=neon-matcha` → **57/100**, account wall, 5/20 catalog.
 6. **The audit** — `npm run verify`, or the *Every source this tape can cite*
    panel. Try changing a weight in `src/lib/readiness.ts` and re-run verify.
@@ -168,7 +173,7 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 ### Optional: native WebMCP
 
 Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → the header badge reads
-**WebMCP live · 13 tools**.
+**Assistant tools active · 16 connected**.
 
 ---
 
@@ -194,4 +199,5 @@ Full one-take script with the exact numbers: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md
 - Score derivation + every weight: [`research.md`](./research.md)
 - Fork guide: [`FORK.md`](./FORK.md)
 - Screenshots (1440px + 390px): [`docs/shots/`](./docs/shots/)
+- Design rulings + open decisions: [`DECISIONS.md`](./DECISIONS.md)
 - Challenge: https://webmcp.devpost.com/

@@ -10,12 +10,14 @@
  *   4  every register URL is quoted in research.md
  *   5  a MEASURED weight equals the figure its source publishes
  *      (26 pts <-> "26%") — this is the one that catches silent drift
- *   6  the tool-count fallback in App.tsx equals the tools actually registered
+ *   6  the tool manifest and registerTools.ts name the same set of tools
+ *
+ *   8  no component calls a store getter inside a selector (React #185)
  *
  * Run: node scripts/verify-score.mjs
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -31,7 +33,7 @@ function check(label, ok, got) {
 
 const sourcesSrc = read('src/data/sources.ts');
 const readinessSrc = read('src/lib/readiness.ts');
-const appSrc = read('src/App.tsx');
+const manifestSrc = read('src/webmcp/toolManifest.ts');
 const toolsSrc = read('src/webmcp/registerTools.ts');
 const researchMd = read('research.md');
 
@@ -125,16 +127,32 @@ for (const w of weightBlocks.filter((x) => x.basis === 'measured')) {
   );
 }
 
-/* ---- 6 · the tool fallback matches the tools that exist ---- */
+/* ---- 6 · the manifest matches the tools that actually register ---- */
 
 const registered = new Set(
   [...toolsSrc.matchAll(/name:\s*'([a-z0-9_]+)'/g)].map((m) => m[1]),
 );
-const fallback = Number(appSrc.match(/REGISTERED_TOOL_COUNT = (\d+);/)?.[1]);
+const manifestNames = new Set(
+  [...(manifestSrc.match(/WEBMCP_TOOL_NAMES = \[([\s\S]*?)\]/)?.[1] ?? '').matchAll(
+    /'([a-z0-9_]+)'/g,
+  )].map((m) => m[1]),
+);
+const declaredCount = Number(manifestSrc.match(/WEBMCP_TOOL_COUNT = (\d+);/)?.[1]);
+
 check(
-  'App.tsx tool fallback equals tools in registerTools.ts',
-  registered.size === fallback,
-  `App.tsx ${fallback} vs registerTools.ts ${registered.size}`,
+  'the manifest count equals the names it lists',
+  declaredCount === manifestNames.size,
+  `WEBMCP_TOOL_COUNT ${declaredCount} vs ${manifestNames.size} names`,
+);
+
+const notRegistered = [...manifestNames].filter((n) => !registered.has(n));
+const notListed = [...registered].filter((n) => !manifestNames.has(n));
+check(
+  'every tool in the manifest actually registers, and vice versa',
+  notRegistered.length === 0 && notListed.length === 0,
+  notRegistered.length || notListed.length
+    ? `manifest-only: ${notRegistered.join(', ') || 'none'} · code-only: ${notListed.join(', ') || 'none'}`
+    : `${registered.size} tools match`,
 );
 
 /* ---- 7 · no score literal hardcoded into a component ---- */
@@ -144,6 +162,38 @@ check(
   'landing screen scores the live store, not a literal',
   landing.includes('readinessScore(checks)') && !/landing-hero__score/.test(landing),
   'computed at render',
+);
+
+/* ---- 8 · no store getter called inside a selector ---- */
+
+/*
+ * This bug has now shipped twice, from two different authors, and both times it
+ * white-screened a whole tab while every test stayed green — the verify scripts
+ * drive the store directly and never render a component.
+ *
+ *   useShopStore((s) => s.getOrder())
+ *   useShopStore((s) => s.getCatalogProducts())
+ *
+ * Each call builds a fresh object, so useSyncExternalStore sees a new snapshot
+ * every pass and React throws #185 (maximum update depth). Select the getter,
+ * call it during render. This check makes the pattern un-mergeable.
+ */
+const componentFiles = readdirSync(join(root, 'src/components')).filter((f) => f.endsWith('.tsx'));
+const offenders = [];
+const stripComments = (src) =>
+  src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+
+for (const f of componentFiles) {
+  // Comments describing the bug are not the bug.
+  const src = stripComments(read(`src/components/${f}`));
+  for (const m of src.matchAll(/useShopStore\(\s*\(\s*\w+\s*\)\s*=>\s*\w+\.(\w+)\(/g)) {
+    offenders.push(`${f}: ${m[1]}()`);
+  }
+}
+check(
+  'no component calls a store getter inside a selector (React #185)',
+  offenders.length === 0,
+  offenders.length ? offenders.join(' · ') : `${componentFiles.length} components clean`,
 );
 
 console.log(

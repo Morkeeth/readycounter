@@ -1,4 +1,5 @@
 import type { FunnelEvent, MerchantConfig, OrderState } from '../types/commerce';
+import { publishRoom } from './room-events';
 
 export interface RoomState {
   storeId: string;
@@ -42,6 +43,7 @@ export function patchRoom(
     updatedAt: Date.now(),
   };
   memory.set(roomId, next);
+  publishRoom(roomId, next);
   return next;
 }
 

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getStore } from '../../src/data/stores';
 import { toShopifyCatalog } from '../../src/integrations/shopify-catalog';
+import { resolveStore } from '../../src/server/resolve-store';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
@@ -9,7 +9,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const storeId = String(req.query.storeId ?? 'ember-oak');
-  const store = getStore(storeId);
+  const store = resolveStore(storeId);
   const shopify = toShopifyCatalog(storeId);
 
   return res.status(200).json({

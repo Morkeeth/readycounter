@@ -23,6 +23,7 @@ const root = path.join(__dirname, '..');
 const script = `
 import { STORES, STORE_IDS } from './src/data/stores.ts';
 import { computeReadinessChecks, readinessScore } from './src/lib/readiness.ts';
+import { WEBMCP_TOOL_COUNT } from './src/webmcp/toolManifest.ts';
 
 // Matches REGISTERED_TOOL_COUNT in App.tsx; verify-score.mjs pins that to the
 // tools actually registered in src/webmcp/registerTools.ts.

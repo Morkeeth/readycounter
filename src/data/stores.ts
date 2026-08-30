@@ -204,7 +204,7 @@ export const STORES: Record<string, StoreDefinition> = {
   'ember-oak': {
     id: 'ember-oak',
     name: 'Ember & Oak Coffee',
-    tagline: 'Specialty coffee · CAPTCHA blocks agents by default',
+    tagline: 'Small-batch coffee · shipped fresh weekly',
     products: EMBER_OAK_PRODUCTS,
     merchant: {
       storeName: 'Ember & Oak Coffee',
@@ -216,7 +216,7 @@ export const STORES: Record<string, StoreDefinition> = {
   'neon-matcha': {
     id: 'neon-matcha',
     name: 'Neon Matcha Lab',
-    tagline: 'Ceremonial matcha · account wall blocks agents',
+    tagline: 'Ceremonial matcha from Uji · barista blends',
     products: NEON_MATCHA_PRODUCTS,
     merchant: {
       storeName: 'Neon Matcha Lab',
@@ -230,14 +230,49 @@ export const STORES: Record<string, StoreDefinition> = {
 export const DEFAULT_STORE_ID = 'ember-oak';
 export const STORE_IDS = Object.keys(STORES);
 
+const CUSTOM_STORAGE_KEY = 'readycounter-custom-stores';
+
+function loadCustomStores(): Record<string, StoreDefinition> {
+  if (typeof localStorage === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(CUSTOM_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, StoreDefinition>) : {};
+  } catch {
+    return {};
+  }
+}
+
+let customStores: Record<string, StoreDefinition> = loadCustomStores();
+
+function persistCustomStores(): void {
+  if (typeof localStorage === 'undefined') return;
+  localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(customStores));
+}
+
+export function registerCustomStore(def: StoreDefinition): void {
+  customStores[def.id] = def;
+  persistCustomStores();
+}
+
+export function listStoreIds(): string[] {
+  return [...STORE_IDS, ...Object.keys(customStores)];
+}
+
 export function getStore(id?: string | null): StoreDefinition {
-  const key = id && STORES[id] ? id : DEFAULT_STORE_ID;
-  return STORES[key];
+  const key = id ?? DEFAULT_STORE_ID;
+  if (STORES[key]) return STORES[key];
+  if (customStores[key]) return customStores[key];
+  return STORES[DEFAULT_STORE_ID];
 }
 
 export function storeIdFromLocation(): string | null {
   const id = new URLSearchParams(window.location.search).get('store');
-  return id && STORES[id] ? id : null;
+  if (!id) return null;
+  return STORES[id] || customStores[id] ? id : null;
+}
+
+export function isBuiltinStore(id: string): boolean {
+  return id in STORES;
 }
 
 /** Legacy exports for scripts importing catalog.ts */

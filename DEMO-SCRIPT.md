@@ -11,8 +11,9 @@ Beats do not overlap. Nothing needs a browser flag.
 ```bash
 npm install
 npm run build && npm run verify     # both must exit 0
-npm run preview                     # or open the deployed URL
 ```
+
+Film the live URL — **https://tooltruth-webmcp.vercel.app** — or `npm run preview`.
 
 Then, in the browser you will film:
 
@@ -66,12 +67,12 @@ carry a GTIN, and the fix names the SKU count to fix.
 
 ## 0:55 – 1:20 · Co-shop — one order, two actors
 
-**Do:** click **Open the counter**, land on **Shop + order**.
+**Do:** click **Start shopping**, land on the **Shop** tab.
 
 1. Click **Add to order** on *House Espresso Blend*. It appears in the order
    panel with a solid `HUMAN` chip.
-2. Open **Judge harness** at the bottom → click **add_to_order: first SKU**,
-   then **get_order**.
+2. Go to **Connect** → **Agent tool console** → click **add_to_order: first SKU**,
+   then **get_order**, then click **Shop** to come back.
 
 **On screen:** the same order, now with a dashed `AGENT` chip on the second
 line, and the raw tool JSON in the harness output.
@@ -84,7 +85,7 @@ line, and the raw tool JSON in the harness output.
 
 ## 1:20 – 1:45 · The refusal is legible, not a dead end
 
-**On screen:** still Shop + order. The order panel already shows a red
+**On screen:** back on **Shop**. The order panel already shows a red
 **WILL VOID** panel naming the CAPTCHA and citing Presenc AI.
 
 **Do:** click **Prepare checkout (human confirms)**. It refuses, and says why.
@@ -97,7 +98,8 @@ line, and the raw tool JSON in the harness output.
 
 ## 1:45 – 2:10 · Fix it, and watch the bill reprint
 
-**Do:** go to **Merchant readiness** → uncheck **CAPTCHA on checkout**.
+**Do:** go to **Readiness** → uncheck **CAPTCHA on checkout** (or press **Apply
+fix** in Readiness autopilot, which does the same thing and says it is a sandbox).
 
 **On screen:** the tape reprints. **70 → 94.** The VOID stamp disappears. The
 `Checkout path` line goes `0/24` → `24/24`.
@@ -147,7 +149,7 @@ Read from `npm run verify`, 2026-08-31. If any of these differ when you film,
 | Ember & Oak, CAPTCHA off | **94 / 100** | `verify-readiness.mjs` |
 | The delta | **24**, = Presenc AI's 24% | `verify-readiness.mjs` |
 | Neon Matcha | **57 / 100**, account wall | `verify-stores.mjs` |
-| WebMCP tools registered | **13** | `verify-score.mjs` |
+| WebMCP tools registered | **16** | `verify-score.mjs` |
 | Sources on file | **8** | `verify-score.mjs` |
 | GTIN coverage, Ember & Oak | **7 / 8** | `verify-readiness.mjs` |
 
@@ -158,7 +160,7 @@ Read from `npm run verify`, 2026-08-31. If any of these differ when you film,
 1. Fresh browser, no context: does the landing screen explain the product
    without you saying anything?
 2. Can you add an item and see it in the order in under ten seconds?
-3. Does the judge harness update the same order without reading any docs?
+3. Does the **Connect → Agent tool console** update the same order without docs?
 4. Does unchecking the CAPTCHA visibly move 70 → 94?
 5. Does Neon Matcha show a **different score and a different blocker**?
 6. Can you say the pitch in one sentence without using the letters M-C-P?
