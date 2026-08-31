@@ -1,0 +1,75 @@
+{
+  "at": "2026-08-31T18:22:30.732Z",
+  "crawlCrawled": 78,
+  "ucpAvailable": 81,
+  "ucpAndCrawl": 76,
+  "ucpGtinWhereCrawlZero": 11,
+  "gapStores": [
+    {
+      "host": "tatcha.com",
+      "ucpGtinPct": 100,
+      "crawlGtinPct": 0,
+      "ucpProducts": 56
+    },
+    {
+      "host": "aloyoga.com",
+      "ucpGtinPct": 100,
+      "crawlGtinPct": 0,
+      "ucpProducts": 123
+    },
+    {
+      "host": "buffy.co",
+      "ucpGtinPct": 100,
+      "crawlGtinPct": 0,
+      "ucpProducts": 40
+    },
+    {
+      "host": "mejuri.com",
+      "ucpGtinPct": 100,
+      "crawlGtinPct": 0,
+      "ucpProducts": 207
+    },
+    {
+      "host": "gorjana.com",
+      "ucpGtinPct": 100,
+      "crawlGtinPct": 0,
+      "ucpProducts": 80
+    },
+    {
+      "host": "dagnedover.com",
+      "ucpGtinPct": 100,
+      "crawlGtinPct": 0,
+      "ucpProducts": 1
+    },
+    {
+      "host": "stio.com",
+      "ucpGtinPct": 100,
+      "crawlGtinPct": 0,
+      "ucpProducts": 243
+    },
+    {
+      "host": "awaytravel.com",
+      "ucpGtinPct": 100,
+      "crawlGtinPct": 0,
+      "ucpProducts": 27
+    },
+    {
+      "host": "glossier.com",
+      "ucpGtinPct": 99,
+      "crawlGtinPct": 0,
+      "ucpProducts": 125
+    },
+    {
+      "host": "brooklinen.com",
+      "ucpGtinPct": 72,
+      "crawlGtinPct": 0,
+      "ucpProducts": 241
+    },
+    {
+      "host": "unitedbyblue.com",
+      "ucpGtinPct": 64,
+      "crawlGtinPct": 0,
+      "ucpProducts": 120
+    }
+  ]
+}

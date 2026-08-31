@@ -50,7 +50,7 @@ one of the hundred points is a weight we chose. What is ours is the *test* behin
 each line — the source names six causes and defines none of them — so every line
 prints its own test beside the published weight, and a check with no published
 price is reported and charged nothing rather than given a number we made up.
-The store itself exposes **16 WebMCP tools**, so a human and an agent co-edit one
+The store itself exposes **18 WebMCP tools**, so a human and an agent co-edit one
 order in one tab, and `prepare_checkout` never charges a card.
 
 ---
@@ -91,7 +91,7 @@ Merchants are told agents are coming. Nobody tells them **which door is locked**
    A check with no published price is **reported and charged nothing** rather
    than given a weight we made up: the 16-tool surface is printed as the
    instrument the six lines are measured through, worth zero.
-3. **Co-shop.** 16 WebMCP tools; a human and an agent edit the same order in the
+3. **Co-shop.** 18 WebMCP tools; a human and an agent edit the same order in the
    same tab. `prepare_checkout` validates and returns totals — it never charges.
 4. **Two merchants, two failure modes, five points apart.** Ember & Oak Coffee
    scores **70/100**: blocked by a CAPTCHA worth 24, everything else close to
@@ -103,6 +103,11 @@ Merchants are told agents are coming. Nobody tells them **which door is locked**
 5. **Agent tool console.** Under **Connect** — invoke every tool without `chrome://flags`.
 6. **Instant use.** No signup. Order survives refresh. `?co=` share links,
    live API rooms on Vercel, `?view=` deep-links a tab.
+7. **Field batch + UCP gap.** We crawled **148** curated DTC storefronts:
+   **78** opened a public feed — **0% GTIN** on every one. Separately, **81**
+   expose Shopify UCP Catalog MCP; **11** of the crawl-zero brands still return
+   GTIN via UCP (glossier, tatcha, brooklinen, mejuri, …). The compare API
+   (crawl + UCP + OAuth) is how ReadyCounter tells that truth.
 
 ### Why the score is defensible
 

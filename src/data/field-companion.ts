@@ -37,8 +37,10 @@ export const FIELD_RECEIPT = {
   gtinPctOnCrawled: 0,
   catalogScoreOnCrawled: '0/24',
   curatedMapped: 148,
+  ucpAvailable: 81,
+  ucpGtinWhereCrawlZero: 11,
   headline:
-    '78/78 crawled DTC stores: 0% GTIN in public feeds. Vertical predicts reach, not barcode quality.',
+    '78/78 crawled: 0% GTIN in public feeds. 11 stores still show GTIN via UCP MCP — scrape ≠ agent protocol.',
 } as const;
 
 export const PRESSING_ISSUES: PressingIssue[] = [
@@ -105,10 +107,10 @@ export const PRESSING_ISSUES: PressingIssue[] = [
     rank: 7,
     id: 'ucp-mcp',
     title: 'Wrong or gated UCP Catalog MCP',
-    why: 'Storefront Catalog MCP at /api/ucp/mcp expects agent profiles.',
-    fails: 'Silent negotiation failure; store looks offline to that agent.',
-    doThisWeek: 'Confirm /.well-known/ucp and /api/ucp/mcp; keep Hydrogen MCP proxies enabled.',
-    evidence: 'Shopify Storefront Catalog MCP · ReadyCounter UCP probe',
+    why: 'Storefront Catalog MCP at /api/ucp/mcp expects agent profiles. 81/148 curated stores answer it; 11 show GTIN on UCP while public crawl is 0%.',
+    fails: 'Silent negotiation failure; or agents scrape HTML and miss identifiers UCP already exposes.',
+    doThisWeek: 'Confirm /.well-known/ucp and /api/ucp/mcp; keep Hydrogen MCP proxies enabled; prefer compare (crawl+UCP) over scrape-only.',
+    evidence: 'ReadyCounter E3/E3b · Shopify Storefront Catalog MCP',
   },
   {
     rank: 8,
@@ -151,6 +153,13 @@ export const MERCHANT_CHECKLIST: ChecklistItem[] = [
 ];
 
 export const RESEARCH_BRIEFS: ResearchBrief[] = [
+  {
+    id: 'E3',
+    title: 'UCP census vs public crawl',
+    finding:
+      '81/148 expose UCP MCP; 11 stores have GTIN via UCP while public crawl is 0% — compare API is the truth layer.',
+    artifact: 'research/experiments/E3b-ucp-vs-crawl.md',
+  },
   {
     id: 'R1',
     title: 'DTC public-feed GTIN gap',

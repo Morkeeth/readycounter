@@ -25,7 +25,7 @@ Shopping is moving from **pages humans click** to **catalogs agents resolve**. S
 | Worst crawl verticals | pet **17%**, home **25%**, outdoor **29%** |
 | Best crawl verticals | beauty **76%**, food **75%**, fun **71%** |
 
-**Conclusion:** Vertical predicts whether an agent can *see* you — not whether your barcodes are filled. Everywhere we could read, GTIN was empty.
+**Conclusion:** Vertical predicts whether an agent can *see* you via scrape — not whether barcodes exist. **UCP can hold GTINs (11 stores) while public crawl stays at 0%.** Use crawl + UCP compare, not scrape alone.
 
 ---
 

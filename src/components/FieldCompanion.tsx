@@ -45,8 +45,12 @@ export function FieldCompanion() {
         <h3>Pressing issues · guidelines · research</h3>
         <p className="companion__thesis">{COMPANION_THESIS}</p>
         <p className="companion__receipt">
-          Field receipt · {crawled}/{attempted} crawled · <strong>{gtin}% GTIN</strong> ·{' '}
-          {FIELD_RECEIPT.catalogScoreOnCrawled} catalog · as of {asOf}
+          Field receipt · {crawled}/{attempted} crawled · <strong>{gtin}% GTIN</strong> scrape ·{' '}
+          {FIELD_RECEIPT.catalogScoreOnCrawled} catalog
+          {FIELD_RECEIPT.ucpGtinWhereCrawlZero
+            ? ` · ${FIELD_RECEIPT.ucpGtinWhereCrawlZero} brands with UCP GTIN where scrape is 0%`
+            : ''}{' '}
+          · as of {asOf}
           {live ? ' · live' : ''}
         </p>
       </header>

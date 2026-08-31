@@ -18,6 +18,7 @@
     "audit:batch": "npx tsx scripts/audit-shops.mjs --curated",
     "audit:analyze": "npx tsx scripts/analyze-batch.mjs",
     "audit:ucp-census": "npx tsx scripts/ucp-census.mjs",
+    "audit:ucp-vs-crawl": "node scripts/ucp-vs-crawl.mjs",
     "audit:oauth-pairs": "npx tsx scripts/oauth-pairs.mjs",
     "audit:journey": "npx tsx scripts/journey-batch.mjs",
     "preview": "vite preview"

@@ -57,7 +57,17 @@ curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,suc
 | **Checkout** | Presenc abandonment rows (26/24/18/15/11/6) — journey + co-shop proof |
 | **Proof** | WebMCP tools — `simulate_agent_journey` breaks at checkout wall |
 
-**One-liner:** *Shopify brings catalog · Render keeps audit · WebMCP proves the path.*
+**One-liner:** *Public feeds: 0% GTIN. UCP: identifiers on 11 of those same brands. Shopify brings catalog · Render keeps audit · WebMCP proves the path.*
+
+### UCP vs crawl (E3b)
+
+| Metric | N |
+|--------|---|
+| UCP MCP available | **81 / 148 (55%)** |
+| Crawl succeeded ∧ UCP available | 76 |
+| **UCP GTIN > 0 while crawl GTIN = 0** | **11** (glossier, tatcha, brooklinen, aloyoga, mejuri, …) |
+
+Full table: `research/experiments/E3b-ucp-vs-crawl.md`.
 
 ---
 

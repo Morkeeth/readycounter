@@ -55,7 +55,7 @@ export const LAUNCH_RECOMMENDATIONS: LaunchRecommendation[] = [
     sourceIds: ['shopify_catalog_2x', 'schema_offer_gap', 'presenc_page_structure'],
     maxPoints: 6,
     fieldEvidence:
-      '78/148 DTC storefronts crawled (2026-08-31 v4 batch): 0% GTIN in public products.json — catalog legibility 0/24 on all.',
+      '78/148 DTC crawled (v4): 0% GTIN in public products.json. E3b: 11 of those brands still return GTIN via UCP MCP — scrape ≠ protocol.',
   },
   {
     id: 'remove-captcha',
