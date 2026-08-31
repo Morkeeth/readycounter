@@ -52,8 +52,10 @@ Then, in the browser you will film:
 **On screen:** still the tape. **Click the `No CAPTCHA on the checkout path`
 line** so it opens.
 
-It prints: `0/24` · `measured weight` · the detail · the fix · and the source
-row — **Presenc AI, published 2026-06, read 2026-08-31**, with the URL live.
+It prints: `0/24` · `published weight · our stated test` · the detail · the fix ·
+and the source row — **Presenc AI, published 2026-06, read 2026-08-31**, with the
+URL live. (The reported line at the bottom of the tape prints
+`no published price · not charged` instead.)
 
 > Twenty-four points, and the twenty-four is not ours. It is the share of
 > abandoned agent carts Presenc AI attributes to a CAPTCHA. Every line on this
