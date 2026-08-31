@@ -6,6 +6,17 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const script = `
+let __fails = 0;
+function ok(label, cond, detail) {
+  // L10 gate sweep 2026-08-31 07:1x: these lines used to be console.log(label, <boolean>), so the
+  // script printed "false" and still exited 0. Three siblings were fixed in wave 5 for exactly
+  // this; these were not. A check that cannot exit non-zero is not a check.
+  console.log(label + ':', cond === true ? 'true' : cond, detail === undefined ? '' : detail);
+  if (cond !== true) { __fails += 1; console.log('  ASSERT FAILED: ' + label); }
+}
+function done() {
+  if (__fails > 0) { console.log('FAIL: ' + __fails + ' assertion(s)'); process.exit(1); }
+}
 import { importShopifyFeed, toShopifyCatalog } from './src/integrations/shopify-catalog.ts';
 import { applyAutopilotFix, suggestFixes } from './src/lib/autopilot.ts';
 import { simulateAgentJourney } from './src/lib/agent-journey.ts';
@@ -28,7 +39,7 @@ console.log('neon suggestions:', suggestions.map(s => s.id).join(','));
 
 const synced = applyAutopilotFix('sync_feed_prices', neon.merchant, neon.products);
 const mismatches = synced.products.filter(p => p.feedPrice !== p.price).length;
-console.log('sync feed mismatches after fix:', mismatches);
+ok('sync feed mismatches after fix is 0', mismatches === 0, mismatches);
 
 const mockStore = {
   storeId: 'ember-oak',
@@ -44,25 +55,30 @@ const mockStore = {
 };
 const journey = simulateAgentJourney(mockStore, WEBMCP_TOOL_COUNT);
 console.log('journey steps:', journey.steps.length);
-console.log('journey blocked:', journey.checkoutBlocked);
+ok('journey blocked', journey.checkoutBlocked === true);
 
 const roomId = createRoom('ember-oak', STORES['ember-oak'].merchant);
 let events = 0;
 const unsub = subscribeRoom(roomId, () => { events += 1; });
 publishRoom(roomId, getRoom(roomId));
 unsub();
-console.log('room sse pub:', events === 1);
+ok('room sse pub', events === 1);
 
 const score = readinessScore(
   computeReadinessChecks(STORES['ember-oak'].merchant, WEBMCP_TOOL_COUNT, STORES['ember-oak'].products),
 );
 console.log('ember score with 16 tools:', score);
+done();
 `;
 
 const tmp = path.join(root, '.verify-ambition.mts');
 writeFileSync(tmp, script);
 try {
   execSync(`npx --yes tsx ${tmp}`, { cwd: root, stdio: 'inherit' });
+} catch {
+  // the child already printed which assertion failed; exit red without a Node stack dump
+  unlinkSync(tmp);
+  process.exit(1);
 } finally {
   unlinkSync(tmp);
 }
