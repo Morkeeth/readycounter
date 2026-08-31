@@ -44,11 +44,12 @@ agent carts are abandoned** — and merchants cannot see why. **ReadyCounter**
 scores a storefront out of 100 for agent shoppers and prints the score as an
 **itemised bill**: every point traced to a named check, its arithmetic, its one-line
 fix, and the page the weight came from — publisher, date published, date read.
-Three of the six weights are published shares of abandoned agent carts — three
-rows of one table — and the other three are ours, which the receipt says on the
-line rather than in a footnote. **No checkout wall is priced by us:** a CAPTCHA
-costs 24 and a forced account 15, because those are the two figures the source
-publishes.
+**All six weights are published shares of abandoned agent carts — the six rows of
+one table, 26/24/18/15/11/6, which sum to 100 on that page and to 100 here.** Not
+one of the hundred points is a weight we chose. What is ours is the *test* behind
+each line — the source names six causes and defines none of them — so every line
+prints its own test beside the published weight, and a check with no published
+price is reported and charged nothing rather than given a number we made up.
 The store itself exposes **16 WebMCP tools**, so a human and an agent co-edit one
 order in one tab, and `prepare_checkout` never charges a card.
 
@@ -255,7 +256,7 @@ Full one-take script with the exact numbers: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md
 | 1:20 | `prepare_checkout` refuses, and says exactly why |
 | 1:45 | Clear the CAPTCHA — 70 → 94, a delta of exactly 24 |
 | 2:10 | Neon Matcha — 65/100, account wall worth 15, payment row 0/11, records 2/6 |
-| 2:30 | Nine sources, every one dated |
+| 2:30 | Twelve sources, every one dated |
 
 ---
 
