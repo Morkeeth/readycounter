@@ -7,8 +7,9 @@ sentence in [`research.md`](./research.md). `npm run verify` fails the build if 
 cited figure loses its source. Scores and catalog counts are *measured* off the
 shipped fixtures and cite nothing.
 
-**Oscar: this is final — nothing left to fill in.** Deploy is live; the remaining
-clicks are the video and the Devpost submit.
+**Oscar: film + Devpost submit remain.** Deploy is live with rankings×UCP and
+re-audit delta. Use `demo/FILM-AND-SUBMIT.md` + `demo/voiceover.mp3`. Deadline
+Wed Sep 3, 2026 1pm PDT.
 
 ---
 
@@ -31,17 +32,17 @@ ReadyCounter
 
 ## Tagline (≤60 characters)
 
-The counter prints the score — agent readiness, itemised
+Agent commerce. Now reviewable. Proof.
 
-*(55 characters)*
+*(39 characters)*
 
 ---
 
 ## Elevator pitch
 
-Agent traffic to Shopify storefronts is up **8× year over year** and **78.6% of
+**Agent commerce. Now reviewable. Proof.** Agent traffic to Shopify storefronts is up **8× year over year** and **78.6% of
 agent carts are abandoned** — and merchants cannot see why. **ReadyCounter**
-scores a storefront out of 100 for agent shoppers and prints the score as an
+scores a storefront for agent shoppers and prints the score as an
 **itemised bill**: every point traced to a named check, its arithmetic, its one-line
 fix, and the page the weight came from — publisher, date published, date read.
 **All six weights are published shares of abandoned agent carts — the six rows of
@@ -51,7 +52,9 @@ each line — the source names six causes and defines none of them — so every 
 prints its own test beside the published weight, and a check with no published
 price is reported and charged nothing rather than given a number we made up.
 The store itself exposes **18 WebMCP tools**, so a human and an agent co-edit one
-order in one tab, and `prepare_checkout` never charges a card.
+order in one tab, and `prepare_checkout` never charges a card. Field proof: **78/148**
+crawled DTC stores at **0%** scrape GTIN, **11** brands with UCP GTIN where scrape is empty,
+and a re-audit delta when you claim a fix.
 
 ---
 

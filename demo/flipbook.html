@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ReadyCounter — film title cards</title>
+    <style>
+      :root {
+        --ink: #1a1612;
+        --paper: #f3efe6;
+        --stamp: #c45c26;
+        --rule: #cfc6b6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(1200px 700px at 20% 0%, #fff8ea, var(--paper));
+        color: var(--ink);
+        font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      }
+      .card {
+        width: min(920px, 92vw);
+        padding: 4rem 3.5rem;
+        border: 1px solid var(--rule);
+        background: color-mix(in srgb, white 55%, transparent);
+      }
+      .kicker {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        color: #6a6258;
+        margin: 0 0 1.25rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(2.4rem, 6vw, 4rem);
+        line-height: 1.05;
+        font-weight: 600;
+      }
+      .proof {
+        display: inline-block;
+        margin-top: 1.5rem;
+        padding: 0.35rem 0.7rem;
+        border: 2px solid var(--stamp);
+        color: var(--stamp);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        transform: rotate(-3deg);
+      }
+      .sub {
+        margin: 1.75rem 0 0;
+        font-size: 1.15rem;
+        max-width: 34ch;
+        line-height: 1.45;
+      }
+      .nav {
+        position: fixed;
+        bottom: 1.25rem;
+        right: 1.25rem;
+        display: flex;
+        gap: 0.5rem;
+      }
+      button {
+        font: inherit;
+        padding: 0.45rem 0.8rem;
+        border: 1px solid var(--rule);
+        background: white;
+        cursor: pointer;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="card" id="f0">
+      <p class="kicker">WebMCP Challenge · ReadyCounter</p>
+      <h1>Agent commerce.<br />Now reviewable.</h1>
+      <span class="proof">Proof</span>
+    </section>
+    <section class="card hidden" id="f1">
+      <p class="kicker">Field receipt</p>
+      <h1>78 / 148 crawled.<br />0% scrape GTIN.<br />11 UCP gaps.</h1>
+      <p class="sub">Scrape is not the protocol.</p>
+    </section>
+    <section class="card hidden" id="f2">
+      <p class="kicker">The loop</p>
+      <h1>Measure.<br />Act.<br />Re-measure.</h1>
+      <span class="proof">Proof</span>
+    </section>
+    <section class="card hidden" id="f3">
+      <p class="kicker">Open source · live</p>
+      <h1>ReadyCounter</h1>
+      <p class="sub">Shopify catalog · Render audit · WebMCP path</p>
+      <span class="proof">Proof</span>
+    </section>
+    <div class="nav">
+      <button type="button" id="prev">←</button>
+      <button type="button" id="next">→</button>
+    </div>
+    <script>
+      const ids = ["f0", "f1", "f2", "f3"];
+      let i = 0;
+      const show = (n) => {
+        i = (n + ids.length) % ids.length;
+        ids.forEach((id, idx) => document.getElementById(id).classList.toggle("hidden", idx !== i));
+      };
+      document.getElementById("prev").onclick = () => show(i - 1);
+      document.getElementById("next").onclick = () => show(i + 1);
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " ") show(i + 1);
+        if (e.key === "ArrowLeft") show(i - 1);
+      });
+    </script>
+  </body>
+</html>

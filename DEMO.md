@@ -1,129 +1,99 @@
-# ReadyCounter — 90-second demo script
+# ReadyCounter — demo script (~110s)
 
+**Line:** Agent commerce. Now reviewable. Proof.  
 **URL:** https://tooltruth-webmcp.vercel.app  
 **Film mode:** `/?film=1` — script overlay with prev/next beats  
-**Checklist:** [`FILM-READY.md`](./FILM-READY.md)
+**Submit pack:** [`demo/FILM-AND-SUBMIT.md`](./demo/FILM-AND-SUBMIT.md)  
+**Checklist:** [`FILM-READY.md`](./FILM-READY.md) · Roadmap: [`demo/ROADMAP-FILM.md`](./demo/ROADMAP-FILM.md)
 
 ---
 
 ## Setup (before recording)
 
-- [ ] `npm run verify` + `npm run test:e2e` green
-- [ ] Production rankings: **78/148** (`GET /api/v1/rankings` — avg GTIN 0%)
-- [ ] Field companion visible on Connect (`#field-companion`)
-- [ ] Incognito window
-- [ ] Optional: Chrome WebMCP flag for native assistant demo
+- [ ] `npm run verify` green
+- [ ] Production rankings: **78/148** · avg GTIN **0** · UCP gap **11**
+- [ ] Incognito · 1920×1080 · DND on
+- [ ] Optional: play `demo/voiceover.mp3` in headphones
 
 ---
 
 ## Beats
 
-### 0:00 — The bill
+### 0:00 — Hook
 
-**Show:** `/?store=ember-oak&view=merchant` — tape **70/100**, CHECKOUT VOID
-
-**Say:**  
-*"Agents are already shopping Shopify stores — traffic up eight-x year over year. This merchant scores seventy. Here is the itemised bill."*
-
-**Point at:** CAPTCHA **0/24** — *"Twenty-four percent of abandoned agent carts hit a verification wall."*
+**Show:** Landing / ember-oak **70/100** CHECKOUT VOID  
+**Say:** *Agent commerce. Now reviewable. Proof.*
 
 ---
 
-### 0:15 — Readiness depth
+### 0:08 — The stake
 
-**Show:** Expanded tape — six lines, all published weights
-
-**Say:**  
-*"Six lines, one hundred points — each weight is a row from Presenc AI's causes table. Nothing invented."*
+**Show:** CAPTCHA line **0/24**  
+**Say:** *Agents already shop Shopify — traffic up eight-x. Seventy eight point six percent of agent carts still abandon. Merchants cannot see which door is locked.*
 
 ---
 
-### 0:30 — Real storefront audit
+### 0:22 — The bill
 
-**Show:** **Connect** → paste `https://colourpop.com` → **Audit** (auto-fills with `?demo=1`)
-
-**Say:**  
-*"Paste any storefront URL. We read public products.json — no JSON paste."*
-
-**Point at:** Catalog **0/24** · checkout lines **NOT MEASURED**
+**Show:** Expanded readiness tape  
+**Say:** *ReadyCounter prints the bill. Seventy out of one hundred. Every point is a published abandonment share. Captcha twenty four. Stale data twenty six. Nothing invented.*
 
 ---
 
-### 0:45 — Field batch + rankings
+### 0:38 — Real storefront
 
-**Show:** **DTC rankings** table on Connect tab
-
-**Say:**  
-*"We batch-audited fifty-eight DTC stores. Thirty-four crawled. Zero percent had barcodes in the feed agents read."*
+**Show:** Connect → colourpop audit (`?demo=1`)  
+**Say:** *Paste a real storefront. We read the public catalog agents get. Catalog score only. Checkout not measured until you connect. That honesty is the product.*
 
 ---
 
-### 0:52 — Agent journey
+### 0:52 — Field + UCP twist
 
-**Show:** **Readiness** → **Run agent journey** on ember-oak
-
-**Say:**  
-*"One click: search, add, checkout. Blocked at CAPTCHA — same twenty-four percent row."*
+**Show:** Rankings → filter **UCP GTIN · scrape empty**  
+**Say:** *One forty eight brands. Seventy eight crawled. Zero percent GTIN in the scrape. Eleven still return GTIN on UCP. Scrape is not the protocol.*
 
 ---
 
-### 0:58 — Three discovery paths
+### 1:08 — Delta / proof loop
 
-**Show:** After audit → **Compare all paths** (crawl · UCP · Admin)
-
-**Say:**  
-*"Public scrape versus Shopify's UCP protocol versus Admin OAuth — we don't fight their scanner, we measure what agents actually get."*
+**Show:** Re-audit same URL → delta receipt  
+**Say:** *Fix something. Re-audit. We print the delta. Measure. Act. Re-measure. Proof.*
 
 ---
 
-### 1:05 — Fix preview (sandbox)
+### 1:18 — Journey + autopilot
 
-**Show:** **Autopilot** → Remove CAPTCHA → **70 → 94**
-
-**Say:**  
-*"Preview the fix in sandbox. Your live Shopify is untouched."*
+**Show:** Agent journey → Autopilot CAPTCHA → **70 → 94**  
+**Say:** *One click walks the path. Blocked at captcha. Autopilot: seventy becomes ninety four. Live Shopify untouched.*
 
 ---
 
-### 1:12 — Co-shop proof
+### 1:32 — WebMCP co-shop
 
-**Show:** **Co-shop** tab → add item → **Copy cart link**
-
-**Say:**  
-*"Sixteen WebMCP tools. Human stays in the tab. prepare_checkout never charges a card."*
+**Show:** Co-shop / tool console · badge **18 tools**  
+**Say:** *Eighteen WebMCP tools. Human and agent, one cart. Prepare checkout never charges.*
 
 ---
 
-### 1:20 — Render persistence
+### 1:42 — Ambition
 
-**Show:** Render partnership card — batch **78/148**
-
-**Say:**  
-*"Vercel serves the app. Render Key Value keeps the audit. The link works tomorrow."*
+**Show:** Against the field companion  
+**Say:** *Next: Admin pairs, Offer at scale, ACP eligibility smoke, an open receipt standard for every merchant.*
 
 ---
 
-### 1:28 — Close
+### 1:55 — Close
 
-**Say:**  
-*"ReadyCounter: research-priced abandonment, field batch rankings, co-shop proof. Shopify brings catalog, Render keeps audit, WebMCP proves the path."*
-
----
-
-## B-roll
-
-| Shot | URL |
-|------|-----|
-| CAPTCHA sandbox | `/?store=ember-oak&view=merchant` |
-| Account sandbox | `/?store=neon-matcha&view=merchant` |
-| Film script overlay | `/?film=1&view=integrations` |
-| Rankings API | `/api/v1/rankings` |
-| Compare API | `POST /api/v1/audit/compare` |
+**Show:** Brand / landing  
+**Say:** *ReadyCounter is live. Open source. Shopify catalog. Render audit. WebMCP proof. Agent commerce. Now reviewable. ReadyCounter. Proof.*
 
 ---
 
 ## What not to claim
 
-- ❌ "We fixed your Shopify checkout"
+- ❌ Fixed live Shopify checkout
 - ❌ Crawl scores checkout CAPTCHA
-- ❌ Every store has UCP live
+- ❌ Every store has UCP
+- ❌ Field crawl full /100
+- ❌ Old **34/58** numbers — use **78/148**
+- ❌ Sixteen tools — use **eighteen**

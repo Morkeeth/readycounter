@@ -289,69 +289,69 @@ export const LAUNCH_IMPACT: LaunchImpact[] = [
   },
 ];
 
-/** ~90s demo script for Devpost / outbound video. */
+/** ~110s demo script for Devpost / outbound video. Line: Agent commerce. Now reviewable. Proof. */
 export const DEMO_BEATS: DemoBeat[] = [
   {
     atSec: 0,
-    action: 'Open live URL — default ember-oak landing tape',
-    say: 'Agents are shopping your store right now. This is the bill — seventy out of one hundred.',
-    show: 'Readiness tape with CAPTCHA line at 0/24 citing Presenc AI',
+    action: 'Open live URL — ember-oak tape 70/100 CHECKOUT VOID',
+    say: 'Agent commerce. Now reviewable. Proof.',
+    show: 'Landing / readiness tape with VOID stamp',
   },
   {
-    atSec: 15,
-    action: 'Click Open the readiness bill',
-    say: 'Every point maps to a published abandonment share — twenty-four percent for CAPTCHA alone.',
+    atSec: 8,
+    action: 'Point CAPTCHA 0/24 on the bill',
+    say: 'Agents already shop Shopify — traffic up eight-x. Seventy eight point six percent of agent carts still abandon. Merchants cannot see which door is locked.',
+    show: 'CAPTCHA line citing Presenc 24%',
+  },
+  {
+    atSec: 22,
+    action: 'Expand readiness bill — six published lines',
+    say: 'ReadyCounter prints the bill. Seventy out of one hundred. Every point is a published abandonment share. Captcha twenty four. Stale data twenty six. Nothing invented.',
     show: 'Expanded tape + source stamps',
   },
   {
-    atSec: 30,
-    action: 'Connect tab → paste colourpop.com → Audit',
-    say: 'Paste any Shopify URL — we crawl products.json and score what agents can actually read.',
-    show: 'Catalog score honest vs checkout NOT MEASURED',
-  },
-  {
-    atSec: 45,
-    action: 'Connect → DTC rankings table + scroll batch stats',
-    say: 'We batch-audited fifty-eight DTC stores. Thirty-four crawled; zero percent had barcodes in the public feed agents read.',
-    show: 'Rankings panel + GET /api/v1/render/status',
+    atSec: 38,
+    action: 'Connect → paste colourpop.com → Audit (?demo=1)',
+    say: 'Paste a real storefront. We read the public catalog agents get. Catalog score only. Checkout not measured until you connect. That honesty is the product.',
+    show: 'Catalog score · NOT MEASURED checkout lines',
   },
   {
     atSec: 52,
-    action: 'Readiness → Run agent journey on ember-oak',
-    say: 'One click walks the agent path — search, add, checkout. Blocked at CAPTCHA — twenty-four percent of abandoned carts.',
-    show: 'AgentJourneyRun step list + CHECKOUT VOID stamp',
+    action: 'Rankings → filter UCP GTIN · scrape empty',
+    say: 'One forty eight brands. Seventy eight crawled. Zero percent GTIN in the scrape. Eleven still return GTIN on UCP. Scrape is not the protocol.',
+    show: 'UCP column + 11-gap filter',
   },
   {
-    atSec: 58,
-    action: 'After URL audit → Three discovery paths compare',
-    say: 'Public crawl versus Shopify UCP versus Admin OAuth — same bill, three ways agents discover catalog.',
-    show: 'CrawlVsOAuthPanel three-row table',
+    atSec: 68,
+    action: 'Re-audit same URL → delta receipt',
+    say: 'Fix something. Re-audit. We print the delta. Measure. Act. Re-measure. Proof.',
+    show: 'AuditDeltaReceipt catalog / GTIN / SKUs',
   },
   {
-    atSec: 65,
-    action: 'Autopilot → Remove CAPTCHA on ember-oak',
-    say: 'Preview the fix in sandbox — ninety-four. Your live Shopify is untouched until you act.',
-    show: 'Score animation 70 → 94',
+    atSec: 78,
+    action: 'Journey on ember-oak → Autopilot remove CAPTCHA',
+    say: 'One click walks the path. Blocked at captcha. Autopilot: seventy becomes ninety four. Live Shopify untouched.',
+    show: 'Journey steps + score 70 → 94',
   },
   {
-    atSec: 72,
-    action: 'Shop tab → add SKU → copy co-shop link',
-    say: 'Co-shop proves the agent path — sixteen WebMCP tools; human stays in the tab, no card charged.',
-    show: '?co= share link · WebMCP badge if flag on',
+    atSec: 92,
+    action: 'Co-shop tab / tool console',
+    say: 'Eighteen WebMCP tools. Human and agent, one cart. Prepare checkout never charges.',
+    show: 'WebMCP badge · prepare_checkout',
   },
   {
-    atSec: 82,
-    action: 'Connect → Render partnership card',
-    say: 'Catalog and sessions persist on Render Key Value — the audit link works tomorrow.',
-    show: 'GET /api/v1/render/status',
+    atSec: 102,
+    action: 'Against the field companion',
+    say: 'Next: Admin pairs, Offer at scale, ACP eligibility smoke, an open receipt standard for every merchant.',
+    show: 'Field companion / handbook',
   },
   {
-    atSec: 90,
-    action: 'Close on landing research facts',
-    say: 'Shopify says catalog-powered AI converts two-x. ReadyCounter shows what is blocking yours.',
-    show: '8× traffic · 78.6% abandon · Shopify 2× stat',
+    atSec: 110,
+    action: 'Close on brand',
+    say: 'ReadyCounter is live. Open source. Shopify catalog. Render audit. WebMCP proof. Agent commerce. Now reviewable. ReadyCounter. Proof.',
+    show: 'Landing research facts · 8× · 78.6%',
   },
 ];
 
 export const LAUNCH_ONE_LINER =
-  'Research-priced agent abandonment bill + real catalog audit + co-shop proof — Shopify catalog in, Render persistence out.';
+  'Agent commerce. Now reviewable. Proof. — field rankings, UCP gap, delta receipt, co-shop.';
