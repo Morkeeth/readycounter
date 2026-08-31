@@ -16,14 +16,44 @@ function done() {
 }
 import { extractJsonLdBlocks } from './src/server/url-audit.ts';
 import { assertSafeAuditUrl } from './src/server/ssrf.ts';
+import {
+  jsonLdNodeHasCompleteOffer,
+  offerCoverageFromJsonLdNodes,
+  offerCoverageFromProducts,
+  feedRowHasCompleteOffer,
+} from './src/lib/offer-crawl.ts';
+import { discoverPolicyUrls } from './src/lib/policy-smoke.ts';
 
 const html = \`
 <html><head>
-<script type="application/ld+json">{"@graph":[{"@type":"Product","name":"Test Bean","sku":"sku-1","offers":{"price":"12.00"}}]}</script>
-</head></html>\`;
+<script type="application/ld+json">{"@graph":[{"@type":"Product","name":"Test Bean","sku":"sku-1","offers":{"price":"12.00","availability":"https://schema.org/InStock"}}]}</script>
+</head><body>
+<footer>
+<a href="/policies/privacy-policy">Privacy Policy</a>
+<a href="/pages/terms-of-service">Terms of Service</a>
+</footer>
+</body></html>\`;
 
 const blocks = extractJsonLdBlocks(html);
 ok('json-ld blocks parsed', blocks.length === 1);
+
+const node = {"@type":"Product","name":"X","offers":{"price":"9.99","availability":"InStock"}};
+ok('complete offer detected', jsonLdNodeHasCompleteOffer(node) === true);
+const noAvail = {"@type":"Product","offers":{"price":"9.99"}};
+ok('missing availability fails', jsonLdNodeHasCompleteOffer(noAvail) === false);
+ok('offer coverage from nodes', offerCoverageFromJsonLdNodes([node, noAvail]) === 50);
+
+const products = [
+  { id: 'a', name: 'A', description: '', price: 10, currency: 'USD', tags: [], category: 'x', inStock: true },
+  { id: 'b', name: 'B', description: '', price: 0, currency: 'USD', tags: [], category: 'x', inStock: true },
+];
+ok('feed row complete offer', feedRowHasCompleteOffer(products[0]) === true);
+ok('feed row zero price fails', feedRowHasCompleteOffer(products[1]) === false);
+ok('offer coverage from products', offerCoverageFromProducts(products) === 50);
+
+const policies = discoverPolicyUrls(html, 'https://example.com');
+ok('privacy url discovered', policies.privacy === 'https://example.com/policies/privacy-policy');
+ok('terms url discovered', policies.terms === 'https://example.com/pages/terms-of-service');
 
 ok('https public host allowed', assertSafeAuditUrl('https://colourpop.com').ok === true);
 ok('http blocked', assertSafeAuditUrl('http://colourpop.com').ok === false);

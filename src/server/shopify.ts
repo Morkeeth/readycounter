@@ -1,5 +1,6 @@
 import type { ShopifyCatalogExport } from '../integrations/shopify-catalog';
 import { importShopifyFeed } from '../integrations/shopify-catalog';
+import { offerCoverageFromProducts } from '../lib/offer-crawl';
 import type { StoreDefinition } from '../data/stores';
 
 export interface ShopifyConfig {
@@ -228,6 +229,7 @@ export async function syncShopifyStore(shop: string): Promise<{
       gtinCoverage: Math.round(
         (store.products.filter((p) => p.gtin).length / Math.max(1, store.products.length)) * 100,
       ),
+      offerCoverage: offerCoverageFromProducts(store.products),
       captchaHints: false,
       accountWallHints: false,
       checkoutProbed: false,

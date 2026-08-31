@@ -156,7 +156,7 @@ export interface UrlAuditResponse {
     fullScore: number;
     unmeasuredLineIds: string[];
   };
-  meta?: { url: string; method: string; gtinPct?: number; captchaHint?: boolean };
+  meta?: { url: string; method: string; gtinPct?: number; offerPct?: number; captchaHint?: boolean; policySmoke?: { privacyOk: boolean | null; termsOk: boolean | null; measured: boolean; urls: { privacy?: string; terms?: string } } };
   fieldReview?: FieldReviewPayload;
   bookmark: string;
   nextSteps?: string[];
@@ -231,7 +231,9 @@ export interface RankingsResponse {
     catalogScore?: number;
     catalogBudget?: number;
     gtinPct?: number;
+    offerPct?: number;
     captchaHint?: boolean;
+    policySmoke?: { privacyOk: boolean | null; termsOk: boolean | null; measured: boolean; urls: { privacy?: string; terms?: string } };
     vertical?: string;
     error?: string;
     ucpAvailable?: boolean | null;

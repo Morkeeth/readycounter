@@ -1,5 +1,5 @@
 import type { StoreDefinition } from '../data/stores';
-import type { StoreAuditMeta } from '../types/audit';
+import type { PolicySmokeResult, StoreAuditMeta } from '../types/audit';
 import { auditStorefrontUrl } from './url-audit';
 import { syncShopifyStore } from './shopify';
 
@@ -22,6 +22,7 @@ function urlMetaFromAudit(
   method: StoreAuditMeta['method'],
   signals: StoreAuditMeta['signals'],
   productCount: number,
+  policySmoke?: PolicySmokeResult,
 ): StoreAuditMeta {
   return {
     source: 'url-crawl',
@@ -30,6 +31,7 @@ function urlMetaFromAudit(
     fetchedAt: new Date().toISOString(),
     productCount,
     signals,
+    policySmoke,
   };
 }
 
@@ -39,7 +41,7 @@ export const urlCrawlAdapter: CatalogAdapter = {
   async fetch(url: string): Promise<CatalogAdapterResult> {
     const result = await auditStorefrontUrl(url);
     if (!result.ok) return result;
-    const meta =
+    const meta: StoreAuditMeta =
       result.store.audit ??
       urlMetaFromAudit(
         result.store,
@@ -47,7 +49,9 @@ export const urlCrawlAdapter: CatalogAdapter = {
         result.meta.method,
         result.meta.signals,
         result.meta.productCount,
+        result.meta.policySmoke,
       );
+    if (!meta.policySmoke) meta.policySmoke = result.meta.policySmoke;
     return { ok: true, store: result.store, meta };
   },
 };

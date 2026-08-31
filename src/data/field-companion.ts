@@ -245,6 +245,13 @@ export function getFieldCompanionPayload(topic?: string) {
 /** Map readiness-ish signals to handbook issues for agent feedback. */
 export function reviewAgainstField(input: {
   gtinPct?: number;
+  offerPct?: number;
+  policySmoke?: {
+    privacyOk: boolean | null;
+    termsOk: boolean | null;
+    measured: boolean;
+    urls: { privacy?: string; terms?: string };
+  };
   captchaHint?: boolean;
   catalogScore?: number;
   productsJsonOk?: boolean;
@@ -284,6 +291,41 @@ export function reviewAgainstField(input: {
       severity: 'medium',
       note: 'CAPTCHA hint on storefront HTML — verify checkout path, not homepage strings alone (R3).',
     });
+  }
+  if (!feedBlocked && (input.offerPct ?? 100) < 100) {
+    flags.push({
+      issueId: 'schema-offer',
+      severity: (input.offerPct ?? 0) < 50 ? 'high' : 'medium',
+      note: `Offer completeness ${input.offerPct ?? 0}% on crawl sample — Product without Offer+price+availability (Digital Applied: 19% field baseline).`,
+    });
+  }
+  if (input.policySmoke) {
+    const ps = input.policySmoke;
+    if (!ps.measured) {
+      flags.push({
+        issueId: 'acp-eligibility',
+        severity: 'medium',
+        note: 'Privacy/ToS URLs not discoverable from homepage crawl — ACP policy smoke not measurable.',
+      });
+    } else if (ps.privacyOk === false || ps.termsOk === false) {
+      const parts: string[] = [];
+      if (ps.privacyOk === false) parts.push('privacy URL failed HTTP check');
+      if (ps.termsOk === false) parts.push('terms URL failed HTTP check');
+      flags.push({
+        issueId: 'acp-eligibility',
+        severity: 'high',
+        note: `ACP policy smoke failed: ${parts.join('; ')}. Instant Checkout requires live privacy + ToS when checkout-eligible.`,
+      });
+    } else if (ps.privacyOk === null || ps.termsOk === null) {
+      const missing: string[] = [];
+      if (ps.privacyOk === null) missing.push('privacy');
+      if (ps.termsOk === null) missing.push('terms');
+      flags.push({
+        issueId: 'acp-eligibility',
+        severity: 'high',
+        note: `ACP policy smoke: missing ${missing.join(' + ')} URL on storefront — required when is_eligible_checkout.`,
+      });
+    }
   }
   if (input.accountWall) {
     flags.push({

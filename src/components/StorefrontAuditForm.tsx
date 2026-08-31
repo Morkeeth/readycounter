@@ -147,7 +147,11 @@ export function StorefrontAuditForm({
     }
 
     setMsg(
-      `${data.name}: ${data.productCount} SKUs · catalog ${catalogScore}/${catalogBudget} pts (catalog budget — never /100 for field crawls)`,
+      `${data.name}: ${data.productCount} SKUs · catalog ${catalogScore}/${catalogBudget} pts · Offer ${data.meta?.offerPct ?? '—'}%${
+        data.meta?.policySmoke?.measured
+          ? ` · policy smoke ${data.meta.policySmoke.privacyOk === true && data.meta.policySmoke.termsOk === true ? 'ok' : 'gap'}`
+          : ' · policy not measurable'
+      }`,
     );
     setFieldReview(data.fieldReview ?? null);
     onSuccess?.(data.storeId);
