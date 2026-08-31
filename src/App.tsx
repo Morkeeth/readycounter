@@ -8,6 +8,9 @@ import { ShopView } from './components/ShopView';
 import { StoreSwitcher } from './components/StoreSwitcher';
 import { ToolActivityToast } from './components/ToolActivityToast';
 import { useRoomSync } from './hooks/useRoomSync';
+import { registerCustomStore } from './data/stores';
+import { apiFetchServerStore } from './api/client';
+import { useShopStore } from './store/shopStore';
 import { registerWebMCPTools } from './webmcp/registerTools';
 import { WEBMCP_TOOL_COUNT } from './webmcp/toolManifest';
 import './App.css';
@@ -43,6 +46,21 @@ function App() {
   }>({ available: false, registered: [], error: null });
 
   useRoomSync();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('shopify') !== 'connected') return;
+    const storeId = params.get('store');
+    if (!storeId) return;
+    void apiFetchServerStore(storeId).then((store) => {
+      if (!store) return;
+      registerCustomStore(store);
+      useShopStore.getState().switchStore(store.id);
+      params.delete('shopify');
+      const clean = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+      window.history.replaceState({}, '', clean.replace(/\?$/, ''));
+    });
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();

@@ -22,6 +22,21 @@ Manual stranger test:
 3. **Copy co-shop link** → incognito → same order
 4. `?store=neon-matcha` → different catalog, account-wall readiness
 
+## Optional env (Vercel → Settings → Environment Variables)
+
+| Variable | Purpose |
+|----------|---------|
+| `SHOPIFY_CLIENT_ID` | Dev Dashboard app credentials |
+| `SHOPIFY_CLIENT_SECRET` | **Never commit** — Vercel only |
+| `SHOPIFY_APP_URL` | `https://tooltruth-webmcp.vercel.app` |
+| `SHOPIFY_DEV_SHOP` | `your-dev-store.myshopify.com` (same Partner org) |
+| `SHOPIFY_SCOPES` | `read_products,read_product_listings` |
+
+**Shopify app redirect URL (required):**
+`https://tooltruth-webmcp.vercel.app/api/v1/shopify/callback`
+
+Local: copy `.env.example` → `.env.local` (gitignored).
+
 ## Optional later
 
 | Env | Purpose |

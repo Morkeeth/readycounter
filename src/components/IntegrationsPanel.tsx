@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { apiAvailable } from '../api/client';
+import {
+  apiAvailable,
+  apiFetchServerStore,
+  apiShopifyStatus,
+  type ShopifyStatus,
+} from '../api/client';
 import {
   importShopifyFeed,
   toShopifyCatalog,
@@ -16,12 +21,33 @@ export function IntegrationsPanel() {
   const [apiUp, setApiUp] = useState<boolean | null>(null);
   const [importJson, setImportJson] = useState('');
   const [importError, setImportError] = useState<string | null>(null);
+  const [shopDomain, setShopDomain] = useState('');
+  const [shopifyStatus, setShopifyStatus] = useState<ShopifyStatus | null>(null);
+  const [shopifyMsg, setShopifyMsg] = useState<string | null>(null);
   const feed = validateStoreCatalog(storeId);
   const shopify = toShopifyCatalog(storeId);
 
   useEffect(() => {
     void apiAvailable().then(setApiUp);
+    void apiShopifyStatus().then(setShopifyStatus);
   }, []);
+
+  const connectShopify = () => {
+    const shop = shopDomain.trim();
+    if (!shop) return;
+    window.location.href = `/api/v1/shopify/auth?shop=${encodeURIComponent(shop)}`;
+  };
+
+  const pullServerStore = async (id: string) => {
+    const store = await apiFetchServerStore(id);
+    if (!store) {
+      setShopifyMsg('Store synced on server but not found — try OAuth again.');
+      return;
+    }
+    registerCustomStore(store);
+    switchStore(store.id);
+    setShopifyMsg(`Connected ${store.name} (${store.products.length} products).`);
+  };
 
   const downloadFeed = () => {
     const blob = new Blob([JSON.stringify(shopify, null, 2)], { type: 'application/json' });
@@ -95,6 +121,55 @@ export function IntegrationsPanel() {
           <button type="button" className="btn btn--secondary" onClick={downloadFeed}>
             Download catalog JSON
           </button>
+        </article>
+
+        <article className="integrations__card integrations__card--wide">
+          <h3>Connect Shopify</h3>
+          <p>
+            Read-only OAuth — pulls your product catalog into ReadyCounter for readiness
+            scoring. No payment scopes. Requires app credentials on the server.
+          </p>
+          <p className="integrations__muted">
+            Server:{' '}
+            {shopifyStatus?.configured
+              ? 'credentials configured'
+              : shopifyStatus?.hasClientSecret
+                ? 'missing client ID'
+                : 'add SHOPIFY_CLIENT_ID + secret on Vercel'}
+          </p>
+          <label className="integrations__shop-label">
+            Shop domain
+            <input
+              type="text"
+              className="integrations__shop-input"
+              placeholder="your-store.myshopify.com"
+              value={shopDomain}
+              onChange={(e) => setShopDomain(e.target.value)}
+            />
+          </label>
+          <div className="share-bar__actions">
+            <button
+              type="button"
+              className="btn btn--primary"
+              disabled={!shopDomain.trim() || !shopifyStatus?.configured}
+              onClick={connectShopify}
+            >
+              Install on Shopify
+            </button>
+            {shopifyStatus?.devShop ? (
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={() => void pullServerStore(shopifyStatus.devShop!.replace('.myshopify.com', ''))}
+              >
+                Load dev store
+              </button>
+            ) : null}
+          </div>
+          {shopifyMsg ? <p className="integrations__warn">{shopifyMsg}</p> : null}
+          <p className="integrations__muted">
+            Callback URL: <code>/api/v1/shopify/callback</code>
+          </p>
         </article>
 
         <article className="integrations__card integrations__card--wide">

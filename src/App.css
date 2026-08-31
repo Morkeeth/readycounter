@@ -1438,6 +1438,24 @@ a {
   grid-column: 1 / -1;
 }
 
+.integrations__shop-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.75rem 0;
+  font-size: 0.85rem;
+}
+
+.integrations__shop-input {
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--radius);
+  border: 1px solid #3a4a5e;
+  background: var(--surface);
+  color: var(--text);
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+}
+
 .integrations__import {
   width: 100%;
   margin: 0.5rem 0;
