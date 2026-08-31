@@ -12,7 +12,8 @@ dist
 dist-ssr
 api/**/*.js
 api/**/*.js.map
-audits/
+audits/*
+!audits/STRANGER-PASS-*.md
 *.local
 .env
 .env.*

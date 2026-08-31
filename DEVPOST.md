@@ -40,21 +40,11 @@ Agent commerce. Now reviewable. Proof.
 
 ## Elevator pitch
 
-**Agent commerce. Now reviewable. Proof.** Agent traffic to Shopify storefronts is up **8× year over year** and **78.6% of
-agent carts are abandoned** — and merchants cannot see why. **ReadyCounter**
-scores a storefront for agent shoppers and prints the score as an
-**itemised bill**: every point traced to a named check, its arithmetic, its one-line
-fix, and the page the weight came from — publisher, date published, date read.
-**All six weights are published shares of abandoned agent carts — the six rows of
-one table, 26/24/18/15/11/6, which sum to 100 on that page and to 100 here.** Not
-one of the hundred points is a weight we chose. What is ours is the *test* behind
-each line — the source names six causes and defines none of them — so every line
-prints its own test beside the published weight, and a check with no published
-price is reported and charged nothing rather than given a number we made up.
-The store itself exposes **18 WebMCP tools**, so a human and an agent co-edit one
-order in one tab, and `prepare_checkout` never charges a card. Field proof: **78/148**
-crawled DTC stores at **0%** scrape GTIN, **11** brands with UCP GTIN where scrape is empty,
-and a re-audit delta when you claim a fix.
+**Agent commerce. Now reviewable. Proof.** Lighthouse for agentic commerce — not Shopify's rails. Agent traffic to Shopify storefronts is up **8× year over year** and **78.6% of agent carts are abandoned** ([`presenc_abandon`](./src/data/sources.ts)) — merchants cannot see why. **ReadyCounter** already parsed **148** curated DTC brands: **78** opened a public feed at **0% scrape GTIN**, while **11** still return GTIN via Shopify UCP Catalog MCP where scrape is empty. Paste your URL → compare to the field → re-audit for a **delta receipt**.
+
+The sandbox prints an **itemised bill**: six Presenc abandonment rows at published shares (26/24/18/15/11/6 — [`sources.ts`](./src/data/sources.ts)), every point traced to a check, fix, and source row. **18 WebMCP tools** let a human and agent co-edit one order; `prepare_checkout` never charges a card. Field crawls score **catalog budget only** — checkout walls stay NOT MEASURED until OAuth.
+
+**Honest gaps:** E1 OAuth Admin↔crawl pairs not done · Offer schema not ranked on crawl yet · ACP feed certification deferred ([`research/RANK-AND-HELP-GAP.md`](./research/RANK-AND-HELP-GAP.md)). **2027 ambition:** every merchant runs ReadyCounter on ship · public receipt · Shopify adopts the format ([`demo/AMBITION.md`](./demo/AMBITION.md)).
 
 ---
 
@@ -183,7 +173,7 @@ numbers had nothing to do with each other — the 35 was a remainder — and say
 they "lined up" would have been a relation nobody checked. We did not assert it.
 We built the three checks instead, and now there is no remainder to explain.
 
-### WebMCP tools (16)
+### WebMCP tools (18)
 
 | Tool | Role |
 |------|------|

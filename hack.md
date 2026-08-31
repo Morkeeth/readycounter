@@ -90,17 +90,17 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Night wave RC-A (2026-08-31):** Lighthouse comparison surface on Connect — hero width, YOU·FIELD·DELTA strip, rankings CTA, `?audit_url=` share.
+**Night wave RC-C (2026-08-31):** Partner-grade narrative — `LIGHTHOUSE-VISION.md`, `SHOPIFY-PARTNER-BRIEF.md`, README stranger hero, `audits/STRANGER-PASS-2026-08-31.md`, DEVPOST sync.
 
-**Slice 1 (this run):** ✅ Shipped 2026-08-31 — see LOG entry RC-A lighthouse UI.
+**Slice 1 (this run):** Lighthouse narrative + stranger audit on live URL.
 
 ```text
-Done-when (ran 2026-08-31):
-  npm run verify   → exit 0
-  npm run build    → exit 0
-  grep ConnectLighthouseHero src/components/IntegrationsPanel.tsx → lines 19,125
-  grep FieldCompareStrip src/components/StorefrontAuditForm.tsx → lines 14,222
-  git push origin night/gates-that-lie-2026-08-31 → eb2dfd2
+Done-when (ran 2026-08-31T21:31Z):
+  test -f LIGHTHOUSE-VISION.md && test -f SHOPIFY-PARTNER-BRIEF.md && test -f audits/STRANGER-PASS-2026-08-31.md → exit 0
+  npm run verify → exit 0
+  npm run build → exit 0
+  PLAYWRIGHT_BASE_URL=https://tooltruth-webmcp.vercel.app npx playwright test e2e/stranger-pass.spec.ts → 1 passed
+  curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,ucp}' → 148, 78, gtinWhereCrawlZero 11
 ```
 
 ## LOG
@@ -144,3 +144,5 @@ Done-when (ran 2026-08-31):
   `npm run build` + `npm run verify` exit 0. Branch `nightrun/l3-readycounter`.
 
 - 2026-08-31 — **RC-A lighthouse UI:** `ConnectLighthouseHero` (148 width live from rankings API, 78.6% abandon from `sources.ts` only) · `FieldCompareStrip` YOU·FIELD·DELTA · `field-compare.ts` percentile join · rankings CTA with vertical/UCP gap filter · `?audit_url=` deep link + copy receipt · `verify-field-compare.mjs`.
+
+- 2026-08-31 — **RC-C narrative wave:** `LIGHTHOUSE-VISION.md` · `SHOPIFY-PARTNER-BRIEF.md` · README lighthouse stranger hero (148 width, 3-step path) · `DEVPOST.md` elevator sync with `demo/AMBITION.md` · `audits/STRANGER-PASS-2026-08-31.md` (live URL Playwright + API) · `e2e/stranger-pass.spec.ts` · README 16→18 tools fix.
