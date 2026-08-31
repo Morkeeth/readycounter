@@ -48,7 +48,7 @@ export function FieldCompanion() {
           Field receipt · {crawled}/{attempted} crawled · <strong>{gtin}% GTIN</strong> scrape ·{' '}
           {FIELD_RECEIPT.catalogScoreOnCrawled} catalog
           {FIELD_RECEIPT.ucpGtinWhereCrawlZero
-            ? ` · ${FIELD_RECEIPT.ucpGtinWhereCrawlZero} brands with UCP GTIN where scrape is 0%`
+            ? ` · ${FIELD_RECEIPT.ucpGtinWhereCrawlZero} brands with UCP GTIN where scrape is ${FIELD_RECEIPT.gtinPctOnCrawled}%`
             : ''}{' '}
           · as of {asOf}
           {live ? ' · live' : ''}
