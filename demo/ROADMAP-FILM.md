@@ -1,8 +1,10 @@
 # ReadyCounter — ambitious roadmap (say on film, ship after)
 
-**North star:** Every merchant gets a stamped, re-runnable **agent-readiness receipt** — ranked against the field, fixed against a handbook, proven with a delta.
+**North star (lighthouse):** Every merchant runs ReadyCounter when they ship anything new — parse features, chase a perfect score, go public with the receipt. **Success:** Shopify adopts it · merchants use it · they announce it.
 
-## Shipped (film these)
+**Not us:** Shopify rails. We measure agent-side truth.
+
+## Shipped (film these — comparison · before/after · width · insights · ease)
 
 | Capability | Proof |
 |------------|--------|
