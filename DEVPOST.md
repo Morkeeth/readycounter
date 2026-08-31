@@ -122,8 +122,12 @@ its own audit:
   **70 to 94** — a delta of exactly **24**, Presenc AI's 24%. Clearing the forced
   account moves Neon Matcha from **65 to 80** — exactly **15**. Giving Neon one
   method an agent can complete on moves it **65 to 76** — exactly **11**. Three
-  different published figures from one table, each asserted separately.
-  `scripts/verify-readiness.mjs` fails the build if any is ever anything else,
+  different published figures from one table. Each of the three *deltas* is
+  asserted separately in `scripts/verify-readiness.mjs`, against its own source
+  row, on the default-store fixture; the two Neon totals above were read from a
+  run on 2026-08-31 and are not themselves pinned by an assertion — what is
+  pinned is the weight that produces them. The build fails if any delta is ever
+  anything else,
   and a budget-neutral tamper (`payment_method` 11→12 with `page_structure` 6→5,
   still summing to exactly 100) sails past the budget check and still goes red on
   five assertions across two scripts.

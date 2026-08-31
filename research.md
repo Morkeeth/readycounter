@@ -252,8 +252,14 @@ Proven red, not just green, all run on 2026-08-31:
 from **70 to 94** — a delta of exactly **24**, the published figure. Clearing the
 forced account on Neon Matcha Lab moves it from **65 to 80** — exactly **15**.
 Giving Neon one method a prepared agent order can complete on moves it from
-**65 to 76** — exactly **11**. Three different rows of one table, each asserted
-separately in `scripts/verify-readiness.mjs`, not eyeballed.
+**65 to 76** — exactly **11**. Three different rows of one table. Precisely what
+is asserted, because the distinction matters: `scripts/verify-readiness.mjs`
+pins each of the three **deltas** (24, 15, 11) against its own source row on the
+default-store fixture, and `verify-stores.mjs` recomputes every line of both
+stores outside the product. The two Neon *totals* (80 and 76) were read from a
+run on 2026-08-31; no assertion pins those two numbers, only the weights that
+produce them. Saying "each asserted separately" without that split would be the
+same shape as the defects this file records.
 
 ---
 
