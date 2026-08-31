@@ -9,7 +9,7 @@ Connect your real catalog, get an itemised abandonment bill, co-shop with an ass
 ```
                     ┌─────────────────────────────────────┐
                     │         ReadyCounter (Vercel)        │
-                    │  readiness tape · 16 tools · co-shop   │
+                    │  readiness tape · 18 tools · co-shop   │
                     └──────────────┬──────────────────────────┘
                                    │
          ┌─────────────────────────┼─────────────────────────┐

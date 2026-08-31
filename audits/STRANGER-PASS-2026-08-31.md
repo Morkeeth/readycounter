@@ -15,6 +15,17 @@
 | 2 | Rankings width | **PASS** — DTC rankings table **148** rows, UCP filter **UCP GTIN · scrape empty · 11** |
 | 3 | Paste audit (colourpop.com) | **PASS** — catalog bill, navigates to merchant audit view, **0/24** catalog |
 | 4 | Re-audit delta | **PASS** — **Re-audit & show delta** button, delta/prior copy appears |
+| 5 | Prove path (branch) | **PASS on branch** — **Prove in co-shop** + WebMCP tool console under Connect |
+
+**90s timing (branch):**
+
+| Time | Step |
+|------|------|
+| 0:00 | Open Connect — lighthouse hero 148/78 |
+| 0:15 | Audit colourpop — YOU·FIELD strip |
+| 0:35 | Scroll rankings — UCP gap filter |
+| 0:50 | Prove in co-shop or tool console |
+| 1:05 | Re-audit — delta receipt hero |
 
 **Command:**
 
@@ -48,10 +59,10 @@ curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,suc
 
 | # | Issue | Severity | Notes |
 |---|--------|----------|-------|
-| 1 | **Lighthouse hero not on production** | Medium | `ConnectLighthouseHero` ships on branch; live Connect has field receipt in companion card, not hero strip. Oscar deploy pending. |
-| 2 | **First audit jumps to Readiness tab** | Low | Stranger still completes path; Connect rankings require scroll on first visit only |
-| 3 | **README said 16 tools until this wave** | Low | Fixed in README (18 tools) |
-| 4 | **JUDGE-60s.md still says 16 tools** | Low | Deferred — out of RC-C copy scope |
+| 1 | **Lighthouse hero not on production** | Medium | Ships on branch; Oscar `vercel --prod` |
+| 2 | **Offer/policy chips not on production** | Medium | Branch-only until deploy |
+| 3 | **First audit jumps to Readiness tab** | Low | Stranger still completes path; Connect rankings require scroll on first visit only |
+| 4 | **JUDGE-60s.md** | Low | Fixed 18 tools heading |
 | 5 | **E1 OAuth pairs = 0** | Blocking narrative | Named in all partner docs; do not film Admin-gap climax |
 | 6 | **`#rankings-panel` id** | Low | Present in branch bundle; production HTML is SPA — use heading "DTC rankings" for tests |
 

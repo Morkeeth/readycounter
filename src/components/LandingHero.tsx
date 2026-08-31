@@ -88,12 +88,13 @@ export function LandingHero({
 
       <div className="landing__copy">
         <h2>
-          {score} out of {POINT_BUDGET}. Here is what costs you agent carts.
+          {score} out of {POINT_BUDGET}. Agents are shopping — can they read your store?
         </h2>
         <p>
-          AI traffic to Shopify is up {traffic.figure}. Agent carts abandon at {abandon.figure}.
-          ReadyCounter prints the store as an itemised bill — six weights from one research table,
-          not a gauge we tuned. Audit your catalog, preview a fix in sandbox, co-shop the proof.
+          Not ready for agents means invisible customer loss. AI traffic to Shopify is up{' '}
+          {traffic.figure}; agent carts abandon at {abandon.figure}. ReadyCounter prints the store
+          as an itemised bill — six weights from one research table, not a gauge we tuned. Audit
+          your catalog, compare to <strong>148</strong> parsed brands, co-shop the proof.
         </p>
 
         <ul className="landing__facts">

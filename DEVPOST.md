@@ -44,7 +44,7 @@ Agent commerce. Now reviewable. Proof.
 
 The sandbox prints an **itemised bill**: six Presenc abandonment rows at published shares (26/24/18/15/11/6 — [`sources.ts`](./src/data/sources.ts)), every point traced to a check, fix, and source row. **18 WebMCP tools** let a human and agent co-edit one order; `prepare_checkout` never charges a card. Field crawls score **catalog budget only** — checkout walls stay NOT MEASURED until OAuth.
 
-**Honest gaps:** E1 OAuth Admin↔crawl pairs not done · Offer schema not ranked on crawl yet · ACP feed certification deferred ([`research/RANK-AND-HELP-GAP.md`](./research/RANK-AND-HELP-GAP.md)). **2027 ambition:** every merchant runs ReadyCounter on ship · public receipt · Shopify adopts the format ([`demo/AMBITION.md`](./demo/AMBITION.md)).
+**Honest gaps:** E1 OAuth Admin↔crawl pairs not done · ACP feed certification deferred · prod may lag branch until deploy ([`research/RANK-AND-HELP-GAP.md`](./research/RANK-AND-HELP-GAP.md)). **On branch:** Offer JSON-LD % + ACP policy smoke on URL audit. **2027 ambition:** every merchant runs ReadyCounter on ship · public receipt · Shopify adopts the format ([`demo/AMBITION.md`](./demo/AMBITION.md)).
 
 ---
 

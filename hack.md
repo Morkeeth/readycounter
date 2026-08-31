@@ -146,3 +146,12 @@ Done-when (ran 2026-08-31T21:31Z):
 - 2026-08-31 — **RC-A lighthouse UI:** `ConnectLighthouseHero` (148 width live from rankings API, 78.6% abandon from `sources.ts` only) · `FieldCompareStrip` YOU·FIELD·DELTA · `field-compare.ts` percentile join · rankings CTA with vertical/UCP gap filter · `?audit_url=` deep link + copy receipt · `verify-field-compare.mjs`.
 
 - 2026-08-31 — **RC-C narrative wave:** `LIGHTHOUSE-VISION.md` · `SHOPIFY-PARTNER-BRIEF.md` · README lighthouse stranger hero (148 width, 3-step path) · `DEVPOST.md` elevator sync with `demo/AMBITION.md` · `audits/STRANGER-PASS-2026-08-31.md` (live URL Playwright + API) · `e2e/stranger-pass.spec.ts` · README 16→18 tools fix.
+
+- 2026-08-31 — **RC-WEBMCP-SHAPE + RC-B Offer/ACP (IDE night):**
+  Connect arc **Measure → Compare → Prove → Re-measure** · `offerPct` + `policySmoke` on crawl/API/UI ·
+  `reviewAgainstField` flags for schema-offer + acp-eligibility · Prove in co-shop CTA ·
+  `LAUNCH.md` restored (symlink loop) · `research/experiments/R7-offer-on-crawl.md` ·
+  `verify-url-audit.mjs` offer fixture · landing urgency copy · delta hero on re-audit ·
+  `demo/PITCH-TOMORROW.md` for morning pitch · `NIGHT-SLICES.md` ticked.
+  `npm run verify && npm run build` exit 0. Branch `night/gates-that-lie-2026-08-31`.
+  **Oscar:** `vercel --prod` · film · Devpost.

@@ -69,7 +69,7 @@ Ordered by Presenc abandonment share + what our batch actually found.
 | `tc-sandbox-account` | Sandbox | `/?store=neon-matcha&view=merchant` | Account 0/15 → autopilot → 80 |
 | `tc-url-audit-gtin` | URL audit | `POST /api/v1/audit/url` colourpop | catalogScore honest; checkout NOT MEASURED |
 | `tc-url-blocked` | URL audit | gymshark.com | 422 + OAuth recommendation |
-| `tc-api-production` | API | `npm run test:e2e` | health redis · shopify · 16 tools |
+| `tc-api-production` | API | `npm run test:e2e` | health redis · shopify · 18 tools |
 | `tc-autopilot-impact` | Autopilot | ember-oak Autopilot tab | Each fix cites Presenc % |
 
 **Run automated:** `npm run test:e2e` + `npm run verify` + `node scripts/verify-launch.mjs`

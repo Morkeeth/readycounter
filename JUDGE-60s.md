@@ -62,7 +62,7 @@ Open **http://localhost:5173** (or live URL when deployed).
 
 ---
 
-## 16 WebMCP tools
+## 18 WebMCP tools
 
 `search_catalog` · `get_product` · `add_to_order` · `update_line_quantity` · `remove_line` · `get_order` · `get_delivery_quote` · `prepare_checkout` · `get_readiness_score` · `get_merchant_config` · `simulate_agent_journey` · …
 

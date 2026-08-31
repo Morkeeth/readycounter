@@ -13,6 +13,7 @@ import { compareToField, type FieldCompareResult } from '../lib/field-compare';
 import { useShopStore } from '../store/shopStore';
 import { FieldCompareStrip } from './FieldCompareStrip';
 import { FieldReviewPanel } from './FieldReviewPanel';
+import { AuditDeltaReceipt } from './AuditDeltaReceipt';
 
 interface StorefrontAuditFormProps {
   onSuccess?: (storeId: string) => void;
@@ -248,6 +249,8 @@ export function StorefrontAuditForm({
           </>
         ) : null}
       </div>
+
+      {delta ? <AuditDeltaReceipt delta={delta} /> : null}
 
       {fieldCompare && youSnapshot ? (
         <FieldCompareStrip compare={fieldCompare} you={youSnapshot} delta={delta} />
