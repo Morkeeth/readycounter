@@ -110,7 +110,8 @@ Most readiness scores are a number with a nice ring around it. This one ships
 its own audit:
 
 - **A figure the product cites cannot be printed without a row in
-  `src/data/sources.ts`.** Twelve rows, each with publisher, figure, URL, publish date,
+  `src/data/sources.ts`.** Twelve rows across six distinct pages (seven rows are
+  the six causes plus the 78.6% headline off one Presenc AI table), each with publisher, figure, URL, publish date,
   read date, and the honest limit of the source (Presenc is a vendor page and
   says its metrics are modelled; the "81% lack Offer" line is our subtraction).
 - **`scripts/verify-score.mjs`** fails `npm run verify` if the budget stops
@@ -255,12 +256,12 @@ Full one-take script with the exact numbers: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md
 | Time | Beat |
 |------|------|
 | 0:00 | The tape — Ember & Oak, 70/100, CHECKOUT VOID |
-| 0:25 | Open a line: 0/24, measured, Presenc AI, read 2026-08-31 |
+| 0:25 | Open a line: 0/24, `published weight · our stated test`, Presenc AI, read 2026-08-31 |
 | 0:55 | Co-shop — human item + `add_to_order` in one order |
 | 1:20 | `prepare_checkout` refuses, and says exactly why |
 | 1:45 | Clear the CAPTCHA — 70 → 94, a delta of exactly 24 |
 | 2:10 | Neon Matcha — 65/100, account wall worth 15, payment row 0/11, records 2/6 |
-| 2:30 | Twelve sources, every one dated |
+| 2:30 | Twelve dated citation rows across six pages |
 
 ---
 

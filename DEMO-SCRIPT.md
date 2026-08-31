@@ -139,10 +139,14 @@ complete` at **0/11** and `Product records an agent can read` at **2/6**.
 
 **On screen:** scroll the merchant page to the **Every source this tape can
 cite** panel — twelve rows, publisher, figure, published date, read date.
+(Twelve *rows*, six distinct pages — seven of the rows are the six causes plus
+the 78.6% headline, all off the one Presenc AI table. Say "citations", not
+"sources", or the panel on screen contradicts you.)
 
-> Twelve sources. A figure this product cites cannot be printed without a row
-> here, and the build fails if a row is not quoted in research.md. Every point
-> we deduct has a published price, and that is the table.
+> Twelve dated citations, across six pages. A figure this product cites cannot
+> be printed without a row here, and the build fails if a row is not quoted in
+> research.md. Every point we deduct has a published price, and that is the
+> table.
 > ReadyCounter — the counter prints the score.
 
 ---
@@ -165,7 +169,7 @@ Read from `npm run verify`, 2026-08-31. If any of these differ when you film,
 | Both walls on one store | **−39** | `verify-readiness.mjs` |
 | Charged points that are a published weight | **100 of 100** | `verify-readiness.mjs` |
 | WebMCP tools registered | **16** (reported, worth 0) | `verify-score.mjs` |
-| Sources on file | **12** | `verify-score.mjs` |
+| Citation rows on file | **12** rows across **6** distinct pages | `verify-score.mjs` |
 | Ember & Oak, complete product records | **7 / 8** | `verify-readiness.mjs` |
 
 ---

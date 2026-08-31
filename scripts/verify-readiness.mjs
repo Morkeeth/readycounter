@@ -199,19 +199,34 @@ assert(
 );
 
 /*
- * The page-structure line reads back the JSON-LD the page EMITS. Grading the
- * fixture instead of the emitted document is the whole objection an earlier
- * ruling raised against scoring this row, so the equality is asserted here.
+ * The page-structure line.
+ *
+ * WHAT THIS ASSERTS, named exactly (wave 5, 2026-08-31): the emitter produces
+ * one record per SKU and the line is that ratio x its weight. It does NOT
+ * assert 'emitted, not fixture' — both sides of that equality come from the
+ * same catalogLegibility() call, so it cannot go red on that question and a
+ * label saying it could was a check claiming more than it tests. The real
+ * emitted-vs-fixture independence is in scripts/verify-stores.mjs, which walks
+ * catalogJsonLd's output against its OWN copy of the required-field list.
  */
 const pageLine = withoutCaptcha.find((c) => c.id === 'page_structure');
 assert(
-  'the page-structure line grades the emitted JSON-LD, not the fixture',
+  'the page-structure line is one emitted record per SKU x its weight',
   pageLine.points === Math.round(pageLine.maxPoints * legibleRatio) && legible.total === PRODUCTS.length,
   legible.legible + '/' + legible.total + ' complete records · ' + pageLine.points + '/' + pageLine.maxPoints,
 );
+/*
+ * STATED LIMIT, asserted so it cannot rot: on a type-conforming catalog
+ * catalogJsonLd always emits name, sku and all three Offer fields, so gtin13 is
+ * the ONLY required field a shipped fixture can be missing. The six-field list
+ * is real for an imported catalog (a Shopify row with an empty title lands as
+ * name ''), but on these two stores this line is a GTIN-coverage test read out
+ * of the emitted document. Tamper 2's own output is the proof: drop gtin13 from
+ * REQUIRED_JSONLD_FIELDS and both stores print a perfect 6/6.
+ */
 assert(
-  'a SKU with no GTIN is exactly what the emitted record is missing',
-  legible.gaps.length > 0 && legible.gaps.every((g) => g.missing > 0),
+  'gtin13 is the only field the shipped fixtures can be missing — stated, not implied',
+  legible.gaps.length > 0 && legible.gaps.every((g) => g.missing > 0 && g.field === 'gtin13'),
   legible.gaps.map((g) => g.field + ' x ' + g.missing).join(', ') || 'no gaps',
 );
 
