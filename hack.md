@@ -90,17 +90,17 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Night wave RC-A (2026-08-31):** Lighthouse comparison surface on Connect — hero width, YOU·FIELD·DELTA strip, rankings CTA, `?audit_url=` share.
+**Night wave RC-C (2026-08-31):** Partner-grade narrative — lighthouse vision, stranger path, Devpost ambition sync.
 
-**Slice 1 (this run):** ✅ Shipped 2026-08-31 — see LOG entry RC-A lighthouse UI.
+**Slice 1 (this run):** Docs + stranger pass receipt. No deploy.
 
 ```text
-Done-when (ran 2026-08-31):
-  npm run verify   → exit 0
-  npm run build    → exit 0
-  grep ConnectLighthouseHero src/components/IntegrationsPanel.tsx → lines 19,125
-  grep FieldCompareStrip src/components/StorefrontAuditForm.tsx → lines 14,222
-  git push origin night/gates-that-lie-2026-08-31 → eb2dfd2
+Done-when (run at commit):
+  test -f LIGHTHOUSE-VISION.md && test -f SHOPIFY-PARTNER-BRIEF.md
+  test -f audits/STRANGER-PASS-2026-08-31.md
+  curl -sS …/api/v1/rankings | jq '{shopCount,succeeded,ucp}'  → 148, 78, gtinWhereCrawlZero:11
+  PLAYWRIGHT_BASE_URL=https://tooltruth-webmcp.vercel.app npx playwright test e2e/*.spec.ts → 12 passed
+  git push origin cursor/lighthouse-narrative-docs-db6e
 ```
 
 ## LOG
@@ -144,3 +144,5 @@ Done-when (ran 2026-08-31):
   `npm run build` + `npm run verify` exit 0. Branch `nightrun/l3-readycounter`.
 
 - 2026-08-31 — **RC-A lighthouse UI:** `ConnectLighthouseHero` (148 width live from rankings API, 78.6% abandon from `sources.ts` only) · `FieldCompareStrip` YOU·FIELD·DELTA · `field-compare.ts` percentile join · rankings CTA with vertical/UCP gap filter · `?audit_url=` deep link + copy receipt · `verify-field-compare.mjs`.
+
+- 2026-08-31 — **RC-C lighthouse narrative:** `LIGHTHOUSE-VISION.md` · `SHOPIFY-PARTNER-BRIEF.md` · README stranger hero · `audits/STRANGER-PASS-2026-08-31.md` (12 Playwright pass, prod missing RC-A hero until deploy) · DEVPOST ambition sync with `demo/AMBITION.md` · README 16→18 tools.

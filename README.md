@@ -1,11 +1,18 @@
 # ReadyCounter
 
-**Agent-ready commerce — score your store, co-shop with your assistant.**
+**Lighthouse for agentic commerce.** Agent commerce. Now reviewable. Proof.
 
-AI shoppers are arriving. Most stores lose them at checkout — CAPTCHA walls, login gates, stale catalog feeds. ReadyCounter gives merchants a **readiness score** with one-click fixes, and gives shoppers a **shared cart** where humans and assistants build the same order in one tab.
+Agents are shopping; **78.6%** of their carts abandon ([Presenc AI](https://presenc.ai/research/agent-cart-abandonment-statistics-2026) · [`sources.ts`](./src/data/sources.ts)) — and merchants cannot see the leak. ReadyCounter already parsed **148** curated DTC brands (**78** crawled, **0%** scrape GTIN, **11** with UCP GTIN where scrape is empty). Paste your storefront URL, compare yourself to the field, re-audit for delta, and prove the agent path with **18** WebMCP tools in one tab.
 
-**Live:** https://tooltruth-webmcp.vercel.app · second store: `?store=neon-matcha`
-· straight to a tab: `?view=merchant`
+**Live:** https://tooltruth-webmcp.vercel.app
+
+### Stranger path (60 seconds, no signup)
+
+1. **Connect** → paste any storefront URL → **Audit** (catalog score + YOU·FIELD·DELTA vs the batch)
+2. **DTC rankings** → filter *UCP GTIN · scrape empty* → see where you sit among **148** brands
+3. **Readiness** or **Shop** → co-shop with the agent tool console; `prepare_checkout` never charges a card
+
+Second merchant: `?store=neon-matcha` · film mode: [`demo/FILM-AND-SUBMIT.md`](./demo/FILM-AND-SUBMIT.md) · Devpost: [`DEVPOST.md`](./DEVPOST.md) · vision: [`LIGHTHOUSE-VISION.md`](./LIGHTHOUSE-VISION.md)
 
 ![The readiness tape — Ember & Oak Coffee, 70/100, checkout void](./docs/shots/03-merchant-1440.png)
 
@@ -15,7 +22,7 @@ AI shoppers are arriving. Most stores lose them at checkout — CAPTCHA walls, l
 |---------|---------|
 | **Merchant / operator** | Readiness score /100, checkout blocker audit, catalog feed validation, autopilot fixes |
 | **Shopper** | Browse, co-shop with your assistant, share a cart link — no account required |
-| **Developer** | REST API, Shopify catalog import/export, 16 structured agent tools, OpenAPI spec |
+| **Developer** | REST API, Shopify catalog import/export, 18 structured agent tools, OpenAPI spec |
 
 ## How it works
 
@@ -91,9 +98,9 @@ Import your own catalog: **Connect → Import your catalog** (Shopify JSON).
 
 Full reference: [`INTEGRATIONS.md`](./INTEGRATIONS.md) · OpenAPI at `/openapi.yaml`
 
-## Agent tools (16)
+## Agent tools (18)
 
-Structured tools registered via WebMCP — search, cart, checkout validation, readiness, catalog import, live rooms. See [`src/webmcp/toolManifest.ts`](./src/webmcp/toolManifest.ts).
+Structured tools registered via WebMCP — search, cart, checkout validation, readiness, field companion, catalog import, live rooms. See [`src/webmcp/toolManifest.ts`](./src/webmcp/toolManifest.ts).
 
 Test without the browser flag: **Connect → Agent tool console**.
 

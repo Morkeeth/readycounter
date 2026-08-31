@@ -40,21 +40,13 @@ Agent commerce. Now reviewable. Proof.
 
 ## Elevator pitch
 
-**Agent commerce. Now reviewable. Proof.** Agent traffic to Shopify storefronts is up **8× year over year** and **78.6% of
-agent carts are abandoned** — and merchants cannot see why. **ReadyCounter**
-scores a storefront for agent shoppers and prints the score as an
-**itemised bill**: every point traced to a named check, its arithmetic, its one-line
-fix, and the page the weight came from — publisher, date published, date read.
-**All six weights are published shares of abandoned agent carts — the six rows of
-one table, 26/24/18/15/11/6, which sum to 100 on that page and to 100 here.** Not
-one of the hundred points is a weight we chose. What is ours is the *test* behind
-each line — the source names six causes and defines none of them — so every line
-prints its own test beside the published weight, and a check with no published
-price is reported and charged nothing rather than given a number we made up.
-The store itself exposes **18 WebMCP tools**, so a human and an agent co-edit one
-order in one tab, and `prepare_checkout` never charges a card. Field proof: **78/148**
-crawled DTC stores at **0%** scrape GTIN, **11** brands with UCP GTIN where scrape is empty,
-and a re-audit delta when you claim a fix.
+**Agent commerce. Now reviewable. Proof.** **Lighthouse for agentic commerce — not Shopify's rails.**
+
+Agent traffic to Shopify storefronts is up **8× year over year** and **78.6% of agent carts are abandoned** — merchants cannot see the customers they lose. **ReadyCounter** is the receipt: compare yourself to **148** parsed DTC brands (**78** crawled, **0%** scrape GTIN, **11** with UCP GTIN where scrape is empty), paste any URL for an honest catalog audit, re-audit for **delta**, and prove the agent path with **18 WebMCP tools** in one tab (`prepare_checkout` never charges a card).
+
+The score is an **itemised bill**: every point traced to a named check, its arithmetic, its one-line fix, and the page the weight came from. **All six weights are published shares of abandoned agent carts — 26/24/18/15/11/6 — which sum to 100 on Presenc's table and 100 here.** What is ours is the *test* behind each line, not the weight.
+
+**Ambition (honest gaps named):** every merchant runs ReadyCounter when they ship anything new; Shopify adopts the receipt; stores go public with their score. We do **not** claim full live checkout measurement (crawl = catalog only), Admin↔public GTIN parity (**E1 OAuth pairs = 0**), or ACP feed certification yet — see [`research/RANK-AND-HELP-GAP.md`](./research/RANK-AND-HELP-GAP.md) and [`demo/AMBITION.md`](./demo/AMBITION.md).
 
 ---
 
