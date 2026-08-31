@@ -12,12 +12,30 @@ type VerticalFilter = 'all' | string;
 type OutcomeFilter = 'all' | CrawlOutcome;
 type UcpFilter = 'all' | 'ucp-on' | 'ucp-gtin-gap';
 
-export function RankingsPanel() {
+export interface RankingsPanelProps {
+  initialVertical?: string;
+  initialUcpFilter?: UcpFilter;
+  highlightHost?: string;
+}
+
+export function RankingsPanel({
+  initialVertical,
+  initialUcpFilter,
+  highlightHost,
+}: RankingsPanelProps = {}) {
   const [data, setData] = useState<RankingsResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [vertical, setVertical] = useState<VerticalFilter>('all');
+  const [vertical, setVertical] = useState<VerticalFilter>(initialVertical ?? 'all');
   const [outcome, setOutcome] = useState<OutcomeFilter>('all');
-  const [ucpFilter, setUcpFilter] = useState<UcpFilter>('all');
+  const [ucpFilter, setUcpFilter] = useState<UcpFilter>(initialUcpFilter ?? 'all');
+
+  useEffect(() => {
+    if (initialVertical) setVertical(initialVertical);
+  }, [initialVertical]);
+
+  useEffect(() => {
+    if (initialUcpFilter) setUcpFilter(initialUcpFilter);
+  }, [initialUcpFilter]);
 
   useEffect(() => {
     void apiRankings()
@@ -88,7 +106,10 @@ export function RankingsPanel() {
   const filtersActive = vertical !== 'all' || outcome !== 'all' || ucpFilter !== 'all';
 
   return (
-    <article className="rankings integrations__card integrations__card--wide">
+    <article
+      id="rankings-panel"
+      className="rankings integrations__card integrations__card--wide"
+    >
       <header className="rankings__header">
         <h3>DTC rankings — field batch</h3>
         <p className="integrations__muted">
@@ -273,10 +294,17 @@ export function RankingsPanel() {
                     </tr>
                   );
                 }
+                const rowHost = hostname(row.url);
+                const highlighted = highlightHost && rowHost === highlightHost;
                 return (
                   <tr
                     key={row.url}
-                    className={row.ucpGtinWhereCrawlZero ? 'rankings__row--ucp-gap' : undefined}
+                    className={[
+                      row.ucpGtinWhereCrawlZero ? 'rankings__row--ucp-gap' : '',
+                      highlighted ? 'rankings__row--you' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ') || undefined}
                   >
                     <td>{i + 1}</td>
                     <td>

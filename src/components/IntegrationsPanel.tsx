@@ -16,6 +16,7 @@ import {
 import { registerCustomStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
 import { DevToolPanel } from './DevToolPanel';
+import { ConnectLighthouseHero } from './ConnectLighthouseHero';
 import { FieldCompanion } from './FieldCompanion';
 import { LaunchBrief } from './LaunchBrief';
 import { RankingsPanel } from './RankingsPanel';
@@ -46,6 +47,11 @@ export function IntegrationsPanel({
   const [shopifyStatus, setShopifyStatus] = useState<ShopifyStatus | null>(null);
   const [renderStatus, setRenderStatus] = useState<RenderPartnershipStatus | null>(null);
   const [shopifyMsg, setShopifyMsg] = useState<string | null>(null);
+  const [rankingsVertical, setRankingsVertical] = useState<string | undefined>();
+  const [rankingsUcpFilter, setRankingsUcpFilter] = useState<
+    'all' | 'ucp-on' | 'ucp-gtin-gap' | undefined
+  >();
+  const [rankingsHost, setRankingsHost] = useState<string | undefined>();
   const feed = validateStoreCatalog(storeId);
   const shopify = toShopifyCatalog(storeId);
 
@@ -104,15 +110,19 @@ export function IntegrationsPanel({
     }
   };
 
+  const openRankingsFromAudit = (filter: {
+    vertical: string;
+    ucpFilter: 'all' | 'ucp-gtin-gap';
+    host: string;
+  }) => {
+    setRankingsVertical(filter.vertical);
+    setRankingsUcpFilter(filter.ucpFilter);
+    setRankingsHost(filter.host);
+  };
+
   return (
     <section className="integrations" aria-label="Connect your store">
-      <header className="integrations__header">
-        <h2>Connect</h2>
-        <p className="integrations__lead">
-          Audit what agents can retrieve from a storefront. Score it on the Readiness bill. Prove
-          the path with WebMCP tools in this tab — or the tool console if the browser flag is off.
-        </p>
-      </header>
+      <ConnectLighthouseHero />
 
       <div className="integrations__grid">
         {/* 1 · Measure */}
@@ -121,9 +131,14 @@ export function IntegrationsPanel({
           <h3>Audit a storefront URL</h3>
           <p>
             Read public <code>products.json</code> or JSON-LD. Checkout walls stay NOT MEASURED
-            until OAuth. After the crawl you get ≤3 “do this week” steps against the field.
+            until OAuth. After the crawl you see where you sit vs the field batch — then ≤3 “do
+            this week” steps.
           </p>
-          <StorefrontAuditForm navigateToBill={navigateToBill} onOpenBill={onOpenBill} />
+          <StorefrontAuditForm
+            navigateToBill={navigateToBill}
+            onOpenBill={onOpenBill}
+            onOpenRankings={openRankingsFromAudit}
+          />
         </article>
 
         {/* 2 · Against the field */}
@@ -165,7 +180,11 @@ export function IntegrationsPanel({
           {shopifyMsg ? <p className="integrations__ok">{shopifyMsg}</p> : null}
         </article>
 
-        <RankingsPanel />
+        <RankingsPanel
+          initialVertical={rankingsVertical}
+          initialUcpFilter={rankingsUcpFilter}
+          highlightHost={rankingsHost}
+        />
 
         <SandboxShowcase />
 

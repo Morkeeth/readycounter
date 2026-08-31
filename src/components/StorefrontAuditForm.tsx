@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { apiAuditUrl, apiFetchServerStore, type FieldReviewPayload } from '../api/client';
+import { apiAuditUrl, apiFetchServerStore, apiRankings, type FieldReviewPayload } from '../api/client';
 import { reviewAgainstField } from '../data/field-companion';
 import { registerCustomStore } from '../data/stores';
 import {
@@ -9,8 +9,9 @@ import {
   snapshotFromAudit,
   type AuditDelta,
 } from '../lib/audit-delta';
+import { compareToField, type FieldCompareResult } from '../lib/field-compare';
 import { useShopStore } from '../store/shopStore';
-import { AuditDeltaReceipt } from './AuditDeltaReceipt';
+import { FieldCompareStrip } from './FieldCompareStrip';
 import { FieldReviewPanel } from './FieldReviewPanel';
 
 interface StorefrontAuditFormProps {
@@ -18,12 +19,18 @@ interface StorefrontAuditFormProps {
   /** After audit, jump to Readiness tab. */
   navigateToBill?: boolean;
   onOpenBill?: () => void;
+  onOpenRankings?: (filter: {
+    vertical: string;
+    ucpFilter: 'all' | 'ucp-gtin-gap';
+    host: string;
+  }) => void;
 }
 
 export function StorefrontAuditForm({
   onSuccess,
   navigateToBill,
   onOpenBill,
+  onOpenRankings,
 }: StorefrontAuditFormProps) {
   const switchStore = useShopStore((s) => s.switchStore);
   const [url, setUrl] = useState(() => {
@@ -36,12 +43,38 @@ export function StorefrontAuditForm({
   const [lastStoreId, setLastStoreId] = useState<string | null>(null);
   const [fieldReview, setFieldReview] = useState<FieldReviewPayload | null>(null);
   const [delta, setDelta] = useState<AuditDelta | null>(null);
+  const [fieldCompare, setFieldCompare] = useState<FieldCompareResult | null>(null);
+  const [youSnapshot, setYouSnapshot] = useState<{
+    catalogScore: number;
+    catalogBudget: number;
+    gtinPct: number;
+    productCount: number;
+  } | null>(null);
   const [priorReady, setPriorReady] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const hasPrior = useMemo(() => {
     if (priorReady) return true;
     return Boolean(url.trim() && loadPriorAudit(url.trim()));
   }, [url, priorReady]);
+
+  const syncAuditUrlParam = (target: string) => {
+    const next = new URL(window.location.href);
+    next.searchParams.set('audit_url', target);
+    next.searchParams.set('view', 'integrations');
+    window.history.replaceState({}, '', next.toString());
+  };
+
+  const copyReceipt = async (line: string) => {
+    const text = `${line}\n${window.location.origin}${window.location.pathname}?view=integrations&audit_url=${encodeURIComponent(url.trim())}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      window.prompt('Copy field receipt:', text);
+    }
+  };
 
   const audit = async () => {
     const target = url.trim();
@@ -51,6 +84,8 @@ export function StorefrontAuditForm({
     setMsg(null);
     setFieldReview(null);
     setDelta(null);
+    setFieldCompare(null);
+    setYouSnapshot(null);
     const prior = loadPriorAudit(target);
     const result = await apiAuditUrl(target);
     setBusy(false);
@@ -85,6 +120,31 @@ export function StorefrontAuditForm({
     }
     savePriorAudit(current);
     setPriorReady(true);
+    syncAuditUrlParam(target);
+
+    const you = {
+      catalogScore,
+      catalogBudget,
+      gtinPct,
+      productCount: data.productCount,
+    };
+    setYouSnapshot(you);
+
+    const rankings = await apiRankings();
+    if (rankings?.rows?.length) {
+      setFieldCompare(
+        compareToField(
+          { url: target, ...you },
+          rankings.rows,
+          {
+            shopCount: rankings.shopCount,
+            succeeded: rankings.succeeded,
+            avgCatalogScore: rankings.avgCatalogScore,
+            avgGtinPct: rankings.avgGtinPct,
+          },
+        ),
+      );
+    }
 
     setMsg(
       `${data.name}: ${data.productCount} SKUs · catalog ${catalogScore}/${catalogBudget} pts (catalog budget — never /100 for field crawls)`,
@@ -99,8 +159,17 @@ export function StorefrontAuditForm({
     onOpenBill?.();
   };
 
+  const openRankings = () => {
+    if (!fieldCompare) return;
+    onOpenRankings?.({
+      ...fieldCompare.rankingsFilter,
+      host: fieldCompare.host,
+    });
+    document.getElementById('rankings-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
-    <div className="audit-form">
+    <div className="audit-form" id="audit-storefront">
       <label className="integrations__shop-label">
         Storefront URL
         <input
@@ -132,10 +201,29 @@ export function StorefrontAuditForm({
             Open bill
           </button>
         ) : null}
+        {fieldCompare ? (
+          <>
+            <button type="button" className="btn btn--secondary" onClick={openRankings}>
+              Rankings · {fieldCompare.vertical}
+              {fieldCompare.ucpGtinWhereCrawlZero ? ' · UCP gap' : ''}
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={() => void copyReceipt(fieldCompare.receiptLine)}
+            >
+              {copied ? 'Receipt copied' : 'Copy field receipt'}
+            </button>
+          </>
+        ) : null}
       </div>
+
+      {fieldCompare && youSnapshot ? (
+        <FieldCompareStrip compare={fieldCompare} you={youSnapshot} delta={delta} />
+      ) : null}
+
       {msg ? <p className="integrations__ok">{msg}</p> : null}
       {err ? <p className="integrations__warn">{err}</p> : null}
-      {delta ? <AuditDeltaReceipt delta={delta} /> : null}
       {fieldReview ? (
         <FieldReviewPanel
           review={fieldReview}
@@ -145,8 +233,9 @@ export function StorefrontAuditForm({
       ) : null}
       <p className="integrations__muted">
         Public <code>products.json</code> or JSON-LD — catalog budget only, never a full /100 for
-        field crawls. Re-run the same URL after a fix to get a delta receipt. Checkout walls stay
-        NOT MEASURED until OAuth. Saved to Render KV; return via <code>?store=…</code>.
+        field crawls. Re-run the same URL after a fix to get a delta receipt. Share via{' '}
+        <code>?audit_url=</code> deep link. Checkout walls stay NOT MEASURED until OAuth. Saved to
+        Render KV; return via <code>?store=…</code>.
       </p>
     </div>
   );

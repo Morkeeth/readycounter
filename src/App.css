@@ -1577,6 +1577,215 @@ a {
   color: var(--ink-soft);
 }
 
+/* ---------- lighthouse hero (Connect tab) ---------- */
+
+.lighthouse-hero {
+  grid-column: 1 / -1;
+  margin-bottom: 0.25rem;
+  padding: 1.25rem 1.35rem 1.1rem;
+  border: 1px solid var(--rule);
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--counter) 55%, var(--paper)) 0%,
+    var(--paper) 55%
+  );
+}
+
+.lighthouse-hero__kicker {
+  margin: 0 0 0.35rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.lighthouse-hero__title {
+  margin: 0 0 0.55rem;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  max-width: 28ch;
+}
+
+.lighthouse-hero__lead {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 62ch;
+}
+
+.lighthouse-hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.lighthouse-hero__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.lighthouse-hero__num {
+  font-family: var(--mono);
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.lighthouse-hero__lbl {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.lighthouse-hero__stat--gap .lighthouse-hero__num {
+  color: var(--stamp);
+}
+
+.lighthouse-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.lighthouse-hero__cite {
+  margin: 0;
+}
+
+/* ---------- field compare strip (YOU · FIELD · DELTA) ---------- */
+
+.field-compare {
+  margin: 1rem 0 0.5rem;
+  padding: 1rem 1.1rem;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 3px 3px 0 var(--rule);
+}
+
+.field-compare__kicker {
+  margin: 0 0 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.field-compare__cols {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.field-compare__col h4 {
+  margin: 0 0 0.45rem;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.field-compare__col dl {
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field-compare__col dt {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.field-compare__col dd {
+  margin: 0.08rem 0 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+}
+
+.field-compare__col--you {
+  padding-right: 0.5rem;
+  border-right: 1px dashed var(--rule);
+}
+
+.field-compare__col--field {
+  padding-right: 0.5rem;
+  border-right: 1px dashed var(--rule);
+}
+
+.field-compare__col--delta {
+  background: color-mix(in srgb, var(--counter) 35%, transparent);
+  padding: 0.65rem 0.75rem;
+  margin: -0.35rem -0.25rem -0.35rem 0;
+}
+
+.field-compare__col--up {
+  border-left: 3px solid color-mix(in srgb, var(--stamp) 50%, var(--rule));
+}
+
+.field-compare__col--down {
+  border-left: 3px solid var(--stamp);
+}
+
+.field-compare__col--first {
+  border-left: 3px dashed var(--rule);
+}
+
+.field-compare__vs {
+  color: var(--ink-soft);
+  font-size: 0.85em;
+}
+
+.field-compare__rank,
+.field-compare__ucp,
+.field-compare__ucp-gap {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: var(--ink-2);
+}
+
+.field-compare__ucp-gap {
+  color: var(--stamp);
+  font-weight: 600;
+}
+
+.field-compare__delta-summary {
+  margin: 0 0 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.field-compare__first {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .field-compare__col--you,
+  .field-compare__col--field {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px dashed var(--rule);
+    padding-bottom: 0.65rem;
+  }
+}
+
 .field-review {
   margin-top: 0.85rem;
   padding: 0.75rem 0 0;
@@ -1753,6 +1962,11 @@ a {
 
 .rankings__row--ucp-gap td {
   background: color-mix(in srgb, var(--stamp) 7%, transparent);
+}
+
+.rankings__row--you td {
+  background: color-mix(in srgb, var(--counter) 45%, transparent);
+  font-weight: 600;
 }
 
 .rankings__ucp {

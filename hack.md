@@ -90,19 +90,14 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Long-run goal:** `GOAL-LONG-RUN.md` (Cursor goal armed 2026-08-31) — measurement layer for agent commerce.
+**Night wave RC-A (2026-08-31):** Lighthouse comparison surface on Connect — hero width, YOU·FIELD·DELTA strip, rankings CTA, `?audit_url=` share.
 
-**Immediate queue:** Phase 0 film/Devpost (Oscar) → G2 batch at 50+ → R5 scanner compare.
-
-**Research:** `research/experiments/` · R1–R4 complete · `research/FINDINGS-D3.md`
-
-**Build queue:** A3 GTIN CSV · R5 · D2 checkout probe. **Session:** `SESSION-STATUS.md`
+**Slice 1 (this run):** Connect tab shows lighthouse + 148 width + compare CTA on first paint; successful audit shows field percentile vs batch; delta receipt visually primary on re-audit; `npm run verify` exits 0; pushed to `night/gates-that-lie-2026-08-31`.
 
 ```text
-Wave 1 (today): Render KV wired + Playwright smoke
-Wave 2: Merchant store API + promote live session
-Wave 3: Live URL audit (the real wedge)
-Wave 4: Auth + domain + monitoring
+Done-when checks (run before tick):
+  npm run verify && npm run build
+  grep ConnectLighthouseHero src/components/IntegrationsPanel.tsx
 ```
 
 ## LOG
@@ -144,3 +139,5 @@ Wave 4: Auth + domain + monitoring
   Merged with the integration lane's 16 tools, autopilot and Shopify import;
   their surfaces restyled into the counter tokens so the app has one token layer.
   `npm run build` + `npm run verify` exit 0. Branch `nightrun/l3-readycounter`.
+
+- 2026-08-31 — **RC-A lighthouse UI:** `ConnectLighthouseHero` (148 width live from rankings API, 78.6% abandon from `sources.ts` only) · `FieldCompareStrip` YOU·FIELD·DELTA · `field-compare.ts` percentile join · rankings CTA with vertical/UCP gap filter · `?audit_url=` deep link + copy receipt · `verify-field-compare.mjs`.
