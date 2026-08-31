@@ -92,12 +92,15 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 **Night wave RC-A (2026-08-31):** Lighthouse comparison surface on Connect — hero width, YOU·FIELD·DELTA strip, rankings CTA, `?audit_url=` share.
 
-**Slice 1 (this run):** Connect tab shows lighthouse + 148 width + compare CTA on first paint; successful audit shows field percentile vs batch; delta receipt visually primary on re-audit; `npm run verify` exits 0; pushed to `night/gates-that-lie-2026-08-31`.
+**Slice 1 (this run):** ✅ Shipped 2026-08-31 — see LOG entry RC-A lighthouse UI.
 
 ```text
-Done-when checks (run before tick):
-  npm run verify && npm run build
-  grep ConnectLighthouseHero src/components/IntegrationsPanel.tsx
+Done-when (ran 2026-08-31):
+  npm run verify   → exit 0
+  npm run build    → exit 0
+  grep ConnectLighthouseHero src/components/IntegrationsPanel.tsx → lines 19,125
+  grep FieldCompareStrip src/components/StorefrontAuditForm.tsx → lines 14,222
+  git push origin night/gates-that-lie-2026-08-31 → eb2dfd2
 ```
 
 ## LOG
