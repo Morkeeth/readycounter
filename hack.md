@@ -92,15 +92,15 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 **Night wave RC-B (2026-08-31):** Offer measurement on crawl path + ACP policy smoke (non-upload).
 
-**Slice 1 (this run):** Close rank gaps #4 Offer schema + #5 ACP policy smoke.
+**Slice 1 (this run):** ✅ Shipped 2026-08-31 — see LOG entry RC-B Offer + ACP smoke.
 
 ```text
-Done-when (target):
+Done-when (ran 2026-08-31):
   npm run verify   → exit 0
   npm run build    → exit 0
-  POST /api/v1/audit/url → offerPct + policySmoke on test store
-  research/experiments/R7-offer-on-crawl.md exists
-  git push origin cursor/offer-acp-smoke-9dbf
+  npx tsx colourpop audit → offerPct 100, policySmoke measured true
+  research/experiments/R7-offer-on-crawl.md → exists
+  git push origin cursor/offer-acp-smoke-9dbf → a471bb8
 ```
 
 ## LOG
