@@ -1,8 +1,9 @@
 import type { Product } from '../types/commerce';
 import type { StoreDefinition } from '../data/stores';
-import type { StoreAuditMeta, StoreAuditSignals } from '../types/audit';
+import type { PolicySmokeMeta, StoreAuditMeta, StoreAuditSignals } from '../types/audit';
 import { importShopifyFeed, type ShopifyCatalogExport } from '../integrations/shopify-catalog';
 import { assertSafeAuditUrl } from './ssrf';
+import { runPolicySmoke } from './policy-smoke';
 
 const FETCH_MS = 15_000;
 const MAX_BYTES = 2_500_000;
@@ -16,6 +17,7 @@ export interface UrlAuditMeta {
   jsonLdBlocks: number;
   productCount: number;
   signals: StoreAuditSignals;
+  policySmoke?: PolicySmokeMeta;
 }
 
 export type UrlAuditResult =
@@ -103,6 +105,50 @@ function offerPrice(offers: unknown): number {
     if (Number.isFinite(n) && n > 0) return n;
   }
   return 0;
+}
+
+function offerAvailability(offers: unknown): boolean {
+  if (!offers || typeof offers !== 'object') return false;
+  const o = offers as Record<string, unknown>;
+  const list = asArray(o.offers ?? o);
+  for (const item of list) {
+    if (!item || typeof item !== 'object') continue;
+    const row = item as Record<string, unknown>;
+    const avail = row.availability;
+    if (avail !== undefined && avail !== null && String(avail).trim() !== '') return true;
+  }
+  return false;
+}
+
+/** Exported for verify scripts — Product JSON-LD node has Offer + price + availability. */
+export function productNodeHasCompleteOffer(node: Record<string, unknown>): boolean {
+  return offerPrice(node.offers) > 0 && offerAvailability(node.offers);
+}
+
+/** % of Product JSON-LD nodes with complete Offer. Exported for verify. */
+export function offerPctFromJsonLdNodes(nodes: Record<string, unknown>[]): number {
+  if (nodes.length === 0) return 0;
+  const complete = nodes.filter(productNodeHasCompleteOffer).length;
+  return Math.round((complete / nodes.length) * 100);
+}
+
+type ShopifyFeedProduct = NonNullable<
+  Parameters<typeof shopifyProductsJsonToFeed>[0]['products']
+>[number];
+
+/** % of feed rows with variant price + availability. Exported for verify. */
+export function offerPctFromShopifyProducts(products: ShopifyFeedProduct[]): number {
+  if (!products.length) return 0;
+  let complete = 0;
+  for (const p of products) {
+    const variants = p.variants ?? [];
+    const ok = variants.some((v) => {
+      const price = parseFloat(String(v.price ?? ''));
+      return Number.isFinite(price) && price > 0 && v.available !== undefined;
+    });
+    if (ok) complete += 1;
+  }
+  return Math.round((complete / products.length) * 100);
 }
 
 function jsonLdToProducts(nodes: Record<string, unknown>[]): Product[] {
@@ -196,8 +242,11 @@ async function fetchText(url: string, accept = 'text/html,application/json,text/
   }
 }
 
-async function fetchShopifyProductsJson(origin: string): Promise<Product[] | null> {
+async function fetchShopifyProductsJson(
+  origin: string,
+): Promise<{ products: Product[]; offerPct: number } | null> {
   const all: Product[] = [];
+  const rawProducts: ShopifyFeedProduct[] = [];
   let page = 1;
   while (page <= 3 && all.length < 50) {
     const { text } = await fetchText(
@@ -209,6 +258,7 @@ async function fetchShopifyProductsJson(origin: string): Promise<Product[] | nul
       const data = JSON.parse(text) as Parameters<typeof shopifyProductsJsonToFeed>[0];
       const feed = shopifyProductsJsonToFeed(data);
       if (!feed?.products.length) break;
+      if (data.products?.length) rawProducts.push(...data.products);
       const store = importShopifyFeed(feed, { storeId: 'tmp', name: 'tmp' });
       all.push(...store.products);
       if ((data.products?.length ?? 0) < 50) break;
@@ -217,7 +267,12 @@ async function fetchShopifyProductsJson(origin: string): Promise<Product[] | nul
       break;
     }
   }
-  return all.length > 0 ? all.slice(0, 50) : null;
+  if (all.length === 0) return null;
+  const sampled = rawProducts.slice(0, 50);
+  return {
+    products: all.slice(0, 50),
+    offerPct: offerPctFromShopifyProducts(sampled),
+  };
 }
 
 function attachAudit(
@@ -227,6 +282,7 @@ function attachAudit(
   method: UrlAuditMeta['method'],
   _jsonLdBlocks: number,
   signals: StoreAuditSignals,
+  policySmoke?: PolicySmokeMeta,
 ): StoreDefinition {
   const audit: StoreAuditMeta = {
     source: 'url-crawl',
@@ -235,6 +291,7 @@ function attachAudit(
     fetchedAt: new Date().toISOString(),
     productCount: store.products.length,
     signals,
+    ...(policySmoke ? { policySmoke } : {}),
   };
   return { ...store, audit, tagline: `Audited from ${origin} (${method})` };
 }
@@ -253,13 +310,24 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
 
   const homepage = await fetchText(parsed.href);
   const htmlSignals = homepage.text ? detectSignals(homepage.text) : { captchaHints: false, accountWallHints: false };
+  const policySmoke = homepage.text
+    ? await runPolicySmoke(homepage.text, origin)
+    : {
+        measurable: false,
+        privacyOk: null,
+        termsOk: null,
+        urls: {},
+        note: 'not measurable — homepage not fetched',
+      };
 
-  const fromJson = await fetchShopifyProductsJson(origin);
-  if (fromJson) {
+  const feedResult = await fetchShopifyProductsJson(origin);
+  if (feedResult) {
+    const { products: fromJson, offerPct } = feedResult;
     const signals: StoreAuditSignals = {
       productsJson: true,
       jsonLdBlocks: 0,
       gtinCoverage: gtinCoverage(fromJson),
+      offerPct,
       captchaHints: htmlSignals.captchaHints,
       accountWallHints: htmlSignals.accountWallHints,
       checkoutProbed: false,
@@ -278,6 +346,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
       'shopify-products-json',
       0,
       signals,
+      policySmoke,
     );
     return {
       ok: true,
@@ -289,6 +358,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
         jsonLdBlocks: 0,
         productCount: fromJson.length,
         signals,
+        policySmoke,
       },
     };
   }
@@ -303,6 +373,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
   const blocks = extractJsonLdBlocks(homepage.text);
   const nodes = collectProductNodes(blocks);
   const products = jsonLdToProducts(nodes);
+  const offerPct = offerPctFromJsonLdNodes(nodes);
 
   if (products.length === 0) {
     return {
@@ -316,6 +387,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
     productsJson: false,
     jsonLdBlocks: blocks.length,
     gtinCoverage: gtinCoverage(products),
+    offerPct,
     captchaHints: htmlSignals.captchaHints,
     accountWallHints: htmlSignals.accountWallHints,
     checkoutProbed: false,
@@ -335,6 +407,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
     'json-ld',
     blocks.length,
     signals,
+    policySmoke,
   );
 
   return {
@@ -347,6 +420,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
       jsonLdBlocks: blocks.length,
       productCount: products.length,
       signals,
+      policySmoke,
     },
   };
 }

@@ -90,17 +90,17 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Night wave RC-A (2026-08-31):** Lighthouse comparison surface on Connect — hero width, YOU·FIELD·DELTA strip, rankings CTA, `?audit_url=` share.
+**Night wave RC-B (2026-08-31):** Offer measurement on crawl path + ACP policy smoke (non-upload) — rank gaps #4 and #5.
 
-**Slice 1 (this run):** ✅ Shipped 2026-08-31 — see LOG entry RC-A lighthouse UI.
+**Slice 1 (this run):** Offer `offerPct` + `policySmoke` on URL audit; Rankings Offer column; `reviewAgainstField` wires `schema-offer` + `acp-eligibility`.
 
 ```text
 Done-when (ran 2026-08-31):
   npm run verify   → exit 0
   npm run build    → exit 0
-  grep ConnectLighthouseHero src/components/IntegrationsPanel.tsx → lines 19,125
-  grep FieldCompareStrip src/components/StorefrontAuditForm.tsx → lines 14,222
-  git push origin night/gates-that-lie-2026-08-31 → eb2dfd2
+  node scripts/verify-url-audit.mjs → offer + policy assertions pass
+  npx tsx colourpop probe → offerPct 100, policySmoke privacy+terms ok
+  research/experiments/R7-offer-on-crawl.md → exists with colourpop.com example
 ```
 
 ## LOG
@@ -144,3 +144,5 @@ Done-when (ran 2026-08-31):
   `npm run build` + `npm run verify` exit 0. Branch `nightrun/l3-readycounter`.
 
 - 2026-08-31 — **RC-A lighthouse UI:** `ConnectLighthouseHero` (148 width live from rankings API, 78.6% abandon from `sources.ts` only) · `FieldCompareStrip` YOU·FIELD·DELTA · `field-compare.ts` percentile join · rankings CTA with vertical/UCP gap filter · `?audit_url=` deep link + copy receipt · `verify-field-compare.mjs`.
+
+- 2026-08-31 — **RC-B Offer + ACP smoke:** `offerPct` on crawl (JSON-LD + products.json) · `policySmoke` HTTP check for privacy/ToS · API + Rankings Offer column · `reviewAgainstField` flags schema-offer + acp-eligibility · `R7-offer-on-crawl.md` (colourpop: 100% feed Offer, policy ok, GTIN 0%).

@@ -254,6 +254,7 @@ export function RankingsPanel({
                 <th>Outcome</th>
                 <th>Catalog</th>
                 <th>Scrape GTIN</th>
+                <th>Offer</th>
                 <th>UCP GTIN</th>
                 <th>Signals</th>
               </tr>
@@ -269,6 +270,12 @@ export function RankingsPanel({
                 const signals = [
                   row.captchaHint ? 'captcha?' : '',
                   !row.error && (row.gtinPct ?? 0) < 50 ? 'low-scrape-gtin' : '',
+                  !row.error && (row.offerPct ?? 100) < 50 ? 'low-offer' : '',
+                  row.policySmoke?.measurable === false ? 'policy-unmeasured' : '',
+                  row.policySmoke?.measurable &&
+                  (row.policySmoke.privacyOk === false || row.policySmoke.termsOk === false)
+                    ? 'policy-fail'
+                    : '',
                   row.ucpGtinWhereCrawlZero ? 'ucp-gtin-gap' : '',
                   row.ucpAvailable && !row.ucpGtinWhereCrawlZero && (row.ucpGtinPct ?? 0) > 0
                     ? 'ucp-gtin'
@@ -284,7 +291,7 @@ export function RankingsPanel({
                       <td>{hostname(row.url)}</td>
                       <td className="rankings__vert">{row.vertical}</td>
                       <td className="rankings__vert">{CRAWL_OUTCOME_LABEL[row.outcome]}</td>
-                      <td colSpan={2} className="rankings__err">
+                      <td colSpan={3} className="rankings__err">
                         {row.error.slice(0, 72)}
                       </td>
                       <td className={row.ucpAvailable ? 'rankings__ucp' : 'rankings__err'}>
@@ -323,6 +330,9 @@ export function RankingsPanel({
                       {row.catalogBudget ? `/${row.catalogBudget}` : ''}
                     </td>
                     <td>{row.gtinPct ?? 0}%</td>
+                    <td className={!row.error && (row.offerPct ?? 100) < 50 ? 'rankings__offer rankings__offer--low' : 'rankings__offer'}>
+                      {row.offerPct ?? '—'}%
+                    </td>
                     <td className={row.ucpGtinWhereCrawlZero ? 'rankings__ucp rankings__ucp--gap' : 'rankings__ucp'}>
                       {ucpCell}
                       {row.ucpProducts != null && row.ucpAvailable ? (

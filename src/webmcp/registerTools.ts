@@ -443,11 +443,20 @@ export async function registerWebMCPTools(
         type: 'object',
         properties: {
           gtinPct: { type: 'number' },
+          offerPct: { type: 'number' },
           catalogScore: { type: 'number' },
           captchaHint: { type: 'boolean' },
           productsJsonOk: { type: 'boolean' },
           accountWall: { type: 'boolean' },
           error: { type: 'string' },
+          policySmoke: {
+            type: 'object',
+            properties: {
+              measurable: { type: 'boolean' },
+              privacyOk: { type: ['boolean', 'null'] },
+              termsOk: { type: ['boolean', 'null'] },
+            },
+          },
         },
         additionalProperties: false,
       },
@@ -457,12 +466,21 @@ export async function registerWebMCPTools(
         return jsonResult(
           reviewAgainstField({
             gtinPct: typeof input.gtinPct === 'number' ? input.gtinPct : undefined,
+            offerPct: typeof input.offerPct === 'number' ? input.offerPct : undefined,
             catalogScore: typeof input.catalogScore === 'number' ? input.catalogScore : undefined,
             captchaHint: input.captchaHint === true,
             productsJsonOk:
               typeof input.productsJsonOk === 'boolean' ? input.productsJsonOk : undefined,
             accountWall: input.accountWall === true,
             error: typeof input.error === 'string' ? input.error : undefined,
+            policySmoke:
+              input.policySmoke && typeof input.policySmoke === 'object'
+                ? (input.policySmoke as {
+                    measurable?: boolean;
+                    privacyOk?: boolean | null;
+                    termsOk?: boolean | null;
+                  })
+                : undefined,
           }),
         );
       },
@@ -626,11 +644,20 @@ export async function invokeToolLocally(
       return jsonResult(
         reviewAgainstField({
           gtinPct: typeof args.gtinPct === 'number' ? args.gtinPct : undefined,
+          offerPct: typeof args.offerPct === 'number' ? args.offerPct : undefined,
           catalogScore: typeof args.catalogScore === 'number' ? args.catalogScore : undefined,
           captchaHint: args.captchaHint === true,
           productsJsonOk: typeof args.productsJsonOk === 'boolean' ? args.productsJsonOk : undefined,
           accountWall: args.accountWall === true,
           error: typeof args.error === 'string' ? args.error : undefined,
+          policySmoke:
+            args.policySmoke && typeof args.policySmoke === 'object'
+              ? (args.policySmoke as {
+                  measurable?: boolean;
+                  privacyOk?: boolean | null;
+                  termsOk?: boolean | null;
+                })
+              : undefined,
         }),
       );
     }

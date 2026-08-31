@@ -4,10 +4,23 @@ export type AuditSource = 'builtin' | 'import' | 'url-crawl' | 'shopify-admin';
 /** Whether a line was measured from live data, inferred, or not observable yet. */
 export type AuditConfidence = 'observed' | 'inferred' | 'unknown';
 
+export interface PolicySmokeMeta {
+  measurable: boolean;
+  privacyOk: boolean | null;
+  termsOk: boolean | null;
+  urls: {
+    privacy?: string;
+    terms?: string;
+  };
+  note?: string;
+}
+
 export interface StoreAuditSignals {
   productsJson: boolean;
   jsonLdBlocks: number;
   gtinCoverage: number;
+  /** % of sampled Product JSON-LD nodes or feed rows with Offer + price + availability. */
+  offerPct: number;
   captchaHints: boolean;
   accountWallHints: boolean;
   checkoutProbed: boolean;
@@ -20,6 +33,7 @@ export interface StoreAuditMeta {
   fetchedAt: string;
   productCount: number;
   signals: StoreAuditSignals;
+  policySmoke?: PolicySmokeMeta;
 }
 
 export interface AuditScoreSummary {

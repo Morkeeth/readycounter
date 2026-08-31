@@ -65,10 +65,12 @@ export function ReadinessDashboard({ registeredToolCount, onGoShop }: ReadinessD
     if (!storeAudit || !auditResult) return null;
     return reviewAgainstField({
       gtinPct: storeAudit.signals.gtinCoverage,
+      offerPct: storeAudit.signals.offerPct,
       captchaHint: storeAudit.signals.captchaHints,
       catalogScore: auditResult.summary.catalogScore,
       productsJsonOk: storeAudit.signals.productsJson || storeAudit.productCount > 0,
       accountWall: storeAudit.signals.accountWallHints || merchant.checkoutRequiresAccount,
+      policySmoke: storeAudit.policySmoke,
     });
   }, [storeAudit, auditResult, merchant.checkoutRequiresAccount]);
   const checks = auditResult

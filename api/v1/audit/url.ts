@@ -47,10 +47,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const fieldReview = reviewAgainstField({
     gtinPct: audited.meta.signals.gtinCoverage,
+    offerPct: audited.meta.signals.offerPct,
     captchaHint: audited.meta.signals.captchaHints,
     catalogScore: summary.catalogScore,
     productsJsonOk: audited.meta.signals.productsJson || audited.meta.productCount > 0,
     accountWall: audited.meta.signals.accountWallHints,
+    policySmoke: audited.meta.policySmoke,
   });
 
   return res.status(201).json({
@@ -67,7 +69,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       method: audited.meta.method,
       source: audited.meta.source,
       gtinPct: audited.meta.signals.gtinCoverage,
+      offerPct: audited.meta.signals.offerPct,
       captchaHint: audited.meta.signals.captchaHints,
+    },
+    policySmoke: audited.meta.policySmoke ?? {
+      measurable: false,
+      privacyOk: null,
+      termsOk: null,
+      urls: {},
+      note: 'not measurable — policy smoke not run',
     },
     fieldReview,
     bookmark: `/?store=${encodeURIComponent(audited.store.id)}&view=merchant`,

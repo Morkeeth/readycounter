@@ -76,12 +76,12 @@ Falsifiable, ordered:
 1. **Rankings show UCP GTIN beside crawl GTIN** for the 148 — **DONE** (2026-08-31): `GET /api/v1/rankings` joins `src/data/ucp-census.json`; RankingsPanel columns + filter **UCP GTIN · scrape empty**.
 2. **E1 ≥3 OAuth crawl↔Admin pairs** — done when: R2 table with Admin vs public GTIN; gap narrative either locked or killed.
 3. **Help loop: re-audit after claimed fix** — **DONE** (2026-08-31): same URL twice → `AuditDeltaReceipt` (catalog / scrape GTIN / SKUs) via `src/lib/audit-delta.ts` local prior snapshot.
-4. **Offer/schema line measured on crawl path** — done when: % Product nodes with Offer+price+availability on sampled PDPs or feed; not handbook-only.
-5. **ACP eligibility smoke (non-upload)** — done when: store-level checks for live privacy/ToS URLs + documented eligibility flags (or honest “not measurable without partner feed”).
+4. **Offer/schema line measured on crawl path** — **DONE** (2026-08-31): `offerPct` on URL audit + Rankings Offer column; artifact `research/experiments/R7-offer-on-crawl.md`.
+5. **ACP eligibility smoke (non-upload)** — **DONE** (2026-08-31): `policySmoke` on URL audit (privacy/ToS HTTP); honest unmeasurable when no URLs; eligibility flags still NOT MEASURED without partner feed.
 6. **One consented live checkout probe class (or permanent label)** — **DONE (label)** (2026-08-31): audit form + delta receipt state catalog budget only — never /100 for field crawls.
 7. **MPN / identifier_exists in help + optional score** — **DONE (help)** (2026-08-31): companion issue #1 + ACP #8 + handbook cite OpenAI/Stripe identifier rules (score line still optional).
 
-Until **E1 OAuth pairs** + Offer measurement + ACP smoke: **do not** claim full holistic rank+help. Gaps 1, 3, 6 (label), 7 (help) are closed.
+Until **E1 OAuth pairs**: **do not** claim full holistic rank+help. Gaps 1, 3, 4, 5, 6 (label), 7 (help) are closed.
 
 ---
 

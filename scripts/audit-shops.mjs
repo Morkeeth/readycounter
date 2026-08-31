@@ -89,6 +89,14 @@ async function main() {
       method: result.meta.method,
       products: result.meta.productCount,
       gtinPct: result.meta.signals.gtinCoverage,
+      offerPct: result.meta.signals.offerPct,
+      policySmoke: result.meta.policySmoke
+        ? {
+            measurable: result.meta.policySmoke.measurable,
+            privacyOk: result.meta.policySmoke.privacyOk,
+            termsOk: result.meta.policySmoke.termsOk,
+          }
+        : undefined,
       captchaHint: result.meta.signals.captchaHints,
       catalogScore: summary.catalogScore,
       catalogBudget: summary.catalogBudget,

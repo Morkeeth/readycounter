@@ -163,7 +163,11 @@ export function computeAuditFindings(
     rationale: sandboxChecks.find((c) => c.id === 'page_structure')?.rationale ?? '',
     fix: 'Add barcodes/GTINs and complete Offer objects in Shopify or theme JSON-LD.',
     confidence: 'observed',
-    evidence: [`method: ${audit?.method}`, `gtin coverage ${audit?.signals.gtinCoverage ?? 0}%`],
+    evidence: [
+      `method: ${audit?.method}`,
+      `gtin coverage ${audit?.signals.gtinCoverage ?? 0}%`,
+      `offer completeness ${audit?.signals.offerPct ?? 0}%`,
+    ],
   });
 
   const unmeasured: AuditFinding[] = [

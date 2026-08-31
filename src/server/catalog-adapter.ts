@@ -22,6 +22,7 @@ function urlMetaFromAudit(
   method: StoreAuditMeta['method'],
   signals: StoreAuditMeta['signals'],
   productCount: number,
+  policySmoke?: StoreAuditMeta['policySmoke'],
 ): StoreAuditMeta {
   return {
     source: 'url-crawl',
@@ -30,6 +31,7 @@ function urlMetaFromAudit(
     fetchedAt: new Date().toISOString(),
     productCount,
     signals,
+    ...(policySmoke ? { policySmoke } : {}),
   };
 }
 
@@ -47,6 +49,7 @@ export const urlCrawlAdapter: CatalogAdapter = {
         result.meta.method,
         result.meta.signals,
         result.meta.productCount,
+        result.meta.policySmoke,
       );
     return { ok: true, store: result.store, meta };
   },

@@ -29,6 +29,12 @@ export interface AuditBatchSummary {
     catalogScore?: number;
     catalogBudget?: number;
     gtinPct?: number;
+    offerPct?: number;
+    policySmoke?: {
+      measurable: boolean;
+      privacyOk: boolean | null;
+      termsOk: boolean | null;
+    };
     captchaHint?: boolean;
     method?: string;
     products?: number;

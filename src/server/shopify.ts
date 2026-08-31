@@ -228,6 +228,9 @@ export async function syncShopifyStore(shop: string): Promise<{
       gtinCoverage: Math.round(
         (store.products.filter((p) => p.gtin).length / Math.max(1, store.products.length)) * 100,
       ),
+      offerPct: Math.round(
+        (store.products.filter((p) => p.price > 0).length / Math.max(1, store.products.length)) * 100,
+      ),
       captchaHints: false,
       accountWallHints: false,
       checkoutProbed: false,

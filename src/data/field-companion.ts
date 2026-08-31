@@ -245,11 +245,17 @@ export function getFieldCompanionPayload(topic?: string) {
 /** Map readiness-ish signals to handbook issues for agent feedback. */
 export function reviewAgainstField(input: {
   gtinPct?: number;
+  offerPct?: number;
   captchaHint?: boolean;
   catalogScore?: number;
   productsJsonOk?: boolean;
   accountWall?: boolean;
   error?: string;
+  policySmoke?: {
+    measurable?: boolean;
+    privacyOk?: boolean | null;
+    termsOk?: boolean | null;
+  };
 }) {
   const feedBlocked = Boolean(input.error) || input.productsJsonOk === false;
   const flags: Array<{ issueId: string; severity: 'high' | 'medium'; note: string }> = [];
@@ -277,6 +283,13 @@ export function reviewAgainstField(input: {
         note: gtinNotes.join(' '),
       });
     }
+    if ((input.offerPct ?? 100) < 50) {
+      flags.push({
+        issueId: 'schema-offer',
+        severity: 'medium',
+        note: `Offer completeness ${input.offerPct ?? 0}% on sampled catalog — Digital Applied benchmark is 19% Product+Offer; agents need price + availability in structured data.`,
+      });
+    }
   }
   if (input.captchaHint) {
     flags.push({
@@ -291,6 +304,31 @@ export function reviewAgainstField(input: {
       severity: 'high',
       note: 'Account wall set — agents fail guest checkout (~22% of agent failures).',
     });
+  }
+  const ps = input.policySmoke;
+  if (ps?.measurable === false) {
+    flags.push({
+      issueId: 'acp-eligibility',
+      severity: 'medium',
+      note: 'ACP policy smoke not measurable — no privacy/ToS URLs found in crawled HTML. Instant Checkout requires live policy links when checkout-eligible.',
+    });
+  } else if (ps?.measurable) {
+    const privacyBad = ps.privacyOk === false;
+    const termsBad = ps.termsOk === false;
+    const privacyMissing = ps.privacyOk === null;
+    const termsMissing = ps.termsOk === null;
+    if (privacyBad || termsBad || privacyMissing || termsMissing) {
+      const parts: string[] = [];
+      if (privacyBad) parts.push('privacy URL HTTP failed');
+      else if (privacyMissing) parts.push('privacy URL not found');
+      if (termsBad) parts.push('terms URL HTTP failed');
+      else if (termsMissing) parts.push('terms URL not found');
+      flags.push({
+        issueId: 'acp-eligibility',
+        severity: privacyBad || termsBad ? 'high' : 'medium',
+        note: `ACP policy smoke: ${parts.join('; ')}. OpenAI requires live privacy + ToS when is_eligible_checkout — feed eligibility flags not measured without partner upload.`,
+      });
+    }
   }
 
   const capped = flags.slice(0, 3);
