@@ -17,7 +17,8 @@ Reproducible field studies for ReadyCounter. Every experiment ships:
 | **R3** | complete | HTML captcha hints overstate checkout walls | batch hints vs journey methodology |
 | **R4** | complete | Journey fails at checkout when flags set | `npm run audit:journey` |
 | **R5** | complete (method) | ReadyCounter complements Shopify scanner | R5 doc · compare API |
-| **R6** | complete | GTIN gap varies by vertical | `npm run audit:analyze` · v3 102 URLs |
+| **E3** | complete | UCP census on curated list | 81/148 available · 13 with GTIN |
+| **E1** | blocked | OAuth Admin vs crawl GTIN | `npm run audit:oauth-pairs` — needs shop |
 
 **Published findings:** `research/FINDINGS-D3.md` · **Merchant handbook:** `research/HANDBOOK.md`
 

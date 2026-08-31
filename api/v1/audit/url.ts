@@ -3,7 +3,7 @@ import { reviewAgainstField } from '../../../src/data/field-companion';
 import { computeAuditFindings } from '../../../src/lib/audit-findings';
 import { registerServerCustomStore } from '../../../src/server/custom-stores';
 import { urlCrawlAdapter } from '../../../src/server/catalog-adapter';
-import { checkRateLimit, clientIp } from '../../../src/server/rate-limit';
+import { checkRateLimitAsync, clientIp } from '../../../src/server/rate-limit';
 import { WEBMCP_TOOL_COUNT } from '../../../src/webmcp/toolManifest';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -12,7 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const rl = checkRateLimit(`audit-url:${clientIp(req)}`, 30, 60 * 60 * 1000);
+  const rl = await checkRateLimitAsync(`audit-url:${clientIp(req)}`, 20, 60 * 60 * 1000);
   if (!rl.allowed) {
     res.setHeader('Retry-After', String(rl.retryAfterSec ?? 60));
     return res.status(429).json({ error: 'Rate limit exceeded. Try again later.' });

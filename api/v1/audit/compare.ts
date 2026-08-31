@@ -1,8 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { checkRateLimitAsync, clientIp } from '../../../src/server/rate-limit';
+import { assertSafeAuditUrl } from '../../../src/server/ssrf';
+import { probeUcpCatalog } from '../../../src/server/ucp-probe';
 import { buildAuditCompare } from '../../../src/lib/audit-compare';
 import { shopifyAdminAdapter, urlCrawlAdapter } from '../../../src/server/catalog-adapter';
-import { checkRateLimit, clientIp } from '../../../src/server/rate-limit';
-import { probeUcpCatalog } from '../../../src/server/ucp-probe';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -10,7 +11,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const rl = checkRateLimit(`audit-compare:${clientIp(req)}`, 20, 60 * 60 * 1000);
+  const rl = await checkRateLimitAsync(`audit-compare:${clientIp(req)}`, 15, 60 * 60 * 1000);
   if (!rl.allowed) {
     res.setHeader('Retry-After', String(rl.retryAfterSec ?? 60));
     return res.status(429).json({ error: 'Rate limit exceeded. Try again later.' });
@@ -23,6 +24,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'url required in body' });
   }
 
+  const safe = assertSafeAuditUrl(url);
+  if (!safe.ok) {
+    return res.status(400).json({ error: safe.error });
+  }
   const crawled = await urlCrawlAdapter.fetch(url);
   if (!crawled.ok) {
     return res.status(422).json({ error: crawled.error, mode: 'crawl' });

@@ -42,10 +42,12 @@ Deploy: local `npm run build` then `vercel --prod` (API `.js` must be bundled; `
 
 ## Next slices (holistic)
 
-4. E1 OAuth pairs (Admin vs crawl GTIN) — needs merchant OAuth  
-5. SSRF + KV rate limits on audit  
-6. E3 UCP census on curated list  
-7. Oscar: film + Devpost
+4. E1 OAuth pairs — script ready (`npm run audit:oauth-pairs`); needs Oscar to connect a shop  
+5. ~~SSRF + KV rate limits~~ shipped (`src/server/ssrf.ts`, `checkRateLimitAsync`)  
+6. ~~E3 UCP census~~ **81/148 UCP available (55%); 13 with GTIN via UCP** — `research/experiments/E3-ucp-census.md`  
+7. Oscar: film + Devpost  
+
+Start here: this file. Branch: `night/gates-that-lie-2026-08-31` (pushed).
 
 ## Constitution
 

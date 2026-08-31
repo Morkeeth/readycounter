@@ -2,6 +2,7 @@ import type { Product } from '../types/commerce';
 import type { StoreDefinition } from '../data/stores';
 import type { StoreAuditMeta, StoreAuditSignals } from '../types/audit';
 import { importShopifyFeed, type ShopifyCatalogExport } from '../integrations/shopify-catalog';
+import { assertSafeAuditUrl } from './ssrf';
 
 const FETCH_MS = 15_000;
 const MAX_BYTES = 2_500_000;
@@ -239,15 +240,11 @@ function attachAudit(
 }
 
 export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult> {
-  let parsed: URL;
-  try {
-    parsed = new URL(input.trim());
-  } catch {
-    return { ok: false, error: 'Invalid URL.' };
+  const safe = assertSafeAuditUrl(input);
+  if (!safe.ok) {
+    return { ok: false, error: safe.error };
   }
-  if (!['http:', 'https:'].includes(parsed.protocol)) {
-    return { ok: false, error: 'Only http(s) URLs are supported.' };
-  }
+  const parsed = safe.url;
 
   const origin = parsed.origin;
   const hostname = parsed.hostname;

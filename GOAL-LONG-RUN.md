@@ -49,10 +49,9 @@
 - [x] Audit → companion review loop (slice 1)
 - [x] Rankings failure-reason filter (slice 2)
 - [x] DEMO/FINDINGS sync to v4 148/78/0% (slice 3)
-- [ ] E1 OAuth pairs ≥3 (epistemic)
-- [ ] SSRF + KV rate limits on audit
-- [ ] E3 UCP census on curated list
-- See: `research/HOLISTIC-EXPANSION.md` · `research/DEEP-DIVE-UNDERSTANDING.md`
+- [x] E3 UCP census on curated list — **81/148 (55%) available; 13 with GTIN**
+- [ ] E1 OAuth pairs ≥3 (script ready; needs connected shop)
+- See: `research/HOLISTIC-EXPANSION.md` · `ONBOARDING.md`
 
 ---
 
