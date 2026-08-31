@@ -1,6 +1,7 @@
 import type { ShopifyCatalogExport } from '../integrations/shopify-catalog';
 import { importShopifyFeed } from '../integrations/shopify-catalog';
 import type { StoreDefinition } from '../data/stores';
+import { catalogOfferCoverage } from '../lib/offer-measure';
 
 export interface ShopifyConfig {
   clientId: string;
@@ -216,6 +217,7 @@ export async function syncShopifyStore(shop: string): Promise<{
     storeId: domain.replace('.myshopify.com', ''),
     name: feed.store,
   });
+  const offerReport = catalogOfferCoverage(store.products);
   store.audit = {
     source: 'shopify-admin',
     url: `https://${domain}`,
@@ -228,6 +230,10 @@ export async function syncShopifyStore(shop: string): Promise<{
       gtinCoverage: Math.round(
         (store.products.filter((p) => p.gtin).length / Math.max(1, store.products.length)) * 100,
       ),
+      offerCoverage: offerReport.offerPct,
+      completeOfferCoverage: offerReport.completeOfferPct,
+      offerWithCount: offerReport.withOffer,
+      offerTotal: offerReport.total,
       captchaHints: false,
       accountWallHints: false,
       checkoutProbed: false,

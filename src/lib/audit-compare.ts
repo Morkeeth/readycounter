@@ -1,6 +1,8 @@
 import type { MerchantConfig, Product } from '../types/commerce';
 import type { AuditScoreSummary, StoreAuditMeta } from '../types/audit';
 import type { UcpProbeSnapshot } from '../server/ucp-probe';
+import type { AcpPolicyProbe } from '../server/acp-probe';
+import { buildAuditOfferBlock, type AuditOfferBlock } from './audit-measurement';
 import { computeAuditFindings } from './audit-findings';
 import { WEBMCP_TOOL_COUNT } from '../webmcp/toolManifest';
 
@@ -9,6 +11,8 @@ export interface AuditModeSnapshot {
   label: string;
   productCount: number;
   gtinPct: number;
+  offerPct: number;
+  completeOfferPct: number;
   catalogScore: number;
   catalogBudget: number;
   fullScore: number;
@@ -31,6 +35,7 @@ export interface UcpCompareSnapshot {
 export interface AuditCompareDelta {
   catalogScore: number;
   gtinPct: number;
+  offerPct: number;
   productCount: number;
 }
 
@@ -39,6 +44,8 @@ export interface AuditCompareResult {
   url: string;
   shop?: string;
   crawl: AuditModeSnapshot;
+  offer: AuditOfferBlock;
+  acpPolicy?: AcpPolicyProbe;
   ucp?: UcpCompareSnapshot;
   oauth?: AuditModeSnapshot;
   delta?: AuditCompareDelta;
@@ -69,6 +76,8 @@ function snapshot(
     label,
     productCount: products.length,
     gtinPct: audit.signals.gtinCoverage,
+    offerPct: audit.signals.offerCoverage,
+    completeOfferPct: audit.signals.completeOfferCoverage,
     catalogScore: summary.catalogScore,
     catalogBudget: summary.catalogBudget,
     fullScore: summary.fullScore,
@@ -91,6 +100,7 @@ export function buildAuditCompare(
     audit: StoreAuditMeta;
   } | null,
   ucp?: UcpProbeSnapshot | null,
+  acpPolicy?: AcpPolicyProbe | null,
 ): AuditCompareResult {
   const crawlFindings = computeAuditFindings(
     crawl.merchant,
@@ -105,6 +115,7 @@ export function buildAuditCompare(
     crawl.audit,
     crawlFindings.summary,
   );
+  const offer = buildAuditOfferBlock(crawl.audit.signals);
 
   let oauthSnap: AuditModeSnapshot | undefined;
   let delta: AuditCompareDelta | undefined;
@@ -127,6 +138,7 @@ export function buildAuditCompare(
     delta = {
       catalogScore: oauthSnap.catalogScore - crawlSnap.catalogScore,
       gtinPct: oauthSnap.gtinPct - crawlSnap.gtinPct,
+      offerPct: oauthSnap.offerPct - crawlSnap.offerPct,
       productCount: oauthSnap.productCount - crawlSnap.productCount,
     };
     if (delta.gtinPct > 0 || delta.catalogScore > 0) {
@@ -155,6 +167,8 @@ export function buildAuditCompare(
     url,
     shop: oauth?.shop,
     crawl: crawlSnap,
+    offer,
+    acpPolicy: acpPolicy ?? undefined,
     ucp: ucp ? ucpToCompareSnapshot(ucp) : undefined,
     oauth: oauthSnap,
     delta,

@@ -8,6 +8,12 @@ export interface StoreAuditSignals {
   productsJson: boolean;
   jsonLdBlocks: number;
   gtinCoverage: number;
+  /** % of scraped SKUs with a resolvable Offer / variant price. */
+  offerCoverage: number;
+  /** % with price + currency + availability (schema-complete Offer). */
+  completeOfferCoverage: number;
+  offerWithCount: number;
+  offerTotal: number;
   captchaHints: boolean;
   accountWallHints: boolean;
   checkoutProbed: boolean;

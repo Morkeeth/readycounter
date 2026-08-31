@@ -90,19 +90,11 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Long-run goal:** `GOAL-LONG-RUN.md` (Cursor goal armed 2026-08-31) — measurement layer for agent commerce.
-
-**Immediate queue:** Phase 0 film/Devpost (Oscar) → G2 batch at 50+ → R5 scanner compare.
-
-**Research:** `research/experiments/` · R1–R4 complete · `research/FINDINGS-D3.md`
-
-**Build queue:** A3 GTIN CSV · R5 · D2 checkout probe. **Session:** `SESSION-STATUS.md`
-
-```text
-Wave 1 (today): Render KV wired + Playwright smoke
-Wave 2: Merchant store API + promote live session
-Wave 3: Live URL audit (the real wedge)
-Wave 4: Auth + domain + monitoring
+```
+RC-S2 · Offer% + ACP policy on audit path
+→ npm run audit:offer-smoke
+→ POST /api/v1/audit/url { "url": "https://colourpop.com" } → offer.* + acpPolicy.*
+→ npm run audit:batch logs Offer% with schema_offer_gap citation from sources.ts
 ```
 
 ## LOG
@@ -144,3 +136,7 @@ Wave 4: Auth + domain + monitoring
   Merged with the integration lane's 16 tools, autopilot and Shopify import;
   their surfaces restyled into the counter tokens so the app has one token layer.
   `npm run build` + `npm run verify` exit 0. Branch `nightrun/l3-readycounter`.
+
+- 2026-08-31 — **RC-S2:** Offer% + ACP policy wired into audit API (`offer` block cites
+  `schema_offer_gap` from `sources.ts`; `acpPolicy` probes privacy/ToS). Smoke:
+  `npm run audit:offer-smoke`. Batch table adds Offer% column.

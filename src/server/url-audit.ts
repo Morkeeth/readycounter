@@ -2,6 +2,7 @@ import type { Product } from '../types/commerce';
 import type { StoreDefinition } from '../data/stores';
 import type { StoreAuditMeta, StoreAuditSignals } from '../types/audit';
 import { importShopifyFeed, type ShopifyCatalogExport } from '../integrations/shopify-catalog';
+import { catalogOfferCoverage, jsonLdOfferCoverage } from '../lib/offer-measure';
 import { assertSafeAuditUrl } from './ssrf';
 
 const FETCH_MS = 15_000;
@@ -50,6 +51,32 @@ function detectSignals(html: string): Pick<StoreAuditSignals, 'captchaHints' | '
 function gtinCoverage(products: Product[]): number {
   if (products.length === 0) return 0;
   return Math.round((products.filter((p) => p.gtin).length / products.length) * 100);
+}
+
+function offerSignalsFromProducts(products: Product[]): Pick<
+  StoreAuditSignals,
+  'offerCoverage' | 'completeOfferCoverage' | 'offerWithCount' | 'offerTotal'
+> {
+  const report = catalogOfferCoverage(products);
+  return {
+    offerCoverage: report.offerPct,
+    completeOfferCoverage: report.completeOfferPct,
+    offerWithCount: report.withOffer,
+    offerTotal: report.total,
+  };
+}
+
+function offerSignalsFromJsonLd(nodes: Record<string, unknown>[]): Pick<
+  StoreAuditSignals,
+  'offerCoverage' | 'completeOfferCoverage' | 'offerWithCount' | 'offerTotal'
+> {
+  const report = jsonLdOfferCoverage(nodes);
+  return {
+    offerCoverage: report.offerPct,
+    completeOfferCoverage: report.completeOfferPct,
+    offerWithCount: report.withOffer,
+    offerTotal: report.total,
+  };
 }
 
 /** Exported for verify scripts. */
@@ -260,6 +287,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
       productsJson: true,
       jsonLdBlocks: 0,
       gtinCoverage: gtinCoverage(fromJson),
+      ...offerSignalsFromProducts(fromJson),
       captchaHints: htmlSignals.captchaHints,
       accountWallHints: htmlSignals.accountWallHints,
       checkoutProbed: false,
@@ -316,6 +344,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
     productsJson: false,
     jsonLdBlocks: blocks.length,
     gtinCoverage: gtinCoverage(products),
+    ...offerSignalsFromJsonLd(nodes),
     captchaHints: htmlSignals.captchaHints,
     accountWallHints: htmlSignals.accountWallHints,
     checkoutProbed: false,

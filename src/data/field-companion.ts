@@ -245,10 +245,12 @@ export function getFieldCompanionPayload(topic?: string) {
 /** Map readiness-ish signals to handbook issues for agent feedback. */
 export function reviewAgainstField(input: {
   gtinPct?: number;
+  offerPct?: number;
   captchaHint?: boolean;
   catalogScore?: number;
   productsJsonOk?: boolean;
   accountWall?: boolean;
+  acpPolicyReady?: boolean;
   error?: string;
 }) {
   const feedBlocked = Boolean(input.error) || input.productsJsonOk === false;
@@ -277,6 +279,20 @@ export function reviewAgainstField(input: {
         note: gtinNotes.join(' '),
       });
     }
+    if ((input.offerPct ?? 100) < 50) {
+      flags.push({
+        issueId: 'schema-offer',
+        severity: 'medium',
+        note: `Offer coverage ${input.offerPct ?? 0}% on crawled SKUs — Digital Applied 5k benchmark is 19% carry Offer; agents need price + availability in structured data.`,
+      });
+    }
+  }
+  if (input.acpPolicyReady === false) {
+    flags.push({
+      issueId: 'acp-eligibility',
+      severity: 'medium',
+      note: 'Privacy or Terms URL not found on storefront — ACP Instant Checkout requires live policy pages.',
+    });
   }
   if (input.captchaHint) {
     flags.push({

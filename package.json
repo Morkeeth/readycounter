@@ -21,6 +21,7 @@
     "audit:ucp-vs-crawl": "node scripts/ucp-vs-crawl.mjs",
     "audit:oauth-pairs": "npx tsx scripts/oauth-pairs.mjs",
     "audit:journey": "npx tsx scripts/journey-batch.mjs",
+    "audit:offer-smoke": "node scripts/smoke-audit-offer.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

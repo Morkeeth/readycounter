@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { checkRateLimitAsync, clientIp } from '../../../src/server/rate-limit';
 import { assertSafeAuditUrl } from '../../../src/server/ssrf';
 import { probeUcpCatalog } from '../../../src/server/ucp-probe';
+import { probeAcpPolicies } from '../../../src/server/acp-probe';
 import { buildAuditCompare } from '../../../src/lib/audit-compare';
 import { shopifyAdminAdapter, urlCrawlAdapter } from '../../../src/server/catalog-adapter';
 
@@ -34,6 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const ucpProbe = await probeUcpCatalog(url);
+  const acpPolicy = await probeAcpPolicies(url);
 
   let oauthBlock: {
     shop: string;
@@ -54,6 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         },
         null,
         ucpProbe,
+        acpPolicy,
       );
       return res.status(200).json({
         ...partial,
@@ -77,6 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     },
     oauthBlock,
     ucpProbe,
+    acpPolicy,
   );
 
   return res.status(200).json(result);

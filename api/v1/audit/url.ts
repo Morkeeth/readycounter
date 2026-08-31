@@ -1,8 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { reviewAgainstField } from '../../../src/data/field-companion';
+import { buildAuditOfferBlock } from '../../../src/lib/audit-measurement';
 import { computeAuditFindings } from '../../../src/lib/audit-findings';
 import { registerServerCustomStore } from '../../../src/server/custom-stores';
 import { urlCrawlAdapter } from '../../../src/server/catalog-adapter';
+import { probeAcpPolicies } from '../../../src/server/acp-probe';
 import { checkRateLimitAsync, clientIp } from '../../../src/server/rate-limit';
 import { WEBMCP_TOOL_COUNT } from '../../../src/webmcp/toolManifest';
 
@@ -45,12 +47,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     WEBMCP_TOOL_COUNT,
   );
 
+  const acpPolicy = await probeAcpPolicies(audited.meta.url ?? url);
+  const offer = buildAuditOfferBlock(audited.meta.signals);
+
   const fieldReview = reviewAgainstField({
     gtinPct: audited.meta.signals.gtinCoverage,
+    offerPct: offer.pct,
     captchaHint: audited.meta.signals.captchaHints,
     catalogScore: summary.catalogScore,
     productsJsonOk: audited.meta.signals.productsJson || audited.meta.productCount > 0,
     accountWall: audited.meta.signals.accountWallHints,
+    acpPolicyReady: acpPolicy.policyReady,
   });
 
   return res.status(201).json({
@@ -62,11 +69,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     scoreNote: `Catalog-only score (${summary.catalogBudget} pt budget). ${summary.unmeasuredLineIds.length} checkout lines need OAuth or agent journey.`,
     summary,
     findings,
+    offer,
+    acpPolicy,
     meta: {
       url: audited.meta.url,
       method: audited.meta.method,
       source: audited.meta.source,
       gtinPct: audited.meta.signals.gtinCoverage,
+      offerPct: audited.meta.signals.offerCoverage,
+      completeOfferPct: audited.meta.signals.completeOfferCoverage,
       captchaHint: audited.meta.signals.captchaHints,
     },
     fieldReview,

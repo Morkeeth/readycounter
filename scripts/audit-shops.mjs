@@ -89,6 +89,8 @@ async function main() {
       method: result.meta.method,
       products: result.meta.productCount,
       gtinPct: result.meta.signals.gtinCoverage,
+      offerPct: result.meta.signals.offerCoverage,
+      completeOfferPct: result.meta.signals.completeOfferCoverage,
       captchaHint: result.meta.signals.captchaHints,
       catalogScore: summary.catalogScore,
       catalogBudget: summary.catalogBudget,
@@ -105,16 +107,16 @@ async function main() {
   const outFile = path.join(outDir, `batch-${stamp}.json`);
   writeFileSync(outFile, JSON.stringify(rows, null, 2));
 
-  console.log('\n| Store | Method | SKUs | GTIN% | Catalog | Sandbox* | Signals |');
-  console.log('|-------|--------|------|-------|---------|----------|---------|');
+  console.log('\n| Store | Method | SKUs | GTIN% | Offer% | Catalog | Sandbox* | Signals |');
+  console.log('|-------|--------|------|-------|--------|---------|----------|---------|');
   for (const r of rows) {
     if (r.error) {
-      console.log(`| ${r.url.slice(0, 40)} | FAIL | — | — | — | — | ${r.error.slice(0, 40)} |`);
+      console.log(`| ${r.url.slice(0, 40)} | FAIL | — | — | — | — | — | ${r.error.slice(0, 40)} |`);
       continue;
     }
     const sig = [r.captchaHint ? 'captcha?' : '', r.gtinPct < 50 ? 'low-gtin' : ''].filter(Boolean).join(',') || '—';
     console.log(
-      `| ${r.url.replace(/^https?:\/\/(www\.)?/, '').slice(0, 22)} | ${r.method} | ${r.products} | ${r.gtinPct}% | ${r.catalogScore}/${r.catalogBudget} | ${r.sandboxScore}/100 | ${sig} |`,
+      `| ${r.url.replace(/^https?:\/\/(www\.)?/, '').slice(0, 22)} | ${r.method} | ${r.products} | ${r.gtinPct}% | ${r.offerPct}% | ${r.catalogScore}/${r.catalogBudget} | ${r.sandboxScore}/100 | ${sig} |`,
     );
   }
   console.log('\n* Sandbox score assumes demo checkout flags — misleading for crawls. Use catalog score.');
@@ -128,6 +130,8 @@ async function main() {
       catalogScore: r.catalogScore,
       catalogBudget: r.catalogBudget,
       gtinPct: r.gtinPct,
+      offerPct: r.offerPct,
+      completeOfferPct: r.completeOfferPct,
       captchaHint: r.captchaHint,
       method: r.method,
       products: r.products,
