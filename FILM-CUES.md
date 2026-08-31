@@ -84,8 +84,8 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | `src/webmcp/registerTools.ts` OR badge "WebMCP live · 13 tools" |
-| Say | "Ten structured tools. Fork your catalog in five minutes." |
+| Screen | `src/webmcp/registerTools.ts` OR the header badge — it reads "Assistant tools active · 16 connected" with the flag on, "Assistant tools ready · open Connect to test" without |
+| Say | "Sixteen structured tools, and they are the instrument the whole score is read through — worth zero points on the bill, because no published row prices a tool surface. Fork your catalog in five minutes." |
 | Point | [`FORK.md`](./FORK.md) in repo |
 
 ---
