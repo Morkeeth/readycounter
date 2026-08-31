@@ -111,14 +111,14 @@
 
 **Slices landed on branch:**
 
-- RC-A: lighthouse hero, YOU·FIELD·DELTA, rankings deep link, share receipt
-- RC-B: offerPct + policySmoke on audit API/UI, R7 doc, verify
-- RC-C: LIGHTHOUSE-VISION, partner brief, README, DEVPOST, stranger pass
-- WebMCP shape: Measure→Compare→Prove→Re-measure, co-shop CTA
+- RC-A/B/C/W complete · B7 Offer% rankings · C8 ONBOARDING · E2 compare doc
+- Connect arc · offerPct + policySmoke · co-shop prove CTA
 
-**Verify:** `npm run verify && npm run build` green on `873a394+`
+**Verify:** `npm run verify && npm run build` green on `869e6df`
 
-**Cloud lanes:** RC-A/B/C FINISHED · RC WebMCP shape RUNNING at handoff
+**Cloud lanes:** RC-A/B/C/W all FINISHED
+
+**Optional morning:** `npm run audit:batch -- --curated --publish` — backfill Offer% in rankings KV
 
 ---
 
