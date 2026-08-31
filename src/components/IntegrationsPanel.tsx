@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import {
   apiAvailable,
   apiFetchServerStore,
+  apiRenderStatus,
   apiShopifyStatus,
+  type RenderPartnershipStatus,
   type ShopifyStatus,
 } from '../api/client';
 import {
@@ -14,15 +16,35 @@ import {
 import { registerCustomStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
 import { DevToolPanel } from './DevToolPanel';
+import { FieldCompanion } from './FieldCompanion';
+import { LaunchBrief } from './LaunchBrief';
+import { RankingsPanel } from './RankingsPanel';
+import { SandboxShowcase } from './SandboxShowcase';
+import { StorefrontAuditForm } from './StorefrontAuditForm';
+import { WhyWebMCP } from './WhyWebMCP';
 
-export function IntegrationsPanel() {
+interface IntegrationsPanelProps {
+  navigateToBill?: boolean;
+  onOpenBill?: () => void;
+  webmcpLive?: boolean;
+  toolCount?: number;
+}
+
+export function IntegrationsPanel({
+  navigateToBill,
+  onOpenBill,
+  webmcpLive = false,
+  toolCount = 18,
+}: IntegrationsPanelProps) {
   const storeId = useShopStore((s) => s.storeId);
   const switchStore = useShopStore((s) => s.switchStore);
   const [apiUp, setApiUp] = useState<boolean | null>(null);
+  const [kvRedis, setKvRedis] = useState<boolean | null>(null);
   const [importJson, setImportJson] = useState('');
   const [importError, setImportError] = useState<string | null>(null);
   const [shopDomain, setShopDomain] = useState('');
   const [shopifyStatus, setShopifyStatus] = useState<ShopifyStatus | null>(null);
+  const [renderStatus, setRenderStatus] = useState<RenderPartnershipStatus | null>(null);
   const [shopifyMsg, setShopifyMsg] = useState<string | null>(null);
   const feed = validateStoreCatalog(storeId);
   const shopify = toShopifyCatalog(storeId);
@@ -30,23 +52,33 @@ export function IntegrationsPanel() {
   useEffect(() => {
     void apiAvailable().then(setApiUp);
     void apiShopifyStatus().then(setShopifyStatus);
+    void apiRenderStatus().then(setRenderStatus);
+    void fetch('/api/v1/health')
+      .then((r) => r.json())
+      .then((h) => setKvRedis(h?.kv?.redisOk === true))
+      .catch(() => setKvRedis(false));
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('shopify') !== 'connected') return;
+    const id = params.get('store');
+    if (!id) return;
+    void apiFetchServerStore(id).then((store) => {
+      if (!store) return;
+      registerCustomStore(store);
+      switchStore(store.id);
+      setShopifyMsg(
+        `Connected ${store.name} — ${store.products.length} products on Render KV. Opening bill…`,
+      );
+      onOpenBill?.();
+    });
+  }, [switchStore, onOpenBill]);
 
   const connectShopify = () => {
     const shop = shopDomain.trim();
     if (!shop) return;
     window.location.href = `/api/v1/shopify/auth?shop=${encodeURIComponent(shop)}`;
-  };
-
-  const pullServerStore = async (id: string) => {
-    const store = await apiFetchServerStore(id);
-    if (!store) {
-      setShopifyMsg('Store synced on server but not found — try OAuth again.');
-      return;
-    }
-    registerCustomStore(store);
-    switchStore(store.id);
-    setShopifyMsg(`Connected ${store.name} (${store.products.length} products).`);
   };
 
   const downloadFeed = () => {
@@ -75,67 +107,40 @@ export function IntegrationsPanel() {
   return (
     <section className="integrations" aria-label="Connect your store">
       <header className="integrations__header">
-        <h2>Connect your store</h2>
+        <h2>Connect</h2>
         <p className="integrations__lead">
-          Import your catalog, export for agent feeds, or call the REST API. Scores and fixes
-          run on your ReadyCounter sandbox — use the checklist to update your live store.
+          Audit what agents can retrieve from a storefront. Score it on the Readiness bill. Prove
+          the path with WebMCP tools in this tab — or the tool console if the browser flag is off.
         </p>
       </header>
 
       <div className="integrations__grid">
-        <article className="integrations__card">
-          <h3>REST API</h3>
+        {/* 1 · Measure */}
+        <article className="integrations__card integrations__card--wide integrations__card--hero">
+          <p className="integrations__section-label">1 · Measure</p>
+          <h3>Audit a storefront URL</h3>
           <p>
-            <code>GET /api/v1/health</code> · <code>/catalog</code> · <code>/readiness</code> ·{' '}
-            <code>/tools</code>
+            Read public <code>products.json</code> or JSON-LD. Checkout walls stay NOT MEASURED
+            until OAuth. After the crawl you get ≤3 “do this week” steps against the field.
           </p>
-          <p>
-            Status:{' '}
-            <strong className={apiUp ? 'integrations__ok' : 'integrations__warn'}>
-              {apiUp === null
-                ? 'checking…'
-                : apiUp
-                  ? 'connected'
-                  : 'local preview — deploy for live API'}
-            </strong>
-          </p>
-          <p className="integrations__muted">
-            OpenAPI spec at <code>/openapi.yaml</code>
-          </p>
+          <StorefrontAuditForm navigateToBill={navigateToBill} onOpenBill={onOpenBill} />
         </article>
 
-        <article className="integrations__card">
-          <h3>Shopify catalog export</h3>
-          <p>
-            {feed.ok
-              ? 'Your feed is valid for agent discovery.'
-              : `${feed.issues.length} issues blocking full agent discovery.`}
-          </p>
-          <ul className="integrations__issues">
-            {feed.issues.slice(0, 4).map((issue) => (
-              <li key={`${issue.productId}-${issue.field}`}>
-                <code>{issue.productId}</code> — {issue.message}
-              </li>
-            ))}
-          </ul>
-          <button type="button" className="btn btn--secondary" onClick={downloadFeed}>
-            Download catalog JSON
-          </button>
-        </article>
+        {/* 2 · Against the field */}
+        <FieldCompanion />
+
+        {/* 3 · Prove / WebMCP */}
+        <WhyWebMCP webmcpLive={webmcpLive} toolCount={toolCount} />
 
         <article className="integrations__card integrations__card--wide">
-          <h3>Connect Shopify</h3>
-          <p>
-            Read-only OAuth — pulls your product catalog into ReadyCounter for readiness
-            scoring. No payment scopes. Requires app credentials on the server.
-          </p>
+          <p className="integrations__section-label">3 · Admin path</p>
+          <h3>Connect Shopify OAuth</h3>
+          <p>Read-only Admin API — full catalog, barcodes, prices. No payment scopes.</p>
           <p className="integrations__muted">
-            Server:{' '}
             {shopifyStatus?.configured
-              ? 'credentials configured'
-              : shopifyStatus?.hasClientSecret
-                ? 'missing client ID'
-                : 'add SHOPIFY_CLIENT_ID + secret on Vercel'}
+              ? 'OAuth configured on server'
+              : 'Set SHOPIFY_CLIENT_ID + secret on Vercel'}
+            {kvRedis === true ? ' · Render KV live' : kvRedis === false ? ' · KV memory fallback' : ''}
           </p>
           <label className="integrations__shop-label">
             Shop domain
@@ -156,31 +161,58 @@ export function IntegrationsPanel() {
             >
               Install on Shopify
             </button>
-            {shopifyStatus?.devShop ? (
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => void pullServerStore(shopifyStatus.devShop!.replace('.myshopify.com', ''))}
-              >
-                Load dev store
-              </button>
-            ) : null}
           </div>
-          {shopifyMsg ? <p className="integrations__warn">{shopifyMsg}</p> : null}
+          {shopifyMsg ? <p className="integrations__ok">{shopifyMsg}</p> : null}
+        </article>
+
+        <RankingsPanel />
+
+        <SandboxShowcase />
+
+        <article className="integrations__card integrations__card--wide">
+          <h3>Render partnership</h3>
+          <p>
+            {renderStatus?.tagline ??
+              'Key Value persists stores, rooms, and audit batches across Vercel cold starts.'}
+          </p>
           <p className="integrations__muted">
-            Callback URL: <code>/api/v1/shopify/callback</code>
+            KV{' '}
+            {renderStatus?.kv.connected
+              ? `live · ${renderStatus.kv.region ?? 'render'}`
+              : kvRedis === false
+                ? 'offline — set REDIS_URL'
+                : 'checking…'}
+            {renderStatus?.lastAuditBatch
+              ? ` · batch ${renderStatus.lastAuditBatch.succeeded}/${renderStatus.lastAuditBatch.shopCount} shops · avg catalog ${renderStatus.lastAuditBatch.avgCatalogScore}`
+              : ''}
           </p>
         </article>
 
-        <article className="integrations__card integrations__card--wide">
-          <h3>Import your catalog</h3>
+        <article className="integrations__card">
+          <h3>API</h3>
           <p>
-            Paste Shopify Catalog JSON to spin up a store on ReadyCounter. Your team can shop
-            and run readiness checks immediately.
+            <code>POST /audit/url</code> · <code>/companion</code> · <code>/tools</code>
           </p>
+          <p>
+            <strong className={apiUp ? 'integrations__ok' : 'integrations__warn'}>
+              {apiUp === null ? 'checking…' : apiUp ? 'live' : 'offline'}
+            </strong>
+          </p>
+        </article>
+
+        <article className="integrations__card">
+          <h3>Catalog export</h3>
+          <p>{feed.ok ? 'Feed valid.' : `${feed.issues.length} issues on current store.`}</p>
+          <button type="button" className="btn btn--secondary" onClick={downloadFeed}>
+            Download JSON
+          </button>
+        </article>
+
+        <details className="integrations__card integrations__card--wide integrations__advanced">
+          <summary>Import JSON manually</summary>
           <textarea
             className="integrations__import"
-            rows={6}
+            rows={5}
             placeholder='{ "store": "My Shop", "products": [...] }'
             value={importJson}
             onChange={(e) => setImportJson(e.target.value)}
@@ -188,25 +220,21 @@ export function IntegrationsPanel() {
           {importError ? <p className="integrations__warn">{importError}</p> : null}
           <button
             type="button"
-            className="btn btn--primary"
+            className="btn btn--secondary"
             disabled={!importJson.trim()}
             onClick={importFeed}
           >
             Import catalog
           </button>
-        </article>
-
-        <article className="integrations__card">
-          <h3>Live co-shop sessions</h3>
-          <p>
-            Create a session with <code>POST /api/v1/rooms</code>, then share{' '}
-            <code>?room=…&store=…</code>. Everyone sees the same cart in real time.
-          </p>
-          <p className="integrations__muted">See INTEGRATIONS.md for API examples.</p>
-        </article>
+        </details>
       </div>
 
       <DevToolPanel />
+
+      <details className="launch-brief-details">
+        <summary>Launch kit — research, test cases, demo script</summary>
+        <LaunchBrief />
+      </details>
     </section>
   );
 }

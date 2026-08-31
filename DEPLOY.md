@@ -37,11 +37,24 @@ Manual stranger test:
 
 Local: copy `.env.example` → `.env.local` (gitignored).
 
+| `REDIS_URL` | Render Key Value connection string — durable co-shop rooms + imported stores |
+| `RENDER_API_KEY` | Local only — `npm run render:setup` / `render:create-kv` |
+
+Provision Key Value:
+
+```bash
+# RENDER_API_KEY in .env.local (from Render dashboard → Account → API keys)
+npm run render:setup          # list / print REDIS_URL
+npm run render:create-kv      # create readycounter-kv if missing
+```
+
+After deploy: `curl -s https://tooltruth-webmcp.vercel.app/api/v1/health | jq .kv`
+
 ## Optional later
 
 | Env | Purpose |
 |-----|---------|
-| `UPSTASH_REDIS_REST_URL` | Server-side co-shop rooms (post-hack) |
+| `UPSTASH_REDIS_REST_URL` | Alternative to Render if you prefer Upstash REST |
 
 ## Oscar checklist
 

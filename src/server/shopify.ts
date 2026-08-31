@@ -143,19 +143,19 @@ export async function fetchAdminProducts(
 ): Promise<ShopifyAdminProduct[]> {
   const domain = normalizeShop(shop);
   const products: ShopifyAdminProduct[] = [];
-  let url: string | null =
+  let nextUrl: string | null =
     `https://${domain}/admin/api/2025-01/products.json?limit=50&fields=id,title,body_html,vendor,product_type,tags,variants`;
 
-  while (url) {
-    const res = await fetch(url, {
+  while (nextUrl) {
+    const res: Response = await fetch(nextUrl, {
       headers: { 'X-Shopify-Access-Token': accessToken },
     });
     if (!res.ok) break;
     const data = (await res.json()) as { products: ShopifyAdminProduct[] };
     products.push(...data.products);
-    const link = res.headers.get('link');
-    const next = link?.match(/<([^>]+)>;\s*rel="next"/)?.[1];
-    url = next ?? null;
+    const link: string | null = res.headers.get('link');
+    const next: string | undefined = link?.match(/<([^>]+)>;\s*rel="next"/)?.[1];
+    nextUrl = next ?? null;
   }
 
   return products;
@@ -216,6 +216,23 @@ export async function syncShopifyStore(shop: string): Promise<{
     storeId: domain.replace('.myshopify.com', ''),
     name: feed.store,
   });
+  store.audit = {
+    source: 'shopify-admin',
+    url: `https://${domain}`,
+    method: 'shopify-products-json',
+    fetchedAt: new Date().toISOString(),
+    productCount: store.products.length,
+    signals: {
+      productsJson: true,
+      jsonLdBlocks: 0,
+      gtinCoverage: Math.round(
+        (store.products.filter((p) => p.gtin).length / Math.max(1, store.products.length)) * 100,
+      ),
+      captchaHints: false,
+      accountWallHints: false,
+      checkoutProbed: false,
+    },
+  };
 
   return { ok: true, store };
 }

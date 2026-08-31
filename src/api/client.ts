@@ -120,3 +120,186 @@ export async function apiFetchServerStore(storeId: string): Promise<StoreDefinit
     return null;
   }
 }
+
+export interface FieldReviewPayload {
+  ok: true;
+  comparedToField: string;
+  flagCount: number;
+  flags: Array<{
+    issueId: string;
+    severity: 'high' | 'medium';
+    note: string;
+    issue: {
+      rank: number;
+      id: string;
+      title: string;
+      why: string;
+      fails: string;
+      doThisWeek: string;
+      evidence: string;
+    };
+  }>;
+  nextSteps: string[];
+  companionTool: string;
+}
+
+export interface UrlAuditResponse {
+  ok: true;
+  storeId: string;
+  name: string;
+  productCount: number;
+  score: number;
+  scoreNote?: string;
+  summary?: {
+    catalogScore: number;
+    catalogBudget: number;
+    fullScore: number;
+    unmeasuredLineIds: string[];
+  };
+  meta?: { url: string; method: string; gtinPct?: number; captchaHint?: boolean };
+  fieldReview?: FieldReviewPayload;
+  bookmark: string;
+  nextSteps?: string[];
+}
+
+export type UrlAuditClientResult =
+  | { ok: true; data: UrlAuditResponse }
+  | { ok: false; error: string; fieldReview?: FieldReviewPayload };
+
+export async function apiAuditUrl(url: string): Promise<UrlAuditClientResult> {
+  try {
+    const res = await fetch(`${API}/audit/url`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    });
+    const body = (await res.json()) as UrlAuditResponse & {
+      error?: string;
+      fieldReview?: FieldReviewPayload;
+    };
+    if (!res.ok) {
+      return {
+        ok: false,
+        error: body.error ?? `Audit failed (${res.status})`,
+        fieldReview: body.fieldReview,
+      };
+    }
+    return { ok: true, data: body };
+  } catch {
+    return { ok: false, error: 'Network error — could not reach audit API' };
+  }
+}
+
+export interface RenderPartnershipStatus {
+  partner: 'render';
+  tagline: string;
+  kv: {
+    provider: 'render' | 'other' | 'memory';
+    hostname: string | null;
+    region: string | null;
+    connected: boolean;
+  };
+  lastAuditBatch: {
+    at: string;
+    shopCount: number;
+    succeeded: number;
+    avgCatalogScore: number;
+    avgGtinPct: number;
+  } | null;
+  cron: { available: boolean; schedule: string; command: string };
+  blueprint: string;
+}
+
+export interface RankingsResponse {
+  ok: true;
+  at: string | null;
+  shopCount: number;
+  succeeded: number;
+  avgCatalogScore: number;
+  avgGtinPct: number;
+  note: string;
+  verticals?: string[];
+  rows: Array<{
+    url: string;
+    storeId?: string;
+    catalogScore?: number;
+    catalogBudget?: number;
+    gtinPct?: number;
+    captchaHint?: boolean;
+    vertical?: string;
+    error?: string;
+  }>;
+}
+
+export async function apiRankings(): Promise<RankingsResponse | null> {
+  try {
+    const res = await fetch(`${API}/rankings`);
+    if (!res.ok) return null;
+    return (await res.json()) as RankingsResponse;
+  } catch {
+    return null;
+  }
+}
+
+export async function apiRenderStatus(): Promise<RenderPartnershipStatus | null> {
+  try {
+    const res = await fetch(`${API}/render/status`);
+    if (!res.ok) return null;
+    return (await res.json()) as RenderPartnershipStatus;
+  } catch {
+    return null;
+  }
+}
+
+export interface AuditCompareResponse {
+  ok: true;
+  url: string;
+  shop?: string;
+  headline: string;
+  oauthError?: string;
+  crawl: {
+    label: string;
+    productCount: number;
+    gtinPct: number;
+    catalogScore: number;
+    catalogBudget: number;
+  };
+  oauth?: {
+    label: string;
+    productCount: number;
+    gtinPct: number;
+    catalogScore: number;
+    catalogBudget: number;
+  };
+  ucp?: {
+    label: string;
+    available: boolean;
+    productCount: number;
+    gtinPct: number;
+    tools: string[];
+    error?: string;
+  };
+  delta?: {
+    catalogScore: number;
+    gtinPct: number;
+    productCount: number;
+  };
+}
+
+export async function apiAuditCompare(
+  url: string,
+  shop?: string,
+): Promise<AuditCompareResponse | null> {
+  try {
+    const res = await fetch(`${API}/audit/compare`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, shop }),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as AuditCompareResponse;
+  } catch {
+    return null;
+  }
+}
+

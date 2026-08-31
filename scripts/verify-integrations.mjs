@@ -18,7 +18,7 @@ function done() {
   if (__fails > 0) { console.log('FAIL: ' + __fails + ' assertion(s)'); process.exit(1); }
 }
 import { validateStoreCatalog, toShopifyCatalog } from './src/integrations/shopify-catalog.ts';
-import { createRoom, getRoom, patchRoom } from './src/server/room-store.ts';
+import { createRoomSync, getRoomSync, patchRoomSync } from './src/server/room-store.ts';
 
 const ember = validateStoreCatalog('ember-oak');
 const neon = validateStoreCatalog('neon-matcha');
@@ -26,9 +26,9 @@ console.log('ember-oak feed issues:', ember.issues.length);
 console.log('neon-matcha feed issues:', neon.issues.length);
 console.log('shopify export products:', toShopifyCatalog('ember-oak').products.length);
 
-const id = createRoom('ember-oak', { storeName: 'T', checkoutRequiresCaptcha: true, checkoutRequiresAccount: false });
-const patched = patchRoom(id, { order: { lines: [], currency: 'USD' } });
-ok('room create+patch', !!getRoom(id) && !!patched);
+const id = createRoomSync('ember-oak', { storeName: 'T', checkoutRequiresCaptcha: true, checkoutRequiresAccount: false });
+const patched = patchRoomSync(id, { order: { lines: [], currency: 'USD' } });
+ok('room create+patch', !!getRoomSync(id) && !!patched);
 done();
 `;
 

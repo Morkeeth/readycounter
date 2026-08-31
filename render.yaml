@@ -1,0 +1,33 @@
+# Render Blueprint — ReadyCounter partnership stack
+#
+# Deploy: connect this repo in Render Dashboard → New → Blueprint
+# Or: render blueprint launch (Render CLI)
+#
+# Vercel hosts the UI + API. Render hosts durable state + scheduled audits.
+
+services:
+  - type: keyvalue
+    name: readycounter-kv
+    plan: free
+    region: oregon
+    maxmemoryPolicy: allkeys_lru
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Vercel serverless + dev
+
+  - type: cron
+    name: readycounter-audit-cron
+    runtime: node
+    plan: free
+    region: oregon
+    schedule: '0 6 * * 1'
+    buildCommand: npm ci
+    startCommand: npm run render:cron-audit
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          name: readycounter-kv
+          type: keyvalue
+          property: connectionString
+      - key: NODE_ENV
+        value: production

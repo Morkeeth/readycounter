@@ -5,22 +5,35 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/bundle-api.mjs",
     "lint": "oxlint",
-    "verify": "node scripts/verify-score.mjs && node scripts/verify-readiness.mjs && node scripts/verify-share.mjs && node scripts/verify-stores.mjs && node scripts/verify-integrations.mjs && node scripts/verify-ambition.mjs",
+    "verify": "node scripts/verify-score.mjs && node scripts/verify-readiness.mjs && node scripts/verify-share.mjs && node scripts/verify-stores.mjs && node scripts/verify-integrations.mjs && node scripts/verify-ambition.mjs && node scripts/verify-url-audit.mjs && node scripts/verify-launch.mjs && node scripts/verify-goal.mjs",
+    "verify:launch": "node scripts/verify-launch.mjs",
+    "test:e2e": "playwright test",
+    "render:setup": "node scripts/render-setup.mjs",
+    "render:create-kv": "node scripts/render-setup.mjs --create",
+    "render:publish-audit": "npx tsx scripts/render-publish-audit.mjs",
+    "render:cron-audit": "node scripts/render-cron-audit.mjs",
+    "audit:shops": "npx tsx scripts/audit-shops.mjs",
+    "audit:batch": "npx tsx scripts/audit-shops.mjs --curated",
+    "audit:analyze": "npx tsx scripts/analyze-batch.mjs",
+    "audit:journey": "npx tsx scripts/journey-batch.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "redis": "^4.7.1",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/node": "^24.13.3",
-    "@vercel/node": "^5.3.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "@vercel/node": "^5.3.0",
     "@vitejs/plugin-react": "^6.1.0",
+    "esbuild": "^0.27.0",
     "oxlint": "^1.79.0",
     "typescript": "~6.0.2",
     "vite": "^8.2.2"

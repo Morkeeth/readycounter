@@ -68,31 +68,41 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ---
 
-## PLAN (post-EYES, risk-first)
+## PLAN (production-ready — no freeze)
 
-**Shipped (do not re-build):** co-shop core · readiness + autopilot · 16 tools · REST API · Shopify import · product UI · `npm run verify`
+**Philosophy:** Ship continuously toward production. Devpost Wed runs in parallel; it does not pause the build queue. Stranger replies are a signal, not a gate.
+
+**Already shipped:** co-shop · readiness tape · 16 tools · REST API · import + `?co=` share · sandbox-honest UI · Vercel live
 
 | # | Slice | Done when | Size | Risk |
 |---|-------|-----------|------|------|
-| **1** | **Deploy + truth in UI** — Vercel live URL; demote live session; lead **copy cart link** | https://tooltruth-webmcp.vercel.app live | S — Oscar | ✅ |
-| **2** | **Stranger gate** — post live URL (opener B: abandon stats); 72h clock for one non-Oscar reply; **freeze features** | Gate running; zero code slices until reply or timeout | S — Oscar | Building past this falsifies demand |
-| **3** | **Import survives share** — `?co=` carries custom store catalog so incognito sees imported SKUs | `npm run verify` share import roundtrip | M | ✅ shipped |
-| **4** | **Merchant-honest copy** — Readiness/Connect say "sandbox audit + checklist"; autopilot labeled sandbox fixes | No UI line implies live Shopify mutation | S | ✅ shipped |
-| **5** | **Wed Devpost** — submit live URL + ≤60s product screen recording (Shop → Readiness → Connect import) | Devpost filed Wed 22:00 CEST | S — Oscar | Calendar creep |
-| **6** | **Post-gate fork** _(only after reply)_ | | | |
-| | · **Dev reply** → sharpen Connect, FORK.md, tool manifest | | S | |
-| | · **Merchant reply** → spike read-only URL audit (their catalog URL, not our sandbox) | | L | Real wedge test |
-| | · **Either** → Upstash KV for rooms + server custom stores | | M | Live session promise |
+| **1** | **Durable state (Render Key Value)** — rooms + server custom stores | ✅ `kv.backend: redis` on production | M | — |
+| **2** | **E2E smoke (Playwright)** — landing + API health + Shopify configured | `npm run test:e2e` green | M | Flaky tests |
+| **3** | **Merchant store API** — stable slug; `GET /stores/:id` + OAuth/audit persist | Import/OAuth/audit → `?store=slug` bookmark | M | Slug collisions |
+| **4** | **Live URL audit** — paste storefront URL; JSON-LD / products.json | `POST /api/v1/audit/url` → score + Redis persist | L | Bot blocks |
+| **5** | **Merchant identity (light)** — magic-link or passkey; stores tied to account; shoppers still no signup | Merchant returns to dashboard without re-import | M | Auth scope creep |
+| **6** | **Production ops** — custom domain, Sentry, API rate limits, fix API route TS on Vercel build | Errors visible; no silent 500s; clean deploy logs | S | — |
+| **7** | **Shopify OAuth (read-only)** | ✅ configured on Vercel | L | — |
 
-**Not in v1 queue:** merchant auth, payments, Shopify OAuth, Playwright e2e, more demo stores.
+**Parallel (Oscar, non-blocking):** post URL · film · Devpost Wed 22:00 CEST
+
+**Production-ready v1 = slices 1–4.** Auth + OAuth are v1.1 once strangers use URL audit.
 
 ## NOW
 
-```
-open https://tooltruth-webmcp.vercel.app → Start shopping → add item → Copy cart link
-→ incognito → same order + same store catalog
-→ Readiness → score + one autopilot fix → re-run journey preview
-→ Connect → paste sample Shopify JSON → import → share again → incognito roundtrip
+**Long-run goal:** `GOAL-LONG-RUN.md` (Cursor goal armed 2026-08-31) — measurement layer for agent commerce.
+
+**Immediate queue:** Phase 0 film/Devpost (Oscar) → G2 batch at 50+ → R5 scanner compare.
+
+**Research:** `research/experiments/` · R1–R4 complete · `research/FINDINGS-D3.md`
+
+**Build queue:** A3 GTIN CSV · R5 · D2 checkout probe. **Session:** `SESSION-STATUS.md`
+
+```text
+Wave 1 (today): Render KV wired + Playwright smoke
+Wave 2: Merchant store API + promote live session
+Wave 3: Live URL audit (the real wedge)
+Wave 4: Auth + domain + monitoring
 ```
 
 ## LOG
@@ -103,7 +113,7 @@ open https://tooltruth-webmcp.vercel.app → Start shopping → add item → Cop
 - 2026-08-31 — Slice 4: persist, share link, landing, JSON-LD.
 - 2026-08-31 — Slice 4b–5: platform, API, 16 tools, integrations, ambition slice.
 - 2026-08-31 — **Product reframe:** UI/copy/README away from hackathon; Connect tab; merchant-first landing.
-- 2026-08-31 — **Deployed:** https://tooltruth-webmcp.vercel.app · slices 3–4 shipped · `da97b0a`
+- 2026-08-31 — **Autonomous goal run:** G1 CatalogAdapter · A2 compare API+UI · 50+ curated list · R2–R4 · D3 findings · rate limits · weekly cron · `SESSION-STATUS.md`
 
 - 2026-08-31 — **Night run L3 — brand ruled + score made defensible.**
   Signature device is **the readiness tape** (the score ring was rejected: a ring

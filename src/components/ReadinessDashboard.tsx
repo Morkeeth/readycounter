@@ -10,12 +10,20 @@ import {
   reportedLines,
   weightFor,
 } from '../lib/readiness';
+import { computeAuditFindings } from '../lib/audit-findings';
+import { reviewAgainstField } from '../data/field-companion';
+import { getStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
 import { AutopilotPanel } from './AutopilotPanel';
+import { AgentJourneyRun } from './AgentJourneyRun';
+import { CrawlVsOAuthPanel } from './CrawlVsOAuthPanel';
+import { FieldReviewPanel } from './FieldReviewPanel';
 import { ReadinessTape } from './ReadinessTape';
+import { StorefrontAuditForm } from './StorefrontAuditForm';
 
 interface ReadinessDashboardProps {
   registeredToolCount: number;
+  onGoShop?: () => void;
 }
 
 const FUNNEL_STEPS = [
@@ -26,7 +34,7 @@ const FUNNEL_STEPS = [
   'checkout_blocked',
 ] as const;
 
-export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardProps) {
+export function ReadinessDashboard({ registeredToolCount, onGoShop }: ReadinessDashboardProps) {
   const merchant = useShopStore((s) => s.merchant);
   const storeId = useShopStore((s) => s.storeId);
   const setMerchantFlag = useShopStore((s) => s.setMerchantFlag);
@@ -45,9 +53,31 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
     () => getCatalogProducts(),
     [getCatalogProducts, storeId, feedPricePatches],
   );
-  const checks = computeReadinessChecks(merchant, registeredToolCount, products);
-  const reported = reportedLines(registeredToolCount);
-  const score = readinessScore(checks);
+  const storeAudit = getStore(storeId).audit;
+  const auditResult = useMemo(
+    () =>
+      storeAudit
+        ? computeAuditFindings(merchant, products, storeAudit, registeredToolCount)
+        : null,
+    [storeAudit, merchant, products, registeredToolCount, storeId],
+  );
+  const fieldReview = useMemo(() => {
+    if (!storeAudit || !auditResult) return null;
+    return reviewAgainstField({
+      gtinPct: storeAudit.signals.gtinCoverage,
+      captchaHint: storeAudit.signals.captchaHints,
+      catalogScore: auditResult.summary.catalogScore,
+      productsJsonOk: storeAudit.signals.productsJson || storeAudit.productCount > 0,
+      accountWall: storeAudit.signals.accountWallHints || merchant.checkoutRequiresAccount,
+    });
+  }, [storeAudit, auditResult, merchant.checkoutRequiresAccount]);
+  const checks = auditResult
+    ? auditResult.findings.filter((f) => (f.maxPoints ?? 0) > 0)
+    : computeReadinessChecks(merchant, registeredToolCount, products);
+  const reported = auditResult
+    ? auditResult.findings.filter((f) => (f.maxPoints ?? 0) === 0)
+    : reportedLines(registeredToolCount);
+  const score = auditResult ? auditResult.summary.catalogScore : readinessScore(checks);
   const lost = pointsLost(checks);
 
   const captchaSource = getSource('presenc_captcha');
@@ -77,6 +107,39 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
 
   return (
     <section className="readiness" aria-label="Merchant readiness">
+      <aside className="readiness__next" aria-label="Next steps">
+        <p>
+          <strong>Preview</strong> — use Autopilot below to see score deltas (sandbox only).{' '}
+          <strong>Prove</strong> —{' '}
+          {onGoShop ? (
+            <button type="button" className="readiness__next-link" onClick={onGoShop}>
+              co-shop with tools on the Shop tab
+            </button>
+          ) : (
+            'co-shop on the Shop tab'
+          )}
+          .
+        </p>
+      </aside>
+      <article className="integrations__card integrations__card--wide" style={{ marginBottom: '1rem' }}>
+        <h3>Audit another storefront</h3>
+        <StorefrontAuditForm onSuccess={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
+      </article>
+      {auditResult && auditResult.summary.unmeasuredLineIds.length > 0 ? (
+        <p className="integrations__muted" style={{ marginBottom: '1rem' }}>
+          Catalog score <strong>{auditResult.summary.catalogScore}</strong> /{' '}
+          {auditResult.summary.catalogBudget} pts measured from crawl.{' '}
+          {auditResult.summary.unmeasuredLineIds.length} checkout lines need Shopify OAuth or agent
+          journey — sandbox score {auditResult.summary.fullScore}/100 would overstate readiness.
+        </p>
+      ) : null}
+      {fieldReview ? (
+        <div style={{ marginBottom: '1rem' }}>
+          <FieldReviewPanel review={fieldReview} storeLabel={merchant.storeName} />
+        </div>
+      ) : null}
+      <AgentJourneyRun toolCount={registeredToolCount} />
+      <CrawlVsOAuthPanel />
       <div className="readiness__grid">
         <ReadinessTape
           storeName={merchant.storeName}

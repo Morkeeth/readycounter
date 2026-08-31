@@ -1,12 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getRoom } from '../../../src/server/room-store';
-import { subscribeRoom } from '../../../src/server/room-events';
+import { getRoom } from '../../../../src/server/room-store';
+import type { RoomState } from '../../../../src/server/room-store';
+import { subscribeRoom } from '../../../../src/server/room-events';
 
 export const config = {
   maxDuration: 60,
 };
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ error: 'Method not allowed' });
@@ -17,7 +18,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'roomId required' });
   }
 
-  const initial = getRoom(roomId);
+  const initial = await getRoom(roomId);
   if (!initial) {
     return res.status(404).json({ error: 'Room not found' });
   }
@@ -33,7 +34,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   send('snapshot', { roomId, state: initial });
 
-  const unsubscribe = subscribeRoom(roomId, (state) => {
+  const unsubscribe = subscribeRoom(roomId, (state: RoomState) => {
     send('patch', { roomId, state });
   });
 

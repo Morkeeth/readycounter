@@ -10,6 +10,9 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+api/**/*.js
+api/**/*.js.map
+audits/
 *.local
 .env
 .env.*
@@ -27,3 +30,6 @@ dist-ssr
 *.sw?
 .vercel
 .worktrees/
+test-results/
+playwright-report/
+

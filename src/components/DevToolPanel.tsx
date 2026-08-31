@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { getStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
 import { invokeToolLocally } from '../webmcp/registerTools';
+import { WEBMCP_TOOL_COUNT } from '../webmcp/toolManifest';
 
 const SAMPLE_CALLS = [
   {
@@ -47,11 +48,12 @@ export function DevToolPanel() {
 
   return (
     <details className="dev-panel">
-      <summary>Agent tool console — test WebMCP tools without the browser flag</summary>
+      <summary>Path B — Agent tool console (no WebMCP flag)</summary>
       <div className="dev-panel__body">
         <p className="dev-panel__hint">
-          Same tools your shopping assistant uses in Chrome. Run calls here to verify catalog,
-          order sync, and readiness before going live.
+          Same {WEBMCP_TOOL_COUNT} tools Path A would register. Run calls here when{' '}
+          <code>chrome://flags/#enable-webmcp-testing</code> is off — see{' '}
+          <a href="#run-webmcp">How to run WebMCP</a>.
         </p>
         <div className="dev-panel__samples">
           {SAMPLE_CALLS.map((sample) => (

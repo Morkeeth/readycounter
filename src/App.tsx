@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { getSource } from './data/sources';
+import type { JourneyStep } from './data/journey';
+import { tabForStep } from './data/journey';
 import { IntegrationsPanel } from './components/IntegrationsPanel';
 import { hasSeenHero, LandingHero, markHeroSeen } from './components/LandingHero';
+import { MerchantJourney } from './components/MerchantJourney';
 import { OrderPanel } from './components/OrderPanel';
 import { ReadinessDashboard } from './components/ReadinessDashboard';
 import { ShopView } from './components/ShopView';
 import { StoreSwitcher } from './components/StoreSwitcher';
 import { ToolActivityToast } from './components/ToolActivityToast';
+import { FilmGuide } from './components/FilmGuide';
 import { useRoomSync } from './hooks/useRoomSync';
 import { registerCustomStore } from './data/stores';
 import { apiFetchServerStore } from './api/client';
@@ -17,28 +20,32 @@ import './App.css';
 
 type Tab = 'shop' | 'merchant' | 'integrations';
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'shop', label: 'Shop' },
-  { id: 'merchant', label: 'Readiness' },
-  { id: 'integrations', label: 'Connect' },
+const TABS: { id: Tab; label: string; journey: JourneyStep }[] = [
+  { id: 'integrations', label: 'Connect', journey: 'connect' },
+  { id: 'merchant', label: 'Readiness', journey: 'bill' },
+  { id: 'shop', label: 'Co-shop', journey: 'prove' },
 ];
 
-/**
- * `?view=merchant` opens straight on a tab. A shared co-shop link should land
- * where the sender was looking, and the film can cut to a view without a click.
- */
 function initialTab(): Tab {
   const v = new URLSearchParams(window.location.search).get('view');
-  return TABS.some((t) => t.id === v) ? (v as Tab) : 'shop';
+  return TABS.some((t) => t.id === v) ? (v as Tab) : 'integrations';
 }
 
 function hasViewParam(): boolean {
   return new URLSearchParams(window.location.search).has('view');
 }
 
+function journeyForTab(tab: Tab): JourneyStep {
+  if (tab === 'shop') return 'prove';
+  if (tab === 'merchant') return 'bill';
+  return 'connect';
+}
+
 function App() {
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [showHero, setShowHero] = useState(() => !hasSeenHero() && !hasViewParam());
+  const [showHero, setShowHero] = useState(
+    () => !hasSeenHero() && !hasViewParam() && new URLSearchParams(window.location.search).get('film') !== '1',
+  );
   const [webmcpStatus, setWebmcpStatus] = useState<{
     available: boolean;
     registered: string[];
@@ -46,6 +53,15 @@ function App() {
   }>({ available: false, registered: [], error: null });
 
   useRoomSync();
+
+  useEffect(() => {
+    const onPop = () => {
+      const v = new URLSearchParams(window.location.search).get('view');
+      if (v && TABS.some((t) => t.id === v)) setTab(v as Tab);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -81,7 +97,13 @@ function App() {
     window.history.replaceState({}, '', url.toString());
   };
 
-  const enterApp = (nextTab: Tab = 'shop') => {
+  const goJourney = (step: JourneyStep) => {
+    markHeroSeen();
+    setShowHero(false);
+    openTab(tabForStep(step));
+  };
+
+  const enterApp = (nextTab: Tab = 'integrations') => {
     markHeroSeen();
     setShowHero(false);
     openTab(nextTab);
@@ -92,11 +114,13 @@ function App() {
       <div className="app app--landing">
         <header className="app-header app-header--center">
           <h1>ReadyCounter</h1>
-          <p className="tagline">an itemised readiness bill for agent shoppers</p>
+          <p className="tagline">itemised agent abandonment · cited line by line</p>
         </header>
         <LandingHero
-          onShop={() => enterApp('shop')}
+          onAudit={() => enterApp('integrations')}
           onReadiness={() => enterApp('merchant')}
+          onShop={() => enterApp('shop')}
+          onJourneyStep={goJourney}
           registeredToolCount={webmcpStatus.registered.length || WEBMCP_TOOL_COUNT}
         />
       </div>
@@ -104,27 +128,29 @@ function App() {
   }
 
   const toolCount = webmcpStatus.registered.length || WEBMCP_TOOL_COUNT;
+  const journeyStep = journeyForTab(tab);
 
   return (
     <div className="app">
       <header className="app-header">
         <div>
           <h1>ReadyCounter</h1>
-          <p className="tagline">
-            the counter prints the score · co-shop stays in your tab
-          </p>
+          <p className="tagline">audit · bill · preview · prove</p>
         </div>
         <div
           className={`webmcp-badge${webmcpStatus.available ? ' webmcp-badge--live' : ''}`}
+          title={webmcpStatus.available ? 'WebMCP tools registered in this tab' : 'Test tools under Connect'}
         >
           {webmcpStatus.available ? (
-            <>Assistant tools active · {toolCount} connected</>
+            <>WebMCP live · {toolCount} tools</>
           ) : (
-            <>Assistant tools ready · open Connect to test</>
+            <>Tools ready · Connect to test</>
           )}
         </div>
         <StoreSwitcher />
       </header>
+
+      <MerchantJourney active={journeyStep} onStep={goJourney} />
 
       <nav className="tabs" aria-label="Main navigation">
         {TABS.map((t) => (
@@ -147,42 +173,31 @@ function App() {
             <OrderPanel />
           </>
         ) : tab === 'merchant' ? (
-          <ReadinessDashboard registeredToolCount={toolCount} />
+          <ReadinessDashboard registeredToolCount={toolCount} onGoShop={() => openTab('shop')} />
         ) : (
-          <IntegrationsPanel />
+          <IntegrationsPanel
+            navigateToBill
+            onOpenBill={() => openTab('merchant')}
+            webmcpLive={webmcpStatus.available}
+            toolCount={toolCount}
+          />
         )}
       </main>
 
       <ToolActivityToast />
+      <FilmGuide />
 
       <footer className="app-footer">
-        <p>
-          Every figure ReadyCounter <em>cites</em> resolves to a row in{' '}
-          <code>src/data/sources.ts</code> and a quoted sentence in{' '}
-          <code>research.md</code>. The numbers it <em>measures</em> off this store —
-          SKU counts, GTIN coverage, points earned — are computed live from the
-          catalog and cite nothing, because they are not claims about the world.
- All six weights are a published share of
-          abandoned agent carts, one line per row of Presenc AI&rsquo;s causes table
-          ({getSource('presenc_stale_feed').figure} stale data at checkout,{' '}
-          {getSource('presenc_captcha').figure} CAPTCHA,{' '}
-          {getSource('presenc_price_mismatch').figure} feed mismatch,{' '}
-          {getSource('presenc_account_wall').figure} required account,{' '}
-          {getSource('presenc_payment_method').figure} unsupported payment,{' '}
-          {getSource('presenc_page_structure').figure} ambiguous page structure —{' '}
-          {getSource('presenc_page_structure').publisher}, read{' '}
-          {getSource('presenc_page_structure').accessed}); the six sum to 100 on that
-          page and to 100 here, and all six rows are reproduced in{' '}
-          <code>research.md</code>. What is <em>not</em> published is the test behind
-          each line: the source names six causes and defines none of them, so every
-          test is ours and every line prints it. Checks with no published price — the
-          tool surface — are reported at zero rather than given a weight we made up.
-        </p>
-        <p>
-          Humans confirm payment in the browser. Shopping assistants search, add to
-          the order and prepare checkout — <code>prepare_checkout</code> never
-          charges a card.
-        </p>
+        <details className="app-footer__details">
+          <summary>How the score is sourced</summary>
+          <p>
+            Cited figures resolve to <code>src/data/sources.ts</code> and{' '}
+            <code>research.md</code>. Measured counts (SKUs, GTIN coverage, points earned) are
+            computed live from this catalog. Six weights = Presenc AI causes table (26+24+18+15+11+6
+            = 100). Tool surface is reported at zero. <code>prepare_checkout</code> never charges a
+            card.
+          </p>
+        </details>
       </footer>
     </div>
   );

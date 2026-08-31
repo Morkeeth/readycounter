@@ -24,7 +24,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(502).json({ error: synced.error });
   }
 
-  registerServerCustomStore(synced.store);
+  await registerServerCustomStore(synced.store);
   return res.status(200).json({
     ok: true,
     storeId: synced.store.id,

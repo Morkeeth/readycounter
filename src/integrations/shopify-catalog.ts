@@ -113,20 +113,29 @@ export function validateStoreCatalog(storeId: string): {
   return validateShopifyCatalog(toShopifyCatalog(storeId));
 }
 
+function normalizeTags(tags: string | string[] | undefined): string[] {
+  if (Array.isArray(tags)) return tags.map((t) => String(t).trim()).filter(Boolean);
+  if (typeof tags === 'string') {
+    return tags
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
 function shopifyToProduct(row: ShopifyCatalogProduct): Product {
   const variant = row.variants[0];
   const price = variant ? parseFloat(variant.price) : 0;
   const category = (row.product_type || 'merch') as Product['category'];
+  const tagsRaw = row.tags as string | string[] | undefined;
   return {
     id: variant?.sku ?? row.id,
     name: row.title,
     description: row.body_html.replace(/<[^>]+>/g, ' ').trim(),
     price: Number.isFinite(price) ? price : 0,
     currency: 'USD',
-    tags: row.tags
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean),
+    tags: normalizeTags(tagsRaw),
     category,
     inStock: (variant?.inventory_quantity ?? 0) > 0,
     ...(variant?.barcode ? { gtin: variant.barcode } : {}),

@@ -1,0 +1,4 @@
+# Deploy bundled API handlers only (sources stay in git for dev).
+api/**/*.ts
+!api/**/*.js
+!api/**/*.js.map

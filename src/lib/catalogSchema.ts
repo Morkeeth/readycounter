@@ -62,7 +62,7 @@ export const REQUIRED_JSONLD_FIELDS = [
   'offers.availability',
 ] as const;
 
-type JsonRecord = Record<string, unknown>;
+export type JsonRecord = Record<string, unknown>;
 
 function pathValue(record: JsonRecord, path: string): unknown {
   return path.split('.').reduce<unknown>((node, key) => {

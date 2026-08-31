@@ -30,7 +30,7 @@ export function ShareCoShopBar() {
   const startLiveRoom = async () => {
     const created = await apiCreateRoom(storeId, merchant);
     if (!created) {
-      setRoomMsg('Live sync is in preview on deploy — cart links work everywhere now.');
+      setRoomMsg('Could not create room — API may be offline.');
       return;
     }
     const url = new URL(window.location.href);
@@ -39,9 +39,9 @@ export function ShareCoShopBar() {
     window.history.replaceState({}, '', url.toString());
     try {
       await navigator.clipboard.writeText(url.toString());
-      setRoomMsg('Preview session started — link copied (may reset on cold start).');
+      setRoomMsg('Live session started — link copied. Synced via Render KV.');
     } catch {
-      setRoomMsg(`Preview session: ${url.toString()}`);
+      setRoomMsg(`Live session: ${url.toString()}`);
     }
   };
 
@@ -51,9 +51,9 @@ export function ShareCoShopBar() {
         <strong>Share this cart</strong>
         <p>
           {roomId
-            ? 'Preview live sync — prefer cart link for reliable sharing.'
+            ? 'Live sync active — cart updates across tabs (Render KV).'
             : importedStore
-              ? 'Link includes your imported catalog — works in incognito, no account.'
+              ? 'Link includes your catalog — works in incognito.'
               : 'Anyone with the link sees this cart and can keep shopping.'}
         </p>
       </div>
@@ -68,10 +68,11 @@ export function ShareCoShopBar() {
         </button>
         <button
           type="button"
-          className="btn btn--secondary btn--quiet"
+          className="btn btn--secondary"
           onClick={() => void startLiveRoom()}
+          disabled={lineCount === 0}
         >
-          Live sync (preview)
+          Start live session
         </button>
       </div>
       {roomMsg && <p className="share-bar__msg">{roomMsg}</p>}

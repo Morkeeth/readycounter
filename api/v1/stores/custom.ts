@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { StoreDefinition } from '../../src/data/stores';
-import { importShopifyFeed, type ShopifyCatalogExport } from '../../src/integrations/shopify-catalog';
-import { registerServerCustomStore } from '../../src/server/custom-stores';
+import type { StoreDefinition } from '../../../src/data/stores';
+import { importShopifyFeed, type ShopifyCatalogExport } from '../../../src/integrations/shopify-catalog';
+import { registerServerCustomStore } from '../../../src/server/custom-stores';
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'POST') {
     const body = req.body as {
       feed?: ShopifyCatalogExport;
@@ -13,7 +13,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     };
 
     if (body.store) {
-      registerServerCustomStore(body.store);
+      await registerServerCustomStore(body.store);
       return res.status(201).json({ ok: true, storeId: body.store.id });
     }
 
@@ -22,7 +22,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         storeId: body.storeId,
         name: body.storeName,
       });
-      registerServerCustomStore(def);
+      await registerServerCustomStore(def);
       return res.status(201).json({
         ok: true,
         storeId: def.id,

@@ -24,7 +24,7 @@ import { WEBMCP_TOOL_COUNT, WEBMCP_TOOL_NAMES } from './src/webmcp/toolManifest.
 import { STORES } from './src/data/stores.ts';
 import { computeReadinessChecks, readinessScore } from './src/lib/readiness.ts';
 import { subscribeRoom, publishRoom } from './src/server/room-events.ts';
-import { createRoom, getRoom } from './src/server/room-store.ts';
+import { createRoomSync, getRoomSync } from './src/server/room-store.ts';
 
 console.log('tool count:', WEBMCP_TOOL_COUNT);
 console.log('tool names:', WEBMCP_TOOL_NAMES.length);
@@ -57,10 +57,10 @@ const journey = simulateAgentJourney(mockStore, WEBMCP_TOOL_COUNT);
 console.log('journey steps:', journey.steps.length);
 ok('journey blocked', journey.checkoutBlocked === true);
 
-const roomId = createRoom('ember-oak', STORES['ember-oak'].merchant);
+const roomId = createRoomSync('ember-oak', STORES['ember-oak'].merchant);
 let events = 0;
 const unsub = subscribeRoom(roomId, () => { events += 1; });
-publishRoom(roomId, getRoom(roomId));
+publishRoom(roomId, getRoomSync(roomId));
 unsub();
 ok('room sse pub', events === 1);
 

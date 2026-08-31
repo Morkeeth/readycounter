@@ -33,20 +33,21 @@ Open **http://localhost:5173** (or live URL when deployed).
 ## 0:30–0:45 · Readiness tab (store A)
 
 1. **Readiness** tab — Ember & Oak, score **70/100**, CAPTCHA **ON**
-2. Harness → **`prepare_checkout`** → **blocked**
-3. Toggle CAPTCHA **off** → score goes **70 → 94** → **`prepare_checkout`** succeeds
+2. **Run agent journey** — blocked at `prepare_checkout`
+3. Toggle CAPTCHA **off** → score goes **70 → 94** → journey succeeds
 
-**Pass:** score changes; checkout gate matches toggle.
+**Pass:** score changes; journey + checkout gate match toggle.
 
 ---
 
-## 0:45–0:60 · Platform (store B)
+## 0:45–0:60 · Platform (store B + audit wedge)
 
 1. Header **Store** → **Neon Matcha Lab** (or `?store=neon-matcha`)
-2. **Readiness** tab — **65/100**: **No forced account** 0/15, **A payment method an agent can complete** 0/11 and **Product records an agent can read** 2/6, while the CAPTCHA line passes 24/24 (Ember is the reverse)
-3. Harness → **`get_readiness_score`** — JSON shows store-specific checks
+2. **Readiness** — **65/80**: account wall 0/15, payment 0/11, catalog 2/6
+3. **Connect** → paste a storefront URL → audit → rankings table shows batch
+4. Harness → **`get_readiness_score`** — JSON shows store-specific checks
 
-**Pass:** two merchants, one codebase, different failure modes.
+**Pass:** two merchants, audit path, rankings from Render KV.
 
 ---
 
@@ -54,17 +55,18 @@ Open **http://localhost:5173** (or live URL when deployed).
 
 | Action | Why it matters |
 |--------|----------------|
-| **Copy co-shop link** → incognito | Shareable session, no backend |
+| **Copy co-shop link** → incognito | Shareable session |
+| **Crawl vs OAuth** on Readiness | A2 comparison panel |
 | View page source → `application/ld+json` | Product schema for agents |
-| `npm run verify` | Automated proof both stores + share roundtrip |
+| `npm run verify` | Automated proof |
 
 ---
 
-## 13 WebMCP tools
+## 16 WebMCP tools
 
-`search_catalog` · `get_product` · `add_to_order` · `update_line_quantity` · `remove_line` · `get_order` · `get_delivery_quote` · `prepare_checkout` · `get_readiness_score` · `get_merchant_config`
+`search_catalog` · `get_product` · `add_to_order` · `update_line_quantity` · `remove_line` · `get_order` · `get_delivery_quote` · `prepare_checkout` · `get_readiness_score` · `get_merchant_config` · `simulate_agent_journey` · …
 
-Source: `src/webmcp/registerTools.ts`
+Source: `src/webmcp/registerTools.ts` · `GET /api/v1/tools`
 
 ---
 

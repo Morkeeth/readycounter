@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(502).send(synced.error);
   }
 
-  registerServerCustomStore(synced.store);
+  await registerServerCustomStore(synced.store);
 
   const app = new URL('/', config.appUrl);
   app.searchParams.set('store', synced.store.id);

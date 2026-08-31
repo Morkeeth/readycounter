@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createRoom, getRoom } from '../../../src/server/room-store';
 import type { MerchantConfig } from '../../../src/types/commerce';
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'POST') {
     const body = req.body as { storeId?: string; merchant?: MerchantConfig };
     const storeId = body.storeId ?? 'ember-oak';
@@ -11,8 +11,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       checkoutRequiresCaptcha: true,
       checkoutRequiresAccount: false,
     };
-    const roomId = createRoom(storeId, merchant);
-    const state = getRoom(roomId);
+    const roomId = await createRoom(storeId, merchant);
+    const state = await getRoom(roomId);
     return res.status(201).json({ roomId, state });
   }
 

@@ -8,7 +8,9 @@ import {
   reportedLines,
 } from '../lib/readiness';
 import { useShopStore } from '../store/shopStore';
+import { MerchantJourney } from './MerchantJourney';
 import { ReadinessTape } from './ReadinessTape';
+import type { JourneyStep } from '../data/journey';
 
 const SEEN_KEY = 'readycounter-hero-seen';
 
@@ -29,23 +31,22 @@ export function markHeroSeen(): void {
 }
 
 interface LandingHeroProps {
-  /** Straight to the catalog. */
-  onShop: () => void;
-  /** Straight to the merchant tape. */
+  onAudit: () => void;
   onReadiness: () => void;
-  /** Live tool count, so the tape on the landing screen is the real one. */
+  onShop: () => void;
+  onJourneyStep: (step: JourneyStep) => void;
   registeredToolCount: number;
 }
 
-export function LandingHero({ onShop, onReadiness, registeredToolCount }: LandingHeroProps) {
+export function LandingHero({
+  onAudit,
+  onReadiness,
+  onShop,
+  onJourneyStep,
+  registeredToolCount,
+}: LandingHeroProps) {
   const storeId = useShopStore((s) => s.storeId);
   const merchant = useShopStore((s) => s.merchant);
-  /*
-   * `useShopStore((s) => s.getCatalogProducts())` returns a NEW array on every
-   * call, so useSyncExternalStore sees a new snapshot each pass and React tears
-   * the tab down with error #185. Subscribe to the state the catalog is derived
-   * from, and call the getter during render instead.
-   */
   const feedPricePatches = useShopStore((s) => s.feedPricePatches);
   const getCatalogProducts = useShopStore((s) => s.getCatalogProducts);
   const products = useMemo(
@@ -53,7 +54,6 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
     [getCatalogProducts, storeId, feedPricePatches],
   );
 
-  // The landing tape is not a mock. It is this store, scored right now.
   const checks = computeReadinessChecks(merchant, registeredToolCount, products);
   const reported = reportedLines(registeredToolCount);
   const score = readinessScore(checks);
@@ -61,7 +61,7 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
   const captcha = getSource('presenc_captcha');
   const traffic = getSource('shopify_ai_traffic');
   const abandon = getSource('presenc_abandon');
-  const trust = getSource('yougov_trust_gap');
+  const catalog2x = getSource('shopify_catalog_2x');
 
   const block = merchant.checkoutRequiresCaptcha
     ? { kind: 'A CAPTCHA', because: captcha.claim, sourceId: 'presenc_captcha' as const }
@@ -75,6 +75,8 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
 
   return (
     <section className="landing" aria-label="ReadyCounter">
+      <MerchantJourney active="bill" onStep={onJourneyStep} compact />
+
       <ReadinessTape
         storeName={merchant.storeName}
         storeId={storeId}
@@ -85,39 +87,44 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
       />
 
       <div className="landing__copy">
-        <h2>Your store scores {score} to an agent. Here is the bill.</h2>
+        <h2>
+          {score} out of {POINT_BUDGET}. Here is what costs you agent carts.
+        </h2>
         <p>
-          Assistants are shopping now and merchants cannot see why they leave.
-          ReadyCounter prices the store out of {POINT_BUDGET} and prints every point
-          as a line item — the check that took it, the fix that returns it, and the
-          page the weight came from. All {POINT_BUDGET} are published weights: one
-          line per row of the same causes-of-abandonment table. Then you and your assistant share
-          one order in this tab.
+          AI traffic to Shopify is up {traffic.figure}. Agent carts abandon at {abandon.figure}.
+          ReadyCounter prints the store as an itemised bill — six weights from one research table,
+          not a gauge we tuned. Audit your catalog, preview a fix in sandbox, co-shop the proof.
         </p>
 
         <ul className="landing__facts">
           <li>
             <b>{traffic.figure}</b>
-            <span>{traffic.claim} — {traffic.publisher}</span>
+            <span>AI sessions and orders — {traffic.publisher}</span>
           </li>
           <li>
             <b>{abandon.figure}</b>
-            <span>{abandon.claim} — {abandon.publisher}</span>
+            <span>agent cart abandon — {abandon.publisher}</span>
           </li>
           <li>
-            <b>{trust.figure}</b>
-            <span>{trust.claim} — {trust.publisher}</span>
+            <b>{catalog2x.figure}</b>
+            <span>catalog AI vs scraped — {catalog2x.publisher}</span>
           </li>
         </ul>
 
         <div className="landing__actions">
-          <button type="button" className="btn btn--primary btn--wide" onClick={onShop}>
-            Start shopping
+          <button type="button" className="btn btn--primary btn--wide" onClick={onAudit}>
+            Audit your storefront
           </button>
           <button type="button" className="btn btn--secondary btn--wide" onClick={onReadiness}>
-            Open the readiness bill
+            Read the bill
+          </button>
+          <button type="button" className="btn btn--ghost btn--wide" onClick={onShop}>
+            Co-shop demo
           </button>
         </div>
+        <p className="landing__hint">
+          Demo store shown ({storeId}). Paste your URL on Connect — persists on Render KV.
+        </p>
       </div>
     </section>
   );

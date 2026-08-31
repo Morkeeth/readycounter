@@ -1,5 +1,5 @@
 /** WebMCP tool catalog — shared by registerTools and /api/v1/tools */
-export const WEBMCP_TOOL_COUNT = 16;
+export const WEBMCP_TOOL_COUNT = 18;
 
 export const WEBMCP_TOOL_NAMES = [
   'search_catalog',
@@ -18,6 +18,8 @@ export const WEBMCP_TOOL_NAMES = [
   'apply_readiness_fix',
   'simulate_agent_journey',
   'import_shopify_catalog',
+  'get_field_companion',
+  'review_against_field',
 ] as const;
 
 export type WebMCPToolName = (typeof WEBMCP_TOOL_NAMES)[number];
@@ -79,5 +81,17 @@ export const TOOL_MANIFEST: ToolManifestEntry[] = [
   {
     name: 'import_shopify_catalog',
     description: 'Import Shopify JSON as a new browsable store (client persist).',
+  },
+  {
+    name: 'get_field_companion',
+    description:
+      'Agent commerce handbook: pressing issues, checklist, research briefs, protocols. topic=issues|checklist|research|protocols|gtin-gap|…',
+    readOnly: true,
+  },
+  {
+    name: 'review_against_field',
+    description:
+      'Map a store’s crawl signals (gtinPct, captchaHint, catalogScore, error) to handbook issues + next steps.',
+    readOnly: true,
   },
 ];

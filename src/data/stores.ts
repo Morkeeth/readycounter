@@ -1,4 +1,7 @@
 import type { MerchantConfig, PaymentMethod, Product } from '../types/commerce';
+import type { StoreAuditMeta } from '../types/audit';
+import type { SandboxProfile } from './sandbox-stores';
+import { SANDBOX_STORES } from './sandbox-stores';
 
 export interface StoreDefinition {
   id: string;
@@ -7,6 +10,8 @@ export interface StoreDefinition {
   products: Product[];
   merchant: MerchantConfig;
   categories: string[];
+  audit?: StoreAuditMeta;
+  sandboxProfile?: SandboxProfile;
 }
 
 const EMBER_OAK_PRODUCTS: Product[] = [
@@ -274,6 +279,7 @@ export const STORES: Record<string, StoreDefinition> = {
       paymentMethods: EMBER_OAK_PAYMENT,
     },
     categories: ['beans', 'kits', 'equipment', 'beverages', 'merch', 'subscription'],
+    sandboxProfile: 'captcha-wall',
   },
   'neon-matcha': {
     id: 'neon-matcha',
@@ -287,7 +293,9 @@ export const STORES: Record<string, StoreDefinition> = {
       paymentMethods: NEON_MATCHA_PAYMENT,
     },
     categories: ['powder', 'kits', 'equipment', 'beverages', 'subscription'],
+    sandboxProfile: 'account-wall',
   },
+  ...SANDBOX_STORES,
 };
 
 export const DEFAULT_STORE_ID = 'ember-oak';

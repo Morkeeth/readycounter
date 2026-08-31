@@ -2,14 +2,14 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getRoom, patchRoom } from '../../../src/server/room-store';
 import type { FunnelEvent, MerchantConfig, OrderState } from '../../../src/types/commerce';
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const roomId = String(req.query.roomId ?? '');
   if (!roomId) {
     return res.status(400).json({ error: 'roomId required' });
   }
 
   if (req.method === 'GET') {
-    const state = getRoom(roomId);
+    const state = await getRoom(roomId);
     if (!state) return res.status(404).json({ error: 'Room not found' });
     return res.status(200).json({ roomId, state });
   }
@@ -21,7 +21,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       funnel?: FunnelEvent[];
       storeId?: string;
     };
-    const state = patchRoom(roomId, body);
+    const state = await patchRoom(roomId, body);
     if (!state) return res.status(404).json({ error: 'Room not found' });
     return res.status(200).json({ roomId, state });
   }

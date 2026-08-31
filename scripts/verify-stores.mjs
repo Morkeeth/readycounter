@@ -51,6 +51,13 @@ function blockerOf(store) {
 
 assert('the platform ships more than one store', STORE_IDS.length >= 2, STORE_IDS.join(', '));
 
+const profiles = STORE_IDS.map((id) => STORES[id].sandboxProfile).filter(Boolean);
+assert(
+  'each sandbox store has a distinct profile',
+  profiles.length === new Set(profiles).size,
+  profiles.join(', '),
+);
+
 const rows = STORE_IDS.map((id) => {
   const store = STORES[id];
   const checks = computeReadinessChecks(store.merchant, TOOL_COUNT, store.products);
@@ -77,7 +84,9 @@ const rows = STORE_IDS.map((id) => {
   assert(
     id + ' charges the blocked wall its own published weight',
     lineFor === undefined || checks.find((c) => c.id === lineFor).maxPoints === pubPct(wallSource),
-    blocker + ' costs ' + (lineFor ? checks.find((c) => c.id === lineFor).maxPoints : 0) + ' pts vs ' + SOURCES[wallSource].publisher + ' ' + SOURCES[wallSource].figure,
+    lineFor === undefined
+      ? 'no checkout wall'
+      : blocker + ' costs ' + checks.find((c) => c.id === lineFor).maxPoints + ' pts vs ' + SOURCES[wallSource].publisher + ' ' + SOURCES[wallSource].figure,
   );
 
   /*
@@ -175,13 +184,19 @@ const rows = STORE_IDS.map((id) => {
 });
 
 const scores = new Set(rows.map((r) => r.score));
-assert('the two stores do not score the same', scores.size === rows.length, rows.map((r) => r.id + ' ' + r.score).join(' · '));
+assert('every sandbox store scores differently', scores.size === rows.length, rows.map((r) => r.id + ' ' + r.score).join(' · '));
 
 const blockers = rows.map((r) => r.blocker);
+const golden = rows.filter((r) => STORES[r.id].sandboxProfile === 'golden-path');
 assert(
-  'each store is blocked by a DIFFERENT mechanism',
-  new Set(blockers).size === blockers.length && !blockers.includes('none'),
-  rows.map((r) => r.id + ' ' + r.blocker).join(' · '),
+  'exactly one golden-path store',
+  golden.length === 1,
+  golden.map((r) => r.id).join(', '),
+);
+assert(
+  'classic demo stores still fail on different walls',
+  STORES['ember-oak'].merchant.checkoutRequiresCaptcha && STORES['neon-matcha'].merchant.checkoutRequiresAccount,
+  'ember captcha · neon account',
 );
 
 console.log(failed === 0

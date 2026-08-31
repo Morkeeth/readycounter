@@ -1,3 +1,4 @@
+import { getFieldCompanionPayload, reviewAgainstField } from '../data/field-companion';
 import { getStore, registerCustomStore } from '../data/stores';
 import { apiCreateRoom } from '../api/client';
 import {
@@ -411,6 +412,62 @@ export async function registerWebMCPTools(
         });
       },
     },
+    {
+      name: 'get_field_companion',
+      description:
+        'Field companion handbook: pressing agent-commerce issues, merchant checklist, research briefs (R1–R6), protocol cheatsheet. Optional topic filter.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          topic: {
+            type: 'string',
+            description:
+              'all | issues | checklist | research | protocols | issue id (e.g. gtin-gap) | rank number',
+          },
+        },
+        additionalProperties: false,
+      },
+      execute: (input: Record<string, unknown>) => {
+        const store = getShopStoreState();
+        store.recordToolActivity({ toolName: 'get_field_companion' });
+        const topic = typeof input.topic === 'string' ? input.topic : undefined;
+        return jsonResult(getFieldCompanionPayload(topic));
+      },
+      annotations: { readOnlyHint: true },
+    },
+    {
+      name: 'review_against_field',
+      description:
+        'Review crawl/readiness signals against the field handbook. Returns matching pressing issues and do-this-week steps.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          gtinPct: { type: 'number' },
+          catalogScore: { type: 'number' },
+          captchaHint: { type: 'boolean' },
+          productsJsonOk: { type: 'boolean' },
+          accountWall: { type: 'boolean' },
+          error: { type: 'string' },
+        },
+        additionalProperties: false,
+      },
+      execute: (input: Record<string, unknown>) => {
+        const store = getShopStoreState();
+        store.recordToolActivity({ toolName: 'review_against_field' });
+        return jsonResult(
+          reviewAgainstField({
+            gtinPct: typeof input.gtinPct === 'number' ? input.gtinPct : undefined,
+            catalogScore: typeof input.catalogScore === 'number' ? input.catalogScore : undefined,
+            captchaHint: input.captchaHint === true,
+            productsJsonOk:
+              typeof input.productsJsonOk === 'boolean' ? input.productsJsonOk : undefined,
+            accountWall: input.accountWall === true,
+            error: typeof input.error === 'string' ? input.error : undefined,
+          }),
+        );
+      },
+      annotations: { readOnlyHint: true },
+    },
   ];
 
   try {
@@ -557,6 +614,25 @@ export async function invokeToolLocally(
         storeId: def.id,
         productCount: def.products.length,
       });
+    }
+    case 'get_field_companion': {
+      store.recordToolActivity({ toolName: name });
+      return jsonResult(
+        getFieldCompanionPayload(typeof args.topic === 'string' ? args.topic : undefined),
+      );
+    }
+    case 'review_against_field': {
+      store.recordToolActivity({ toolName: name });
+      return jsonResult(
+        reviewAgainstField({
+          gtinPct: typeof args.gtinPct === 'number' ? args.gtinPct : undefined,
+          catalogScore: typeof args.catalogScore === 'number' ? args.catalogScore : undefined,
+          captchaHint: args.captchaHint === true,
+          productsJsonOk: typeof args.productsJsonOk === 'boolean' ? args.productsJsonOk : undefined,
+          accountWall: args.accountWall === true,
+          error: typeof args.error === 'string' ? args.error : undefined,
+        }),
+      );
     }
     default:
       return jsonResult({ error: `Unknown tool: ${name}` });

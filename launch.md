@@ -1,69 +1,113 @@
-# Launch — ReadyCounter (product, not hackathon)
+# ReadyCounter — research-based launch kit
 
-## THE PROMISE (honest v1)
+**Live:** https://tooltruth-webmcp.vercel.app  
+**Promise:** Every recommendation, test case, and impact line traces to `research.md` and `src/data/sources.ts`.
 
-**Merchants:** Run an agent-readiness audit on a catalog you bring. See what blocks shopping assistants — CAPTCHA, login walls, stale feed prices — and get a checklist you can act on.
+---
 
-**Proof:** Co-shop in the same tab so you see what assistants experience. Fixes apply in the sandbox first; connecting your live store is post-gate.
+## Impact (why now)
 
-## THE CUSTOMER (v1 — one, not two)
+| Finding | Figure | Source | Product proof |
+|---------|--------|--------|---------------|
+| AI traffic surge | **8×** sessions, **~13×** orders YoY | Shopify Q1 2026 | Landing hero cites source; merchants audit before checkout |
+| Agent abandonment | **78.6%** vs ~70% human | Presenc AI 2026 | Six-line tape = Presenc causes table (26+24+18+15+11+6) |
+| Catalog beats scrape | **2×** conversion | Shopify Finkelstein Q1 2026 | OAuth + URL audit pull structured catalog |
+| Trust gap | **65%** compare · **14%** auto-buy | YouGov / Checkout.com | Co-shop: human confirms payment |
+| **Field audit (ours)** | **0% GTIN** on 6/6 DTC crawls | Batch 2026-08-31 → Render KV | `GET /api/v1/render/status` |
+| Fix one wall | **+24 pts** CAPTCHA cleared | Presenc 24% row | ember-oak sandbox 70→94 (`verify-readiness.mjs`) |
 
-| Primary | Secondary (proof, not GTM) |
-|---------|---------------------------|
-| Merchant / operator auditing agent readiness | Shopper co-shopping with an assistant |
+**Batch stores audited:** colourpop, tentree, jeffreestarcosmetics, brooklinen, allbirds, kyliecosmetics (6 OK) · gymshark (blocked → OAuth path).
 
-Do not split acquisition. Every outbound message leads with **merchant audit**; co-shop is the demo of why readiness matters.
+---
 
-## THE NAMED FIRST TEN
+## Recommendations (research → action)
 
-| # | Who | Why |
-|---|-----|-----|
-| 1 | Indie Shopify merchant (coffee, matcha, DTC) | Real catalog import + audit |
-| 2 | Shopify partner devrel | Catalog 2× narrative |
-| 3 | Agent builder shipping browser commerce | Tool surface + co-shop |
-| 4 | Vercel commerce template author | Deploy + fork lineage |
-| 5 | WebMCP spec author | Reference implementation |
-| 6 | Presenc / agent-commerce researcher | Stat validation |
-| 7 | Open-source contributor wanting WebMCP sample | GitHub star |
-| 8 | Oscar's commerce network | Distribution |
-| 9 | Stranger from URL post | Cold proof |
-| 10 | Devpost retail track _(feedback only)_ | Not the customer |
+Ordered by Presenc abandonment share + what our batch actually found.
 
-## THE CHANNEL
+### 1. Publish GTIN on every discoverable SKU — **6 pts max** (page structure row)
 
-1. **Live URL post** — X / LinkedIn with opener B: *"Why ~78% of agent carts abandon — audit yours in 5 minutes"*
-2. **GitHub README** — "Try it now" (product README, not judge path)
-3. **Devpost (Wed)** — live URL + short product recording; submission ≠ roadmap
+- **Research:** Shopify Catalog AI **2×** vs scrape; only **19%** of Product schema includes Offer (Digital Applied 5k audit); Presenc **6%** ambiguous structure.
+- **Field:** 0% GTIN in public `products.json` across our DTC sample → **catalog score 0/24** on crawls.
+- **Action:** Barcodes in Shopify Admin → visible in theme JSON-LD or products feed.
 
-**Lead mechanic:** Copy cart link (`?co=`). Do **not** lead with live API sessions until KV ships.
+### 2. Remove CAPTCHA on agent checkout — **24 pts** (Presenc **24%**)
 
-## THE GATE
+- **Research:** Largest checkout friction row after stale data.
+- **Proof:** ember-oak scores **70** with CAPTCHA; autopilot clear → **94**.
+- **Action:** Guest/agent checkout path without verification wall; confirm via agent journey.
 
-**One reply from a non-Oscar merchant or dev within 72h of URL post** asking to audit their catalog, fork the tools, or try on their store.
+### 3. Guest checkout — **15 pts** (Presenc **15%**)
 
-Reply type routes post-gate work:
+- **Research:** Separate row from CAPTCHA (we re-read the table 2026-08-31 to fix this).
+- **Proof:** neon-matcha **65** with account wall → **80** when cleared.
+- **Action:** Enable guest checkout in Shopify.
 
-| Reply | Next build |
-|-------|------------|
-| Developer | Connect docs, FORK.md, tool manifest polish |
-| Merchant | Read-only live URL audit spike |
-| Either + needs sync | Upstash KV for rooms |
+### 4. Feed ↔ shelf price match — **18 pts** (Presenc **18%**)
 
-## THE CONTROL ARM
+- **Research:** Distinct from stale-at-checkout (26%).
+- **Proof:** neon-matcha ships feed drift; `sync_feed_prices` autopilot clears line.
+- **Action:** OAuth sync or separate agent feed.
 
-Same URL, two openers (pick one per channel):
+### 5. Agent-completable payment — **11 pts** (Presenc **11%**)
 
-- **A (dev):** "Agent-ready storefront — 16 structured tools, import your Shopify catalog"
-- **B (merchant):** "Why agent carts abandon — score your catalog in 5 minutes"
+- **Proof:** neon-matcha 0/11 until stored-credential method enabled in sandbox.
+- **Action:** Declare tokenized / stored-credential methods.
 
-Instrument: ask which they are in the post CTA.
+### 6. Fresh data at checkout — **26 pts** (Presenc **26%**)
 
-## CONSTRAINT
+- **Cannot score from URL crawl** — marked NOT MEASURED.
+- **Action:** Shopify OAuth + `prepare_checkout` agent journey.
 
-- No login to shop or audit in v1
-- Merchant auth is post-gate
-- No claiming we fix live checkout — sandbox audit only until OAuth/URL audit ships
+---
 
-## EYES NEXT ACTION
+## Test cases (ship before you post)
 
-Deploy today → post URL → run stranger eval on **cart link path** → freeze features until gate fires.
+| ID | Type | Entry | Pass when |
+|----|------|-------|-----------|
+| `tc-sandbox-captcha` | Sandbox | `/?store=ember-oak&view=merchant` | CAPTCHA 0/24 → autopilot → 94 |
+| `tc-sandbox-account` | Sandbox | `/?store=neon-matcha&view=merchant` | Account 0/15 → autopilot → 80 |
+| `tc-url-audit-gtin` | URL audit | `POST /api/v1/audit/url` colourpop | catalogScore honest; checkout NOT MEASURED |
+| `tc-url-blocked` | URL audit | gymshark.com | 422 + OAuth recommendation |
+| `tc-api-production` | API | `npm run test:e2e` | health redis · shopify · 16 tools |
+| `tc-autopilot-impact` | Autopilot | ember-oak Autopilot tab | Each fix cites Presenc % |
+
+**Run automated:** `npm run test:e2e` + `npm run verify` + `node scripts/verify-launch.mjs`
+
+---
+
+## Demo script (~90 seconds)
+
+See `DEMO.md` for beat-by-beat narration. Short version:
+
+1. **0:00** — Landing tape **70/100** ember-oak, CAPTCHA line **0/24**
+2. **0:30** — Connect → audit **colourpop.com** → catalog vs sandbox honesty
+3. **0:45** — **0% GTIN** batch finding (`/api/v1/render/status`)
+4. **0:55** — Autopilot CAPTCHA fix **70→94** (sandbox only)
+5. **1:05** — Co-shop `?co=` — human in tab
+6. **1:15** — Render KV persistence
+7. **1:25** — Close: **2× catalog** (Shopify) + **78.6% abandon** (Presenc)
+
+**Deep links for judges:**
+
+- Sandbox CAPTCHA: https://tooltruth-webmcp.vercel.app/?store=ember-oak&view=merchant
+- Sandbox account: https://tooltruth-webmcp.vercel.app/?store=neon-matcha&view=merchant
+- API status: https://tooltruth-webmcp.vercel.app/api/v1/render/status
+
+---
+
+## One-liner
+
+> **Research-priced agent abandonment bill + real catalog audit + co-shop proof — Shopify catalog in, Render persistence out.**
+
+---
+
+## Files
+
+| File | Role |
+|------|------|
+| `src/data/launch.ts` | Machine-readable kit (UI + verify) |
+| `research.md` | Primary source quotes |
+| `LAUNCH.md` | This brief |
+| `DEMO.md` | Video script |
+| `USE-CASE.md` | Shopify + Render architecture |
+| `PARTNERSHIP-RENDER.md` | Render partnership ops |
