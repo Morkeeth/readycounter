@@ -22,7 +22,8 @@ const root = path.join(__dirname, '..');
 
 const script = `
 import { STORES, STORE_IDS } from './src/data/stores.ts';
-import { computeReadinessChecks, readinessScore, TOOL_FLOOR } from './src/lib/readiness.ts';
+import { computeReadinessChecks, readinessScore, reportedLines, TOOL_FLOOR } from './src/lib/readiness.ts';
+import { catalogJsonLd } from './src/lib/catalogSchema.ts';
 import { SOURCES } from './src/data/sources.ts';
 import { WEBMCP_TOOL_COUNT } from './src/webmcp/toolManifest.ts';
 
@@ -99,15 +100,60 @@ const rows = STORE_IDS.map((id) => {
    * every store, whether or not the drift happens to overshoot.
    */
   const t = store.products.length;
+
+  /*
+   * The verifier's OWN model of each line, typed here on purpose.
+   *
+   * 'unitCharge' and 'shownPrice' look like the same expression, and that is the
+   * assertion: the order path must bill exactly the price the catalog record
+   * quoted. Tamper 'chargeForLine' in src/lib/orderMath.ts to bill 'feedPrice'
+   * and the product's probe stops counting those SKUs as surviving while this
+   * file still expects them to — red, on both stores.
+   *
+   * The JSON-LD field list is typed here too. It IS the definition of "a record
+   * an agent can read", so quietly dropping 'gtin13' from REQUIRED_JSONLD_FIELDS
+   * would raise every score with nothing to stop it. Here it costs points.
+   */
+  const unitCharge = (p) => p.price;
+  const shownPrice = (p) => p.price;
+  const REQUIRED = ['name', 'sku', 'gtin13', 'offers.price', 'offers.priceCurrency', 'offers.availability'];
+  const emitted = (catalogJsonLd(store.merchant.storeName, store.products).itemListElement ?? []).map((e) => e.item);
+  const walk = (rec, path) => path.split('.').reduce((n, k) => (n && typeof n === 'object' ? n[k] : undefined), rec);
+  const legibleCount = emitted.filter((rec) => REQUIRED.every((f) => {
+    const v = walk(rec, f);
+    return v !== undefined && v !== null && v !== '';
+  })).length;
+  const methods = store.merchant.paymentMethods ?? [];
+
   const ratios = {
-    price_consistency:
-      store.products.filter((p) => p.feedPrice === undefined || p.feedPrice === p.price).length / t,
+    checkout_freshness:
+      store.products.filter((p) => p.inStock && unitCharge(p) === shownPrice(p)).length / t,
     agent_checkout_path: store.merchant.checkoutRequiresCaptcha ? 0 : 1,
+    feed_price_match:
+      store.products.filter((p) => p.feedPrice === undefined || p.feedPrice === p.price).length / t,
     account_wall: store.merchant.checkoutRequiresAccount ? 0 : 1,
-    catalog_schema: store.products.filter((p) => p.gtin).length / t,
-    webmcp_tools: Math.min(TOOL_COUNT, TOOL_FLOOR) / TOOL_FLOOR,
-    stock_signals: store.products.filter((p) => p.inStock).length / t,
+    payment_method: methods.some((m) => m.agentCompletable) ? 1 : 0,
+    page_structure: legibleCount / Math.max(1, emitted.length),
   };
+
+  assert(
+    id + ' emits one JSON-LD product record per SKU',
+    emitted.length === t,
+    emitted.length + ' records for ' + t + ' SKUs',
+  );
+
+  const reported = reportedLines(TOOL_COUNT);
+  assert(
+    id + ' reports the tool surface and charges nothing for it',
+    reported.length === 1 && reported[0].maxPoints === 0 && TOOL_COUNT >= TOOL_FLOOR,
+    reported[0].stat,
+  );
+  assert(
+    id + ' charges nothing that has no published row',
+    checks.every((c) => c.basis === 'measured'),
+    checks.map((c) => c.basis).join(','),
+  );
+
   const drift = checks.filter((c) => c.points !== Math.round(c.maxPoints * ratios[c.id]));
   assert(
     id + ' — every line equals ratio x weight, recomputed outside the product',

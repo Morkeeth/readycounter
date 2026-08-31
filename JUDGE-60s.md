@@ -43,7 +43,7 @@ Open **http://localhost:5173** (or live URL when deployed).
 ## 0:45–0:60 · Platform (store B)
 
 1. Header **Store** → **Neon Matcha Lab** (or `?store=neon-matcha`)
-2. **Readiness** tab — **71/100**, the **No forced account** line fails at 0/15 while the CAPTCHA line passes 24/24 (Ember is the reverse)
+2. **Readiness** tab — **65/100**: **No forced account** 0/15, **A payment method an agent can complete** 0/11 and **Product records an agent can read** 2/6, while the CAPTCHA line passes 24/24 (Ember is the reverse)
 3. Harness → **`get_readiness_score`** — JSON shows store-specific checks
 
 **Pass:** two merchants, one codebase, different failure modes.

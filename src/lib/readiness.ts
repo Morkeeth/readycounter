@@ -1,44 +1,46 @@
-import type { MerchantConfig, Product, ReadinessCheck } from '../types/commerce';
+import type { MerchantConfig, PaymentMethod, Product, ReadinessCheck } from '../types/commerce';
 import { getSource } from '../data/sources';
 import type { SourceId } from '../data/sources';
+import { catalogLegibility } from './catalogSchema';
+import { probeCheckoutSurvival } from './orderMath';
 
 /**
  * The readiness score is an itemised bill, not a gauge.
  *
- * 100 points across six checks. THREE are MEASURED — the weight is literally a
- * row in Presenc AI's published causes-of-abandonment table, reproduced in full
- * in `research.md`. The other three are ALLOCATED by us, because no published
- * row prices them on its own, and every surface that prints the score says
- * which is which. That is the narrow claim, and it is narrow deliberately: the
- * table DOES carry rows adjacent to two of our allocated lines — "Ambiguous
- * page structure, 6%" sits near the catalog line, and stock is named inside the
- * 26% price row — and the rationales below name both rather than claim the
- * table is silent. Claiming a source is silent is the exact mistake that put an
- * account wall on the CAPTCHA's price for a day.
+ * 100 points across six charged lines, and since 2026-08-31 the six lines ARE
+ * the six rows of Presenc AI's "Causes of Agent Cart Abandonment" table, each
+ * at the share that table publishes. Nothing on the bill is a weight we picked:
  *
- *   measured   26  price + stock feed goes stale         presenc_stale_feed
- *   measured   24  CAPTCHA or verification wall          presenc_captcha
- *   measured   15  required account or login             presenc_account_wall
- *   allocated  14  catalog schema an agent can read      schema_offer_gap
- *   allocated  14  structured tool surface               shopify_catalog_2x
- *   allocated   7  availability signals                  presenc_stale_feed
- *   ----------------
- *              100      65 measured · 35 allocated
+ *   26  Stale price or stock data at checkout   checkout_freshness
+ *   24  Captcha or verification wall            agent_checkout_path
+ *   18  Price mismatch vs listed feed           feed_price_match
+ *   15  Required account or login               account_wall
+ *   11  Unsupported payment method              payment_method
+ *    6  Ambiguous page structure                page_structure
+ *   ---
+ *   100        every point traceable to a published row
  *
- * CORRECTION, 2026-08-31. Until today an account wall was charged the CAPTCHA's
- * 24 points, and four surfaces printed the reason: "no published figure prices
- * an account wall separately." That sentence was false about our OWN citation.
- * The Presenc table has six rows, and "Required account or login — 15%" is one
- * of them, sitting three lines below the 24% we had already lifted. Each wall
- * now costs the share its own published row states. Nothing about a checkout
- * wall is priced by us any more.
+ * THE CLAIM THIS LICENSES, AND THE ONE IT DOES NOT. Every WEIGHT is published.
+ * The TESTS are ours. The table names six causes and defines none of them — the
+ * page was fetched again, raw, on 2026-08-31 and the only prose about any row
+ * is one FAQ sentence about the 26. So each line below states its own test in
+ * `rationale`, and the tape prints "published weight · our stated test" rather
+ * than letting an all-measured bill imply the tests are published too. Claiming
+ * more than the source carries is exactly the mistake that charged an account
+ * wall the CAPTCHA's 24 points for a day.
  *
- * The allocated block shrank 50 -> 35 to make room, keeping its old 2:2:1 shape
- * (20/20/10 -> 14/14/7). A published figure takes its full share first; our
- * judgement gets what is left.
- *
- * Nothing here is a constant typed into a component. Change the catalog and the
- * arithmetic moves; every line the merchant reads is recomputed from the store.
+ * WHAT LEFT THE BILL, 2026-08-31. Three lines used to carry weights we
+ * allocated ourselves: catalog schema 14, tool surface 14, availability 7.
+ *   - Availability folded into the 26 row, where the source itself puts stock
+ *     ("stale price OR STOCK data at checkout").
+ *   - Catalog schema folded into the 6 row as an emitted-markup test.
+ *   - The tool surface is not a cause of abandonment on anybody's table. It is
+ *     the INSTRUMENT every line above is measured through, so it is reported
+ *     and not charged — `reportedLines()` below — with a floor that says when
+ *     the store is measurable at all.
+ * The allocated block is now 0. It used to be 35, and the coincidence that the
+ * three then-unscored rows also totalled 35% was arithmetic, never a mapping;
+ * this build makes the question moot by scoring the rows themselves.
  */
 
 export const POINT_BUDGET = 100;
@@ -46,20 +48,20 @@ export const POINT_BUDGET = 100;
 export interface WeightRow {
   id: string;
   max: number;
-  basis: 'measured' | 'allocated';
+  basis: 'measured' | 'reported';
   sourceIds: SourceId[];
-  /** Why this check is worth this many points, in one sentence. */
+  /** Why this check is worth this many points, and what the check actually is. */
   rationale: string;
 }
 
 export const WEIGHTS: WeightRow[] = [
   {
-    id: 'price_consistency',
+    id: 'checkout_freshness',
     max: 26,
     basis: 'measured',
     sourceIds: ['presenc_stale_feed'],
     rationale:
-      'Presenc AI attributes 26% of abandoned agent carts to stale price or stock data at checkout. The weight is that share. The same table also carries "Price mismatch vs listed feed — 18%", which names the defect this line actually detects; ReadyCounter charges the 26 row only and never adds the 18, so one mismatch is never billed twice.',
+      'Published weight: Presenc AI attributes 26% of abandoned agent carts to stale price or stock data at checkout — the largest row on the table. Our test: every SKU the catalog surfaces is run through the real order path, and it survives only if the store still accepts it and bills exactly the price the catalog handed the agent. The source’s one sentence about this row is "when the price or availability the agent saw differs from checkout, the agent halts rather than guessing", so both halves are asserted. Honest limit: in these two demo stores the price half cannot fail, because the catalog record and the order path read the same field — the half that discriminates here is availability. The price assertion still goes red the moment checkout bills anything else, and an imported real catalog is where it earns its keep.',
   },
   {
     id: 'agent_checkout_path',
@@ -67,7 +69,15 @@ export const WEIGHTS: WeightRow[] = [
     basis: 'measured',
     sourceIds: ['presenc_captcha'],
     rationale:
-      'Presenc AI attributes 24% of abandoned agent carts to a CAPTCHA or verification wall. The weight is that share.',
+      'Published weight: Presenc AI attributes 24% of abandoned agent carts to a CAPTCHA or verification wall. Our test: the merchant config declares whether a CAPTCHA stands on the checkout path. All of it, or none of it.',
+  },
+  {
+    id: 'feed_price_match',
+    max: 18,
+    basis: 'measured',
+    sourceIds: ['presenc_price_mismatch'],
+    rationale:
+      'Published weight: "Price mismatch vs listed feed — 18%" is its own row, three lines below the 26% stale-data row. Our test: for every SKU, the price in the catalog feed equals the price on the shelf. This line used to carry the 26 instead, which billed one defect at another row’s price; it now takes the row that names the defect it detects, and never adds the 26 on top.',
   },
   {
     id: 'account_wall',
@@ -75,31 +85,23 @@ export const WEIGHTS: WeightRow[] = [
     basis: 'measured',
     sourceIds: ['presenc_account_wall'],
     rationale:
-      'Presenc AI gives a required account or login its own row: 15% of abandoned agent carts. The weight is that share, not the CAPTCHA\'s.',
+      'Published weight: Presenc AI gives a required account or login its own row — 15% of abandoned agent carts, not the CAPTCHA’s 24%. Our test: the merchant config declares whether an account is forced before payment.',
   },
   {
-    id: 'catalog_schema',
-    max: 14,
-    basis: 'allocated',
-    sourceIds: ['schema_offer_gap', 'shopify_catalog_2x'],
+    id: 'payment_method',
+    max: 11,
+    basis: 'measured',
+    sourceIds: ['presenc_payment_method'],
     rationale:
-      'No published row prices a schema gap on its own. The nearest row on the same Presenc table is "Ambiguous page structure — 6%", and we do not take it: this line scores product identifiers (GTIN), not page markup, and adopting that row would be us choosing which cause fits. So the 14 is ours, and labelled ours. We allocate it because agents that cannot read price and availability never reach a cart at all.',
+      'Published weight: an unsupported payment method causes 11% of abandoned agent carts. Our test, and this one is a classification we own: a prepared agent order must be completable on at least one method the store accepts, with no step only a human at the device can take. A stored credential passes. A per-transaction 3-D Secure step-up, a device biometric, a redirect to another site’s login, and a manual invoice approval do not. The source prices the cause and never says which methods qualify, so the line is scored all-or-nothing on our definition and prints it.',
   },
   {
-    id: 'webmcp_tools',
-    max: 14,
-    basis: 'allocated',
-    sourceIds: ['shopify_catalog_2x'],
+    id: 'page_structure',
+    max: 6,
+    basis: 'measured',
+    sourceIds: ['presenc_page_structure', 'schema_offer_gap'],
     rationale:
-      'Allocated, not measured. Shopify reports catalog-powered AI search converts 2× scraped search; a structured tool surface is the same bet made explicit.',
-  },
-  {
-    id: 'stock_signals',
-    max: 7,
-    basis: 'allocated',
-    sourceIds: ['presenc_stale_feed'],
-    rationale:
-      'Presenc groups stock with price in one 26% figure. We split off 7 points for explicit availability flags rather than double-count the measured share.',
+      'Published weight: "Ambiguous page structure — 6%", the smallest row and the only one with no prose anywhere on the source page. Our test, stated because the source states nothing: we read back the JSON-LD this page actually emits and require each product record to carry name, sku, a resolvable gtin13, and an Offer with price, priceCurrency and availability. A store-local SKU identifies a product inside this store and resolves to nothing outside it, which is why the GTIN is on the list. Digital Applied’s 5,000-site audit found only 19% of Product schemas carry an Offer object at all.',
   },
 ];
 
@@ -131,8 +133,17 @@ export function weightFor(id: string): number {
 export function accountWallBecause(): string {
   return (
     `${getSource('presenc_account_wall').claim} ` +
-    `ReadyCounter charges exactly ${weightFor('account_wall')} points. Every checkout wall on ` +
-    `this tape costs the share its own published row states — none of it is a number we picked.`
+    `ReadyCounter charges exactly ${weightFor('account_wall')} points. Every weight on ` +
+    `this tape is the share its own published row states — none of the 100 is a number we picked.`
+  );
+}
+
+/** The header sentence, in one place, so no surface can widen the claim. */
+export function billClaim(): string {
+  return (
+    `All ${POINT_BUDGET} points are published weights: one line per row of Presenc AI’s ` +
+    `causes-of-abandonment table, each at the share that table states. The tests behind the ` +
+    `lines are ReadyCounter’s, and every line prints its own.`
   );
 }
 
@@ -141,6 +152,7 @@ export const MEASURED_POINTS = WEIGHTS.filter((w) => w.basis === 'measured').red
   0,
 );
 
+/** Zero since 2026-08-31, and exported so a surface can assert it rather than assume it. */
 export const ALLOCATED_POINTS = POINT_BUDGET - MEASURED_POINTS;
 
 /** Tools the WebMCP Challenge brief treats as a credible surface. */
@@ -175,8 +187,6 @@ function statusFor(earned: number, max: number): ReadinessCheck['status'] {
  * printed 5/14 and looked correct while still being one point wrong. The clamp
  * only lies where the stale literal OVERSHOOTS the new weight, which is why a
  * check that runs on the default store alone would have caught this by luck.
- * Availability was wrong on both (7/7, true value 6/7), and both stores landed
- * on the same 73 — the two-stores-differ beat would have died with it.
  *
  * A fraction cannot drift from the weight, because the weight is applied here
  * and stated in exactly one place.
@@ -207,23 +217,38 @@ function line(
   };
 }
 
+/** Methods a store declares. A session persisted before 2026-08-31 carries none. */
+export function paymentMethodsOf(config: MerchantConfig): PaymentMethod[] {
+  return config.paymentMethods ?? [];
+}
+
+/** The methods a prepared agent order can actually complete on. */
+export function agentPayableMethods(config: MerchantConfig): PaymentMethod[] {
+  return paymentMethodsOf(config).filter((m) => m.agentCompletable);
+}
+
 export function computeReadinessChecks(
   config: MerchantConfig,
   registeredToolCount: number,
   products: Product[],
 ): ReadinessCheck[] {
+  void registeredToolCount;
   const total = Math.max(1, products.length);
-
-  const withGtin = products.filter((p) => p.gtin).length;
-  const gtinPct = Math.round((withGtin / total) * 100);
 
   const mismatched = products.filter(
     (p) => p.feedPrice !== undefined && p.feedPrice !== p.price,
   );
   const cleanFeed = total - mismatched.length;
 
-  const outOfStock = products.filter((p) => !p.inStock).length;
-  const inStock = total - outOfStock;
+  const probes = probeCheckoutSurvival(products);
+  const survived = probes.filter((p) => p.survives);
+  const refused = probes.filter((p) => p.refusal !== null);
+  const repriced = probes.filter((p) => p.refusal === null && p.charged !== p.shown);
+
+  const legibility = catalogLegibility(config.storeName, products);
+
+  const methods = paymentMethodsOf(config);
+  const payable = agentPayableMethods(config);
 
   /*
    * Two walls, two published prices. They are scored on separate lines because
@@ -236,18 +261,25 @@ export function computeReadinessChecks(
 
   return [
     line(
-      'price_consistency',
-      'Price feed agrees with the shelf',
-      cleanFeed / total,
-      mismatched.length === 0
-        ? `All ${total} SKUs quote the same price in the feed and on the page.`
-        : `${mismatched.length} of ${total} SKUs quote a feed price that is not the shelf price: ${mismatched
-            .map((p) => p.name)
-            .join(', ')}. An agent that quotes the feed and pays the shelf gets a mismatch at checkout.`,
-      `${cleanFeed}/${total} SKUs agree`,
-      mismatched.length === 0
+      'checkout_freshness',
+      'What the agent was shown survives to checkout',
+      survived.length / total,
+      survived.length === total
+        ? `All ${total} SKUs run the order path unchanged: the store accepts every one, and bills the price its catalog record quoted.`
+        : `${total - survived.length} of ${total} SKUs do not survive the order path. ` +
+          (refused.length > 0
+            ? `${refused.length} the store refuses outright (${refused
+                .map((p) => p.refusal)
+                .join('; ')}) — an agent that searched the catalog builds a cart it cannot fill. `
+            : '') +
+          (repriced.length > 0
+            ? `${repriced.length} are billed at a price the catalog did not quote. `
+            : '') +
+          'Presenc AI: when the price or availability the agent saw differs at checkout, the agent halts rather than guessing.',
+      `${survived.length}/${total} survive`,
+      survived.length === total
         ? 'Nothing to fix — keep the feed job running.'
-        : 'Re-sync the product feed so feedPrice equals the live price.',
+        : 'Delist or restock what the order path refuses, so the searchable catalog is the fillable catalog.',
     ),
     line(
       'agent_checkout_path',
@@ -262,6 +294,20 @@ export function computeReadinessChecks(
         : 'Nothing to fix.',
     ),
     line(
+      'feed_price_match',
+      'Price feed agrees with the shelf',
+      cleanFeed / total,
+      mismatched.length === 0
+        ? `All ${total} SKUs quote the same price in the feed and on the page.`
+        : `${mismatched.length} of ${total} SKUs quote a feed price that is not the shelf price: ${mismatched
+            .map((p) => p.name)
+            .join(', ')}. An agent that quotes the feed and pays the shelf gets a mismatch at checkout — Presenc AI's own row, ${weightFor('feed_price_match')}%.`,
+      `${cleanFeed}/${total} SKUs agree`,
+      mismatched.length === 0
+        ? 'Nothing to fix — keep the feed job running.'
+        : 'Re-sync the product feed so feedPrice equals the live price.',
+    ),
+    line(
       'account_wall',
       'No forced account on the checkout path',
       accountOn ? 0 : 1,
@@ -274,42 +320,84 @@ export function computeReadinessChecks(
         : 'Nothing to fix.',
     ),
     line(
-      'catalog_schema',
-      'Catalog an agent can read',
-      withGtin / total,
-      `${withGtin} of ${total} SKUs carry a GTIN, so ${gtinPct}% of this catalog can be matched to a product an agent already knows. In a 5,000-site audit only 19% of Product schemas carried the Offer object at all.`,
-      `${gtinPct}% identified`,
-      withGtin === total
+      'payment_method',
+      'A payment method an agent can complete',
+      payable.length > 0 ? 1 : 0,
+      methods.length === 0
+        ? `This store declares no payment methods, so nothing here can complete a prepared order. Presenc AI prices an unsupported payment method at ${weightFor('payment_method')}% of abandoned agent carts.`
+        : payable.length > 0
+          ? `${payable.length} of ${methods.length} accepted methods complete without a human-only step: ${payable
+              .map((m) => m.label)
+              .join(', ')}. The agent can hand the order over and it goes through.`
+          : `${methods.length} methods accepted, none of which a prepared agent order can complete: ${methods
+              .map((m) => `${m.label} (${m.humanStep ?? 'human-only step'})`)
+              .join('; ')}. Presenc AI prices this at ${weightFor('payment_method')}% of abandoned agent carts, and this line is all-or-nothing because the agent only needs one route that works.`,
+      payable.length > 0 ? `${payable.length}/${methods.length} agent-payable` : 'NO AGENT ROUTE',
+      payable.length > 0
         ? 'Nothing to fix.'
-        : `Add GTIN identifiers to the ${total - withGtin} SKU(s) without one.`,
+        : 'Accept one method that completes on a stored credential, so a prepared order does not need a human at the device.',
     ),
     line(
-      'webmcp_tools',
-      'Structured tools an assistant can call',
-      Math.min(registeredToolCount, TOOL_FLOOR) / TOOL_FLOOR,
-      `${registeredToolCount} structured tools connected, against a floor of ${TOOL_FLOOR}. Tools are the catalog-vs-scrape bet made explicit: the assistant asks a typed question instead of reading the page.`,
-      `${registeredToolCount} tools`,
-      registeredToolCount >= TOOL_FLOOR
+      'page_structure',
+      'Product records an agent can read',
+      legibility.legible / Math.max(1, legibility.total),
+      legibility.legible === legibility.total
+        ? `All ${legibility.total} emitted product records carry every field an agent needs to price, check and match the item.`
+        : `${legibility.total - legibility.legible} of ${legibility.total} emitted product records are missing a required field (${legibility.gaps
+            .map((g) => `${g.field} × ${g.missing}`)
+            .join(', ')}). Read back out of the JSON-LD this page publishes, not out of the fixture.`,
+      `${legibility.legible}/${legibility.total} complete records`,
+      legibility.legible === legibility.total
         ? 'Nothing to fix.'
-        : `Register ${TOOL_FLOOR - registeredToolCount} more tool(s) in src/webmcp/registerTools.ts.`,
-    ),
-    line(
-      'stock_signals',
-      'Availability stated, not implied',
-      inStock / total,
-      outOfStock === 0
-        ? `All ${total} SKUs carry an explicit in-stock flag.`
-        : `${outOfStock} of ${total} SKUs are out of stock and say so explicitly, which is correct — but every hidden one is a cart an agent builds and cannot fill.`,
-      `${inStock}/${total} sellable`,
-      outOfStock === 0 ? 'Nothing to fix.' : 'Restock or delist, so the sellable catalog is the whole catalog.',
+        : `Emit the missing fields: ${legibility.gaps.map((g) => g.field).join(', ')}.`,
     ),
   ];
 }
 
 /**
+ * Lines ReadyCounter checks and prints but does NOT charge for, because no
+ * published row prices them.
+ *
+ * The tool surface used to be a 14-point allocated line. It is not a cause of
+ * cart abandonment on anybody's table — it is the instrument the six charged
+ * lines are measured through, which is a different kind of claim. So it is
+ * reported at zero, with the floor that decides whether the store is measurable
+ * at all. Reporting something at zero is the honest home for a check with no
+ * published price; inventing a weight for it was not.
+ */
+export function reportedLines(registeredToolCount: number): ReadinessCheck[] {
+  const met = registeredToolCount >= TOOL_FLOOR;
+  return [
+    {
+      id: 'webmcp_tools',
+      label: 'Tools the score is measured through',
+      status: met ? 'pass' : 'fail',
+      detail: met
+        ? `${registeredToolCount} typed tools registered, against a floor of ${TOOL_FLOOR}. Every charged line above is read through this surface — the order path the freshness probe runs, the catalog the feed and record checks read. No published row prices a tool surface, so ReadyCounter charges nothing for it and says so here instead of inventing a weight.`
+        : `${registeredToolCount} typed tools registered, below the floor of ${TOOL_FLOOR}. Under the floor the six charged lines are being read through a surface too thin to trust, so treat the total as unmeasured rather than earned.`,
+      stat: `${registeredToolCount} tools · floor ${TOOL_FLOOR}`,
+      points: 0,
+      maxPoints: 0,
+      basis: 'reported',
+      sourceIds: ['shopify_catalog_2x'],
+      rationale:
+        'Shopify reports catalog-powered AI search converts 2× scraped search, which is the case for a typed tool surface — but it is not a row on any abandonment table, so it earns no points here. Reported, not charged.',
+      fix: met
+        ? 'Nothing to fix.'
+        : `Register ${TOOL_FLOOR - registeredToolCount} more tool(s) in src/webmcp/registerTools.ts.`,
+    },
+  ];
+}
+
+/** True when the tool surface is thick enough for the charged lines to mean anything. */
+export function measurementFloorMet(registeredToolCount: number): boolean {
+  return registeredToolCount >= TOOL_FLOOR;
+}
+
+/**
  * Sum of the itemised lines. Returns the printed total, out of POINT_BUDGET.
- * Falls back to the old equal-weight average only if a caller hands us checks
- * that carry no point fields.
+ * Reported lines carry maxPoints 0 and cannot move it. Falls back to the old
+ * equal-weight average only if a caller hands us checks with no point fields.
  */
 export function readinessScore(checks: ReadinessCheck[]): number {
   const itemised = checks.filter((c) => typeof c.points === 'number' && typeof c.maxPoints === 'number');

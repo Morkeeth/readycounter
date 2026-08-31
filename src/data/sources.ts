@@ -49,6 +49,40 @@ export const SOURCES = {
     caveat:
       'Same modeled panel as the 24% CAPTCHA figure. ReadyCounter charged this wall 24 points until 2026-08-31, when a re-read of the cited table found the row.',
   },
+  presenc_price_mismatch: {
+    id: 'presenc_price_mismatch',
+    claim:
+      'A price that does not match the listed feed causes 18% of abandoned agent carts — its own row, separate from the 26% stale-data row.',
+    figure: '18%',
+    publisher: 'Presenc AI',
+    url: 'https://presenc.ai/research/agent-cart-abandonment-statistics-2026',
+    published: '2026-06',
+    accessed: '2026-08-31',
+    caveat:
+      'Same modeled panel as the other rows. The page gives no definition beyond the row label; reading it as feed-price vs shelf-price is ReadyCounter\u2019s reading, stated on the line.',
+  },
+  presenc_payment_method: {
+    id: 'presenc_payment_method',
+    claim: 'An unsupported payment method causes 11% of abandoned agent carts.',
+    figure: '11%',
+    publisher: 'Presenc AI',
+    url: 'https://presenc.ai/research/agent-cart-abandonment-statistics-2026',
+    published: '2026-06',
+    accessed: '2026-08-31',
+    caveat:
+      'Same modeled panel. The page does not say which methods an agent can complete; the test for that is ReadyCounter\u2019s and is printed on the line.',
+  },
+  presenc_page_structure: {
+    id: 'presenc_page_structure',
+    claim: 'Ambiguous page structure causes 6% of abandoned agent carts.',
+    figure: '6%',
+    publisher: 'Presenc AI',
+    url: 'https://presenc.ai/research/agent-cart-abandonment-statistics-2026',
+    published: '2026-06',
+    accessed: '2026-08-31',
+    caveat:
+      'The weakest-defined row on the table: a bare label with no prose anywhere on the page. ReadyCounter defines the test (schema.org Product + Offer with a resolvable identifier) and says so on the line.',
+  },
   presenc_stale_feed: {
     id: 'presenc_stale_feed',
     claim: 'Stale price or stock data at checkout causes 26% of abandoned agent carts.',

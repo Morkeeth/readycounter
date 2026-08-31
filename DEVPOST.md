@@ -65,7 +65,7 @@ Merchants are told agents are coming. Nobody tells them **which door is locked**
 | AI-referred sessions to Shopify storefronts, YoY | **8×**; orders **13×** | [Shopify Enterprise, 2026-05-11](https://www.shopify.com/enterprise/blog/ai-search-insights) |
 | Catalog-powered AI search vs scraped | **2× conversion** | [Shopify Q1 2026 earnings call](https://stockanalysis.com/stocks/shop/transcripts/555081-q1-2026/) |
 | AI traffic conversion, Mar 2025 → Mar 2026 | **−38% → +42%** | [Adobe Digital Insights, 2026-04-16](https://business.adobe.com/blog/ai-traffic-surge-retail-sites-not-machine-readable) |
-| Agent cart abandonment | **78.6%** — stale feed **26%**, CAPTCHA **24%**, required account **15%** (all six rows in `research.md`) | [Presenc AI, 2026-06](https://presenc.ai/research/agent-cart-abandonment-statistics-2026) |
+| Agent cart abandonment | **78.6%** — and all six causes: stale data at checkout **26%**, CAPTCHA **24%**, feed mismatch **18%**, required account **15%**, unsupported payment **11%**, ambiguous page structure **6%** | [Presenc AI, 2026-06](https://presenc.ai/research/agent-cart-abandonment-statistics-2026) |
 | Product schemas carrying the Offer object | **19%** | [Digital Applied, 5,000-site audit, 2026-04-26](https://www.digitalapplied.com/blog/schema-markup-adoption-5k-site-audit-2026) |
 | Trust AI to compare prices vs to place the order | **65% vs 14%** | [YouGov US for Checkout.com, 2025-12-04](https://yougov.com/en-us/articles/53808-american-trust-in-ai-for-retail-consumer-sentiment-in-2025) |
 
@@ -73,25 +73,32 @@ Merchants are told agents are coming. Nobody tells them **which door is locked**
 
 **A readiness score you can audit line by line, on a store an agent can actually use.**
 
-1. **The tape.** The score is not a gauge — it is a printed receipt. Six line
-   items, a measured column and an allocated column, a total, and a red
-   **CHECKOUT VOID** stamp when the agent path is walled. Open any line and it
-   prints the check, the arithmetic, the fix, and the source with its dates.
-2. **A weighting that admits what it does not know — and shows you the table.**
-   100 points: **26** for a stale price feed, **24** for a CAPTCHA, **15** for a
-   forced account, because those are three rows Presenc AI publishes. Every
-   deduction the checkout can take is priced by that table, not by us, and a
-   store with both walls pays 39. The remaining **35** we allocated ourselves,
-   and every surface that prints the score says so. All six rows of the source
-   table are reproduced in `research.md` — see *What we got wrong* for why that
-   matters.
+1. **The tape.** The score is not a gauge — it is a printed receipt. Six charged
+   line items, one line below them reported and charged nothing, a total, and a
+   red **CHECKOUT VOID** stamp when the agent path is walled. Open any line and
+   it prints the check, the arithmetic, the fix, and the source with its dates.
+2. **Every point we deduct has a published price, and here is the table.**
+   The six charged lines *are* the six rows of Presenc AI's causes-of-agent-cart-
+   abandonment table, each at the share that table states: **26** stale price or
+   stock data at checkout, **24** CAPTCHA, **18** price mismatch vs the listed
+   feed, **15** required account, **11** unsupported payment method, **6**
+   ambiguous page structure. They sum to 100 on that page and to 100 here. Not
+   one of the hundred points is a weight we chose.
+   **What is ours is the test, not the price** — the source names six causes and
+   defines none of them, so every line prints its own test beside the published
+   weight, and the tape says `published weight · our stated test` on each one.
+   A check with no published price is **reported and charged nothing** rather
+   than given a weight we made up: the 16-tool surface is printed as the
+   instrument the six lines are measured through, worth zero.
 3. **Co-shop.** 16 WebMCP tools; a human and an agent edit the same order in the
    same tab. `prepare_checkout` validates and returns totals — it never charges.
-4. **Two merchants, two failure modes, one point apart.** Ember & Oak Coffee
-   scores **70/100**, blocked by a CAPTCHA worth 24. Neon Matcha Lab scores
-   **71/100**, blocked by a forced account worth 15, with a catalog agents mostly
-   cannot identify (**4/14**). Almost the same total for completely different
-   reasons — and each wall is priced from the same published table, not by us.
+4. **Two merchants, two failure modes, five points apart.** Ember & Oak Coffee
+   scores **70/100**: blocked by a CAPTCHA worth 24, everything else close to
+   clean. Neon Matcha Lab scores **65/100** and loses on three different rows —
+   a forced account (15), no payment method a prepared agent order can complete
+   (11, its card needs a 3-D Secure step-up on every transaction), and product
+   records agents cannot match (**2/6**, only two of eight SKUs carry a GTIN).
+   Different doors, all six priced by the same published table.
 5. **Agent tool console.** Under **Connect** — invoke every tool without `chrome://flags`.
 6. **Instant use.** No signup. Order survives refresh. `?co=` share links,
    live API rooms on Vercel, `?view=` deep-links a tab.
@@ -102,7 +109,7 @@ Most readiness scores are a number with a nice ring around it. This one ships
 its own audit:
 
 - **A figure the product cites cannot be printed without a row in
-  `src/data/sources.ts`.** Nine rows, each with publisher, figure, URL, publish date,
+  `src/data/sources.ts`.** Twelve rows, each with publisher, figure, URL, publish date,
   read date, and the honest limit of the source (Presenc is a vendor page and
   says its metrics are modelled; the "81% lack Offer" line is our subtraction).
 - **`scripts/verify-score.mjs`** fails `npm run verify` if the budget stops
@@ -112,11 +119,19 @@ its own audit:
   stops equalling the figure its source publishes.**
 - **Observable consequence:** clearing the CAPTCHA moves Ember & Oak from
   **70 to 94** — a delta of exactly **24**, Presenc AI's 24%. Clearing the forced
-  account moves Neon Matcha from **71 to 86** — exactly **15**, a *different*
-  published figure from the same table. `scripts/verify-readiness.mjs` fails the
-  build if either is ever anything else, and a budget-neutral tamper
-  (`account_wall` 15→16 with `stock_signals` 7→6, still summing to 100) still
-  goes red on three assertions.
+  account moves Neon Matcha from **65 to 80** — exactly **15**. Giving Neon one
+  method an agent can complete on moves it **65 to 76** — exactly **11**. Three
+  different published figures from one table, each asserted separately.
+  `scripts/verify-readiness.mjs` fails the build if any is ever anything else,
+  and a budget-neutral tamper (`payment_method` 11→12 with `page_structure` 6→5,
+  still summing to exactly 100) sails past the budget check and still goes red on
+  five assertions across two scripts.
+- **The checks are proven red, not just green.** Make checkout bill `feedPrice`
+  instead of the price the agent was shown and the 26-point freshness probe drops
+  to 20/26 on both stores while the verifier still expects 23 — red. Quietly drop
+  `gtin13` from the machine-legibility field list and both stores print a perfect
+  6/6 they did not earn — red on four assertions. Charge six points for something
+  with no published row and `every charged line is a published weight` goes red.
 
 ### What we got wrong
 
@@ -137,6 +152,22 @@ second defect fell out of the rebalance and is worth naming too: the call sites
 still multiplied by the old point values, and `Math.min` clamped the result into
 a *perfect* score on an imperfect catalog. Weights are now applied in exactly one
 place and there is a check that a partial ratio can never print a full line.
+
+**And then the same shape again, one row over.** With the account wall fixed, the
+bill still charged the *stale price or stock data at checkout* row — 26% — for a
+check that compared the feed price against the shelf price. That defect has its
+own row three lines down: *price mismatch vs listed feed, 18%.* We were billing
+one cause at another cause's price and calling the weight published. The line now
+takes the 18 that names what it detects, and the 26 buys a different check: every
+SKU the catalog surfaces is run through the real order path, and it survives only
+if the store still accepts it and bills exactly the price the catalog quoted.
+Scoring the last three rows is what closed the allocated block from 35 to zero.
+
+A note against the seductive arithmetic: before this build, 35 points were
+allocated by us and the three then-unscored rows also totalled 35%. Those two
+numbers had nothing to do with each other — the 35 was a remainder — and saying
+they "lined up" would have been a relation nobody checked. We did not assert it.
+We built the three checks instead, and now there is no remainder to explain.
 
 ### WebMCP tools (16)
 
@@ -201,7 +232,7 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 3. **The refusal** — *Prepare checkout*. It refuses and cites Presenc AI.
 4. **The fix** — **Readiness** → uncheck CAPTCHA (or use Readiness autopilot) →
    **70 → 94**, a delta of exactly 24.
-5. **Second merchant** — `?store=neon-matcha` → **71/100**, account wall (15 pts), 4/14 catalog.
+5. **Second merchant** — `?store=neon-matcha` → **65/100**: account wall (15), no agent-completable payment method (11), 2/6 machine-readable records.
 6. **The audit** — `npm run verify`, or the *Every source this tape can cite*
    panel. Try changing a weight in `src/lib/readiness.ts` and re-run verify.
 
@@ -223,7 +254,7 @@ Full one-take script with the exact numbers: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md
 | 0:55 | Co-shop — human item + `add_to_order` in one order |
 | 1:20 | `prepare_checkout` refuses, and says exactly why |
 | 1:45 | Clear the CAPTCHA — 70 → 94, a delta of exactly 24 |
-| 2:10 | Neon Matcha — 71/100, account wall worth 15, 4/14 catalog |
+| 2:10 | Neon Matcha — 65/100, account wall worth 15, payment row 0/11, records 2/6 |
 | 2:30 | Nine sources, every one dated |
 
 ---

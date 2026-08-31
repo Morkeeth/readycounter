@@ -31,26 +31,30 @@ AI shoppers are arriving. Most stores lose them at checkout — CAPTCHA walls, l
 
 ## The score is an itemised bill, not a gauge
 
-100 points across six checks. **Three of the weights are measured** — 26, 24 and
-15 are three rows of one published table: the shares of abandoned agent carts
-Presenc AI attributes to a stale price feed, to a CAPTCHA, and to a required
-account. **The other 35 points we allocated ourselves**, and the tape says which
-is which on the line, not in a footnote.
+100 points across six charged checks, and **the six checks are the six rows of
+one published table.** Presenc AI publishes the causes of agent cart abandonment
+with a share against each; ReadyCounter charges each cause exactly the share that
+table states. The six sum to 100 on their page and to 100 here.
 
-| Check | Points | Basis |
+| Check | Points | Row it is charged from |
 |---|---|---|
-| Price feed agrees with the shelf | 26 | **measured** — Presenc AI, 26% row |
-| No CAPTCHA on the checkout path | 24 | **measured** — Presenc AI, 24% row |
-| No forced account on the checkout path | 15 | **measured** — Presenc AI, 15% row |
-| Catalog an agent can read | 14 | allocated by us |
-| Structured tools an assistant can call | 14 | allocated by us |
-| Availability stated, not implied | 7 | allocated by us |
+| What the agent was shown survives to checkout | 26 | Stale price or stock data at checkout — 26% |
+| No CAPTCHA on the checkout path | 24 | Captcha or verification wall — 24% |
+| Price feed agrees with the shelf | 18 | Price mismatch vs listed feed — 18% |
+| No forced account on the checkout path | 15 | Required account or login — 15% |
+| A payment method an agent can complete | 11 | Unsupported payment method — 11% |
+| Product records an agent can read | 6 | Ambiguous page structure — 6% |
+| *Structured tools the score is measured through* | *0* | *no published row — reported, never charged* |
 
-**No checkout wall is priced by us.** A CAPTCHA costs 24 and a forced account
-costs 15 because Presenc AI publishes those two figures on two separate rows of
-the same table; a store carrying both pays 39. All six rows of that table are
-reproduced in [`research.md`](./research.md) — reproducing only two of them is
-how this product shipped a wrong weight for a day.
+**Not one of the hundred points is a weight we picked.** What *is* ours is the
+test behind each line: that table names six causes and defines none of them, so
+every line prints its own test next to the published weight, and the tape marks
+each one `published weight · our stated test`. A check with no published price —
+the tool surface — is reported at zero rather than given an invented weight.
+
+All six rows are reproduced in [`research.md`](./research.md). Reproducing only
+two of them is how this product shipped a wrong weight for a day; charging the
+26% row for a defect the 18% row names is how it shipped a second one.
 
 Nothing is a constant typed into a component: a figure the product *cites* — a
 share, a multiple, a survey result — cannot be printed without a row in
@@ -71,7 +75,7 @@ date, or if a source URL is not quoted in [`research.md`](./research.md).
 | Store | URL | Notes |
 |-------|-----|-------|
 | Ember & Oak Coffee | _(default)_ | Specialty coffee — **70/100**, blocked by a CAPTCHA |
-| Neon Matcha Lab | `?store=neon-matcha` | Ceremonial matcha — **71/100**, blocked by an account wall (15 pts), 4/14 catalog |
+| Neon Matcha Lab | `?store=neon-matcha` | Ceremonial matcha — **65/100**: account wall (0/15), no agent-completable payment method (0/11), 2/6 machine-readable records |
 
 Import your own catalog: **Connect → Import your catalog** (Shopify JSON).
 

@@ -3,9 +3,11 @@ import { getSource, SOURCE_IDS } from '../data/sources';
 import type { SourceId } from '../data/sources';
 import {
   accountWallBecause,
+  agentPayableMethods,
   computeReadinessChecks,
   pointsLost,
   readinessScore,
+  reportedLines,
   weightFor,
 } from '../lib/readiness';
 import { useShopStore } from '../store/shopStore';
@@ -28,6 +30,7 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
   const merchant = useShopStore((s) => s.merchant);
   const storeId = useShopStore((s) => s.storeId);
   const setMerchantFlag = useShopStore((s) => s.setMerchantFlag);
+  const setAgentPayable = useShopStore((s) => s.setAgentPayable);
   const funnel = useShopStore((s) => s.funnel);
 
   /*
@@ -43,11 +46,14 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
     [getCatalogProducts, storeId, feedPricePatches],
   );
   const checks = computeReadinessChecks(merchant, registeredToolCount, products);
+  const reported = reportedLines(registeredToolCount);
   const score = readinessScore(checks);
   const lost = pointsLost(checks);
 
   const captchaSource = getSource('presenc_captcha');
   const accountSource = getSource('presenc_account_wall');
+  const paymentSource = getSource('presenc_payment_method');
+  const agentPayable = agentPayableMethods(merchant).length > 0;
   const block = merchant.checkoutRequiresCaptcha
     ? {
         kind: 'A CAPTCHA',
@@ -76,6 +82,7 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
           storeName={merchant.storeName}
           storeId={storeId}
           checks={checks}
+          reported={reported}
           score={score}
           block={block}
         />
@@ -86,7 +93,9 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
             <p className="slab__lead">
               Open any line on the tape. It prints the check, the arithmetic, the fix,
               and the page the weight came from — publisher, date published, date read.
-              Nothing on the tape is a number typed into a component.
+              Every weight is a published share; every test behind it is ours and
+              stated on the line. Nothing on the tape is a number typed into a
+              component.
             </p>
           </article>
 
@@ -119,6 +128,20 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
                 <em>
                   worth {weightFor('account_wall')} pts — its own row in the same table,
                   Presenc AI, read {accountSource.accessed}
+                </em>
+              </span>
+            </label>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={agentPayable}
+                onChange={(e) => setAgentPayable(e.target.checked)}
+              />
+              <span>
+                Accept a method an agent can complete
+                <em>
+                  worth {weightFor('payment_method')} pts — its own row, Presenc AI,
+                  read {paymentSource.accessed}
                 </em>
               </span>
             </label>

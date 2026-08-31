@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { DEFAULT_STORE_ID, getStore, storeIdFromLocation } from '../data/stores';
+import { DEFAULT_STORE_ID, getStore, STORED_CREDENTIAL_METHOD, storeIdFromLocation } from '../data/stores';
 import { applySharePayload, clearShareParam, decodeSharePayload, hydrateShareAtBoot } from '../lib/shareSession';
 import type { AutopilotFix } from '../lib/autopilot';
 import { applyAutopilotFix, previewFixImpact } from '../lib/autopilot';
-import { computeReadinessChecks, readinessScore, weightFor } from '../lib/readiness';
+import { agentPayableMethods, computeReadinessChecks, paymentMethodsOf, readinessScore, weightFor } from '../lib/readiness';
+import { addRefusal, orderSubtotal } from '../lib/orderMath';
 import { getSource } from '../data/sources';
 import { WEBMCP_TOOL_COUNT } from '../webmcp/toolManifest';
 import type {
@@ -16,11 +17,6 @@ import type {
   Product,
   ToolActivity,
 } from '../types/commerce';
-
-function lineTotal(line: OrderLine, products: Product[]): number {
-  const product = products.find((p) => p.id === line.productId);
-  return (product?.price ?? 0) * line.quantity;
-}
 
 function catalogProducts(
   storeId: string,
@@ -79,6 +75,8 @@ export interface ShopStore {
     ok: boolean;
     blocked?: boolean;
     reason?: string;
+    /** Not a block. Something the handoff should know, e.g. no agent-payable method. */
+    note?: string;
     subtotal?: number;
     lineCount?: number;
   };
@@ -86,6 +84,8 @@ export interface ShopStore {
     key: 'checkoutRequiresCaptcha' | 'checkoutRequiresAccount',
     value: boolean,
   ) => void;
+  /** Add or remove a stored-credential method — the payment line's one lever. */
+  setAgentPayable: (value: boolean) => void;
   applyReadinessFix: (fixId: AutopilotFix) => {
     ok: true;
     fixId: AutopilotFix;
@@ -153,14 +153,14 @@ const storeLogic = (
   addToOrder: (productId, quantity, actor) => {
     const products = productsFor(get().storeId, get().feedPricePatches);
     const product = products.find((p) => p.id === productId);
-    if (!product) {
-      return { ok: false as const, error: `Product not found: ${productId}` };
-    }
-    if (!product.inStock) {
-      return { ok: false as const, error: `Out of stock: ${productId}` };
-    }
-    if (quantity < 1 || quantity > 99) {
-      return { ok: false as const, error: 'Quantity must be 1–99' };
+    /*
+     * The refusal rule lives in orderMath, shared with the readiness probe that
+     * grades this path. A probe with its own copy of the rule would grade a
+     * checkout nobody ships.
+     */
+    const refusal = addRefusal(product, quantity, productId);
+    if (refusal) {
+      return { ok: false as const, error: refusal };
     }
 
     const existing = get().order.lines.find((l) => l.productId === productId);
@@ -224,7 +224,7 @@ const storeLogic = (
   getOrder: () => {
     const { order, storeId, feedPricePatches } = get();
     const products = productsFor(storeId, feedPricePatches);
-    const subtotal = order.lines.reduce((sum, line) => sum + lineTotal(line, products), 0);
+    const subtotal = orderSubtotal(order.lines, products);
     return {
       ...order,
       subtotal,
@@ -280,8 +280,29 @@ const storeLogic = (
       };
     }
 
+    /*
+     * Not a wall. The order is prepared either way — but if the store accepts
+     * nothing a prepared agent order can complete on, the handoff dead-ends one
+     * step later, and Presenc AI prices that at its own published share. The
+     * note says so at the moment it matters instead of only on the tape.
+     */
+    const payable = agentPayableMethods(get().merchant);
+    const declared = paymentMethodsOf(get().merchant);
+    const note =
+      payable.length === 0
+        ? `Order prepared, but no accepted method completes without a human at the device` +
+          (declared.length > 0
+            ? ` (${declared.map((m) => `${m.label}: ${m.humanStep ?? 'human-only step'}`).join('; ')}). `
+            : '. ') +
+          `${getSource('presenc_payment_method').figure} of abandoned agent carts stop on an ` +
+          `unsupported payment method (${getSource('presenc_payment_method').publisher}, read ` +
+          `${getSource('presenc_payment_method').accessed}); the tape charges ` +
+          `${weightFor('payment_method')} points for it.`
+        : undefined;
+
     return {
       ok: true,
+      note,
       subtotal: order.subtotal,
       lineCount: order.lineCount,
     };
@@ -291,6 +312,19 @@ const storeLogic = (
     set((state) => ({
       merchant: { ...state.merchant, [key]: value },
     }));
+  },
+
+  setAgentPayable: (value) => {
+    set((state) => {
+      const current = paymentMethodsOf(state.merchant);
+      const without = current.filter((m) => !m.agentCompletable);
+      return {
+        merchant: {
+          ...state.merchant,
+          paymentMethods: value ? [STORED_CREDENTIAL_METHOD, ...without] : without,
+        },
+      };
+    });
   },
 
   applyReadinessFix: (fixId) => {
@@ -311,6 +345,8 @@ const storeLogic = (
       set((s) => ({
         merchant: { ...s.merchant, checkoutRequiresAccount: false },
       }));
+    } else if (fixId === 'enable_agent_payment') {
+      get().setAgentPayable(true);
     } else if (fixId === 'sync_feed_prices') {
       const patches = { ...state.feedPricePatches };
       for (const product of products) {
@@ -355,7 +391,13 @@ const storeLogic = (
 
 export const useShopStore = create<ShopStore>()(
   persist(storeLogic, {
-    name: 'readycounter-v2',
+    /*
+     * v3, bumped 2026-08-31. MerchantConfig gained `paymentMethods`; a v2
+     * session rehydrating without it would score 0 on the payment line and the
+     * merchant would never know why. Bumping the key drops the stale shape
+     * instead of silently mis-scoring a returning visitor.
+     */
+    name: 'readycounter-v3',
     storage: createJSONStorage(() => localStorage),
     partialize: (state) => ({
       storeId: state.storeId,

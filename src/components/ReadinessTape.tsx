@@ -1,6 +1,6 @@
 import { getSource, SOURCES } from '../data/sources';
 import type { SourceId } from '../data/sources';
-import { ALLOCATED_POINTS, MEASURED_POINTS, POINT_BUDGET } from '../lib/readiness';
+import { ALLOCATED_POINTS, billClaim, MEASURED_POINTS, POINT_BUDGET } from '../lib/readiness';
 import type { ReadinessCheck } from '../types/commerce';
 
 /**
@@ -45,6 +45,10 @@ function TapeLine({ check }: { check: ReadinessCheck }) {
   const max = check.maxPoints ?? 0;
   const lost = max - earned;
   const ids = (check.sourceIds ?? []) as SourceId[];
+  // A reported line is worth 0 of 0. Printing "00/0" in the amount column would
+  // read as a failing check; it is not a check that failed, it is one nobody
+  // publishes a price for.
+  const reported = check.basis === 'reported';
 
   return (
     <li className={`tape__line tape__line--${check.status}`}>
@@ -53,14 +57,14 @@ function TapeLine({ check }: { check: ReadinessCheck }) {
           <span className="tape__label">{check.label}</span>
           <span className="tape__leader" aria-hidden />
           <span className="tape__amount">
-            {pad(earned)}/{max}
+            {reported ? 'no charge' : `${pad(earned)}/${max}`}
           </span>
         </summary>
         <div className="tape__body">
           <p className="tape__detail">{check.detail}</p>
           <p className="tape__meta">
-            <span className={`tape__basis tape__basis--${check.basis ?? 'allocated'}`}>
-              {check.basis === 'measured' ? 'measured weight' : 'allocated weight'}
+            <span className={`tape__basis tape__basis--${check.basis ?? 'reported'}`}>
+              {check.basis === 'measured' ? 'published weight · our stated test' : 'no published price · not charged'}
             </span>
             <span className="tape__stat">{check.stat}</span>
             {lost > 0 && <span className="tape__lost">−{lost} pts</span>}
@@ -78,6 +82,8 @@ interface ReadinessTapeProps {
   storeName: string;
   storeId: string;
   checks: ReadinessCheck[];
+  /** Checked and printed, charged nothing — no published row prices them. */
+  reported?: ReadinessCheck[];
   score: number;
   /** Set when the checkout path is walled — prints the refusal stamp. */
   block: { kind: string; because: string; sourceId: SourceId } | null;
@@ -87,10 +93,17 @@ export function ReadinessTape({
   storeName,
   storeId,
   checks,
+  reported = [],
   score,
   block,
 }: ReadinessTapeProps) {
   const measured = checks.filter((c) => c.basis === 'measured');
+  /*
+   * There is no allocated block any more — ALLOCATED_POINTS is 0 since
+   * 2026-08-31. It is still read here rather than assumed away, so that a
+   * weight added without a published row shows up as a section on the judge's
+   * screen instead of hiding inside the measured subtotal.
+   */
   const allocated = checks.filter((c) => c.basis !== 'measured');
   const sum = (rows: ReadinessCheck[]) => rows.reduce((n, c) => n + (c.points ?? 0), 0);
 
@@ -107,38 +120,60 @@ export function ReadinessTape({
           {POINT_BUDGET} pts · {MEASURED_POINTS} priced by a published figure ·{' '}
           {ALLOCATED_POINTS} allocated by ReadyCounter
         </p>
+        <p className="tape__claim">{billClaim()}</p>
 
         <div className="tape__rule" aria-hidden />
 
-        <p className="tape__section">Measured against published abandonment causes</p>
+        <p className="tape__section">
+          Charged — one line per row of the published causes table
+        </p>
         <ul className="tape__lines">
           {measured.map((c) => (
             <TapeLine key={c.id} check={c} />
           ))}
         </ul>
-        <p className="tape__subtotal">
-          <span>Subtotal, measured</span>
-          <span className="tape__leader" aria-hidden />
-          <span className="tape__amount">
-            {pad(sum(measured))}/{MEASURED_POINTS}
-          </span>
-        </p>
+        {allocated.length > 0 && (
+          <p className="tape__subtotal">
+            <span>Subtotal, measured</span>
+            <span className="tape__leader" aria-hidden />
+            <span className="tape__amount">
+              {pad(sum(measured))}/{MEASURED_POINTS}
+            </span>
+          </p>
+        )}
 
-        <p className="tape__section">
-          Allocated by ReadyCounter — no published row prices these on their own
-        </p>
-        <ul className="tape__lines">
-          {allocated.map((c) => (
-            <TapeLine key={c.id} check={c} />
-          ))}
-        </ul>
-        <p className="tape__subtotal">
-          <span>Subtotal, allocated</span>
-          <span className="tape__leader" aria-hidden />
-          <span className="tape__amount">
-            {pad(sum(allocated))}/{ALLOCATED_POINTS}
-          </span>
-        </p>
+        {allocated.length > 0 && (
+          <>
+            <p className="tape__section">
+              Allocated by ReadyCounter — no published row prices these on their own
+            </p>
+            <ul className="tape__lines">
+              {allocated.map((c) => (
+                <TapeLine key={c.id} check={c} />
+              ))}
+            </ul>
+            <p className="tape__subtotal">
+              <span>Subtotal, allocated</span>
+              <span className="tape__leader" aria-hidden />
+              <span className="tape__amount">
+                {pad(sum(allocated))}/{ALLOCATED_POINTS}
+              </span>
+            </p>
+          </>
+        )}
+
+        {reported.length > 0 && (
+          <>
+            <p className="tape__section">
+              Reported, not charged — checked and printed, never billed
+            </p>
+            <ul className="tape__lines">
+              {reported.map((c) => (
+                <TapeLine key={c.id} check={c} />
+              ))}
+            </ul>
+          </>
+        )}
 
         <div className="tape__rule tape__rule--heavy" aria-hidden />
 

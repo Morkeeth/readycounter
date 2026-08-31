@@ -56,14 +56,14 @@ It prints: `0/24` · `measured weight` · the detail · the fix · and the sourc
 row — **Presenc AI, published 2026-06, read 2026-08-31**, with the URL live.
 
 > Twenty-four points, and the twenty-four is not ours. It is the share of
-> abandoned agent carts Presenc AI attributes to a CAPTCHA. The line below it,
-> a forced account, costs fifteen — a different row of the same table. No
-> checkout wall on this tape is priced by us. Three of the six weights are
-> published figures; the other three we allocated ourselves, and the tape says
-> which is which on the line, not in a footnote.
+> abandoned agent carts Presenc AI attributes to a CAPTCHA. Every line on this
+> tape works that way. Six lines, six rows of one published table — twenty-six,
+> twenty-four, eighteen, fifteen, eleven, six. They add to a hundred on their
+> page and to a hundred here. Not one of these points is a number we picked.
+> What we picked is the test, and every line prints its own.
 
-**Do:** click `Catalog an agent can read` too — `12/14`, seven of eight SKUs
-carry a GTIN, and the fix names the SKU count to fix.
+**Do:** click `Product records an agent can read` too — `5/6`, because one SKU of
+eight ships without a GTIN, and the fix names the field that is missing.
 
 ---
 
@@ -119,25 +119,28 @@ fix** in Readiness autopilot, which does the same thing and says it is a sandbox
 **Do:** switch the **Store** dropdown to **Neon Matcha Lab**
 (or open `/?view=merchant&store=neon-matcha`).
 
-**On screen:** **NEON MATCHA LAB**, **71 / 100**, a VOID stamp that says
-**a forced account** — not a CAPTCHA — and `Catalog an agent can read` at
-**4/14** instead of 12/14.
+**On screen:** **NEON MATCHA LAB**, **65 / 100**, a VOID stamp that says
+**a forced account** — not a CAPTCHA — plus `A payment method an agent can
+complete` at **0/11** and `Product records an agent can read` at **2/6**.
 
-> Same platform, a different store, a different failure. Seventy-one against
-> Ember's seventy — one point apart, and nothing in common. This one clears the
-> CAPTCHA line and loses fifteen to a forced account instead of twenty-four,
-> because those are two different rows of the same published table. Duplicate
-> one entry in `stores.ts` and your own store gets its own bill.
+> Same platform, a different store, three different doors. This one passes the
+> CAPTCHA line Ember fails, and loses on the three Ember passes: fifteen for a
+> forced account, eleven because every card it takes needs a 3-D Secure step-up
+> a human has to answer, and four of six because only two of its eight products
+> carry an identifier an agent can resolve. Three separate rows of the same
+> published table. Duplicate one entry in `stores.ts` and your own store gets
+> its own bill.
 
 ---
 
 ## 2:30 – 2:45 · Close
 
 **On screen:** scroll the merchant page to the **Every source this tape can
-cite** panel — nine rows, publisher, figure, published date, read date.
+cite** panel — twelve rows, publisher, figure, published date, read date.
 
-> Nine sources. A figure this product cites cannot be printed without a row
-> here, and the build fails if a row is not quoted in research.md.
+> Twelve sources. A figure this product cites cannot be printed without a row
+> here, and the build fails if a row is not quoted in research.md. Every point
+> we deduct has a published price, and that is the table.
 > ReadyCounter — the counter prints the score.
 
 ---
@@ -152,13 +155,16 @@ Read from `npm run verify`, 2026-08-31. If any of these differ when you film,
 | Ember & Oak, CAPTCHA on | **70 / 100** | `verify-stores.mjs` |
 | Ember & Oak, CAPTCHA off | **94 / 100** | `verify-readiness.mjs` |
 | The CAPTCHA delta | **24**, = Presenc AI's 24% | `verify-readiness.mjs` |
-| Neon Matcha, account wall on | **71 / 100** | `verify-stores.mjs` |
-| Neon Matcha, account wall off | **86 / 100** | `verify-readiness.mjs` |
+| Neon Matcha, account wall on | **65 / 100** | `verify-stores.mjs` |
+| Neon Matcha, account wall off | **80 / 100** | run above, 2026-08-31 |
+| Neon Matcha, payment row fixed | **76 / 100** | run above, 2026-08-31 |
 | The account-wall delta | **15**, = Presenc AI's 15% | `verify-readiness.mjs` |
+| The payment delta | **11**, = Presenc AI's 11% | `verify-readiness.mjs` |
 | Both walls on one store | **−39** | `verify-readiness.mjs` |
-| WebMCP tools registered | **16** | `verify-score.mjs` |
-| Sources on file | **9** | `verify-score.mjs` |
-| GTIN coverage, Ember & Oak | **7 / 8** | `verify-readiness.mjs` |
+| Charged points that are a published weight | **100 of 100** | `verify-readiness.mjs` |
+| WebMCP tools registered | **16** (reported, worth 0) | `verify-score.mjs` |
+| Sources on file | **12** | `verify-score.mjs` |
+| Ember & Oak, complete product records | **7 / 8** | `verify-readiness.mjs` |
 
 ---
 
@@ -169,7 +175,7 @@ Read from `npm run verify`, 2026-08-31. If any of these differ when you film,
 2. Can you add an item and see it in the order in under ten seconds?
 3. Does the **Connect → Agent tool console** update the same order without docs?
 4. Does unchecking the CAPTCHA visibly move 70 → 94?
-5. Does Neon Matcha show a **different score (71) and a different blocker (account wall, 15 pts)**?
+5. Does Neon Matcha show a **different score (65)** and three different failures — **account wall 0/15, payment 0/11, records 2/6**?
 6. Can you say the pitch in one sentence without using the letters M-C-P?
 
 Screenshots of every surface, at 1440px and 390px: `docs/shots/`.

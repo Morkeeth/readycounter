@@ -266,6 +266,16 @@ a {
   color: var(--ink-soft);
 }
 
+.tape__claim {
+  margin: 0 0 0.9rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--rule);
+  text-align: left;
+  font-size: 0.64rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
 .tape__rule {
   border-top: 1px dashed var(--rule);
   margin: 0.85rem 0;
@@ -409,6 +419,12 @@ a {
   border-color: var(--ink);
   color: var(--ink);
   font-weight: 700;
+}
+
+.tape__basis--reported {
+  border-style: dashed;
+  color: var(--ink-soft);
+  font-style: italic;
 }
 
 .tape__lost {

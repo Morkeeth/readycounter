@@ -1,10 +1,12 @@
 import type { MerchantConfig, Product, ReadinessCheck } from '../types/commerce';
-import { computeReadinessChecks, readinessScore, weightFor } from './readiness';
+import { agentPayableMethods, computeReadinessChecks, readinessScore, weightFor } from './readiness';
+import { STORED_CREDENTIAL_METHOD } from '../data/stores';
 
 export type AutopilotFix =
   | 'disable_captcha'
   | 'disable_account_wall'
-  | 'sync_feed_prices';
+  | 'sync_feed_prices'
+  | 'enable_agent_payment';
 
 export interface FixSuggestion {
   id: AutopilotFix;
@@ -40,7 +42,14 @@ export function suggestFixes(
     suggestions.push({
       id: 'sync_feed_prices',
       label: `Sync feed prices (${mismatches.length} SKU)`,
-      impact: `Fixes stale-price abandon risk (~${weightFor('price_consistency')}%)`,
+      impact: `Clears the feed-mismatch row (${weightFor('feed_price_match')}% of abandoned agent carts, Presenc AI 2026)`,
+    });
+  }
+  if (agentPayableMethods(merchant).length === 0) {
+    suggestions.push({
+      id: 'enable_agent_payment',
+      label: 'Accept a stored-credential method',
+      impact: `Clears the unsupported-payment row (${weightFor('payment_method')}% of agent carts, Presenc AI 2026)`,
     });
   }
 
@@ -72,6 +81,17 @@ export function applyAutopilotFix(
           ...p,
           feedPrice: p.price,
         })),
+      };
+    case 'enable_agent_payment':
+      return {
+        merchant: {
+          ...merchant,
+          paymentMethods: [
+            STORED_CREDENTIAL_METHOD,
+            ...(merchant.paymentMethods ?? []).filter((m) => !m.agentCompletable),
+          ],
+        },
+        products,
       };
     default:
       return { merchant, products };

@@ -113,7 +113,9 @@ open https://tooltruth-webmcp.vercel.app → Start shopping → add item → Cop
   reasoning is in `DECISIONS.md` § Decision 4 for Oscar to veto cheaply.
   Score reweighted to **100 pts, 65 measured / 35 admitted as ours** — 26, 24 and
   15 are three rows of Presenc AI's published causes table, the rest are labelled
-  `allocated` on the line. `src/data/sources.ts` (9 rows) is now the only place a
+  `allocated` on the line. **Superseded the same night (wave 4): all six rows are
+  now scored at their published shares, so the bill is 100 measured / 0
+  allocated.** `src/data/sources.ts` (12 rows) is now the only place a
   *cited* figure may come from — measured catalog counts are computed live — and `scripts/verify-score.mjs` fails the build if a
   measured weight stops equalling its published figure (proven red at 24→30) or
   if the tool manifest and `registerTools.ts` disagree.

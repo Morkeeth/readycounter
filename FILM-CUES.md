@@ -43,7 +43,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 | Cue | Action |
 |-----|--------|
 | Screen | **Readiness** tab · Ember & Oak |
-| Point | CAPTCHA check FAIL · stale feed on Brew Scale · GTIN gap |
+| Point | CAPTCHA line 0/24 · feed mismatch on Brew Scale 16/18 · records 5/6 |
 | Say | "Merchants see *why* agents abandon — not a black box." |
 
 ---
@@ -55,7 +55,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 | Screen | Header **Store** dropdown → Neon Matcha Lab |
 | Say | "Two merchants, one fork. Same platform." |
 | Run | Harness → `get_readiness_score` on each store |
-| Proof | Score 70 → 71 · failure mode switches CAPTCHA (24 pts) → account wall (15 pts) · catalog line 12/14 → 4/14 |
+| Proof | Score 70 → 65 · Ember fails ONE row (CAPTCHA 0/24); Neon fails THREE (account 0/15, payment 0/11, records 2/6) · every weight a row of one published table |
 | URL bar | Flash `?store=neon-matcha` |
 
 ---

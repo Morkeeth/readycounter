@@ -170,49 +170,50 @@ ones we made up.**
 ReadyCounter allocates **100 points across six checks**. The allocation is the
 claim, so it is stated in full:
 
-| Check | Points | Basis | Where the number comes from |
+| Check | Points | Row it is charged from | What the check actually is |
 |---|---|---|---|
-| Price feed agrees with the shelf | **26** | **measured** | Presenc AI attributes **26%** of abandoned agent carts to stale price or stock data at checkout. The weight *is* that share. The same table also carries **"Price mismatch vs listed feed — 18%"**, which names the defect this line actually detects; we charge the 26 row only and never add the 18, so one mismatch is billed once. |
-| No CAPTCHA on the checkout path | **24** | **measured** | Row two of the table: **24%**, "Captcha or verification wall". The weight *is* that share. |
-| No forced account on the checkout path | **15** | **measured** | Row four of the table: **15%**, "Required account or login". The weight *is* that share. Until 2026-08-31 this line did not exist and the wall was charged the CAPTCHA's 24 — see the correction above. |
-| Catalog an agent can read | **14** | *allocated* | No published row prices a schema gap on its own. The nearest row is **"Ambiguous page structure — 6%"**, and we do not take it: this line scores product identifiers (GTIN), not page markup, and adopting that row would be us choosing which cause fits. So the 14 is ours and labelled ours. Context: only **19%** of Product schemas carry the Offer object (Digital Applied, 5,000 sites). |
-| Structured tool surface | **14** | *allocated* | Allocated, not measured. Shopify reports catalog-powered AI search converts **2×** scraped search; a WebMCP tool surface is that same bet made explicit. |
-| Availability stated, not implied | **7** | *allocated* | Presenc groups stock **with** price in one 26% figure. We split off 7 points for explicit availability flags rather than double-count the measured share. |
-| **Total** | **100** | **65 measured · 35 allocated** | |
+| What the agent was shown survives to checkout | **26** | "Stale price or stock data at checkout — **26%**" | Every SKU the catalog surfaces is run through the real order path (`src/lib/orderMath.ts`, the same functions checkout calls). A SKU survives only if the store still accepts it *and* bills exactly the price the catalog record quoted. The source's one sentence about this row: *"When the price or availability the agent saw differs from checkout, the agent halts rather than guessing."* Both halves are asserted. **Stated limit:** in the two shipped fixtures the price half cannot fail — the catalog record and the order path read the same field — so the half that discriminates here is availability. The price half is not decoration: tamper `chargeForLine` to bill `feedPrice` and both stores drop 23/26 → 20/26 with `verify-stores` red. |
+| No CAPTCHA on the checkout path | **24** | "Captcha or verification wall — **24%**" | The merchant config declares whether a CAPTCHA stands on the checkout path. All of it or none of it. |
+| Price feed agrees with the shelf | **18** | "Price mismatch vs listed feed — **18%**" | Per SKU, the feed price equals the shelf price. **This line used to carry the 26.** It detected a feed mismatch and charged it the stale-data row's price — billing one cause at another cause's rate while calling the weight published. Corrected 2026-08-31: it takes the row that names the defect it detects, and never adds the 26 on top. |
+| No forced account on the checkout path | **15** | "Required account or login — **15%**" | The merchant config declares whether an account is forced before payment. Until 2026-08-31 this line did not exist and the wall was charged the CAPTCHA's 24 — see the correction above. |
+| A payment method an agent can complete | **11** | "Unsupported payment method — **11%**" | All-or-nothing: at least one method the store accepts must complete a prepared agent order with no step only a human at the device can take. A stored credential passes; a per-transaction 3-D Secure step-up, a device biometric, a redirect to another site's login and a manual invoice approval do not. **The classification is ours** — the source prices the cause and never says which methods qualify — so it is printed on the line and in `src/types/commerce.ts`. |
+| Product records an agent can read | **6** | "Ambiguous page structure — **6%**" | We read back the JSON-LD the page actually emits (`emittedProductRecords` walks the output of `catalogJsonLd`, the same function `ShopView` writes into `<script type="application/ld+json">`) and require each record to carry `name`, `sku`, a resolvable `gtin13`, and an `Offer` with `price`, `priceCurrency` and `availability`. **The field list is ours** and it is the whole definition — the source gives this row no prose anywhere on the page. A store-local SKU resolves to nothing for an agent that has never seen the store; a GTIN does. Context: only **19%** of Product schemas carry an Offer object at all (Digital Applied, 5,000 sites). |
+| *Structured tools the score is measured through* | *0* | *no published row* | Reported, never charged. 16 typed tools against a floor of 6. A tool surface is not a cause of cart abandonment on anybody's table — it is the instrument the six lines above are read through — so it is printed at zero rather than given a weight we invented. It used to be an allocated 14. |
+| **Total** | **100** | **six rows, six shares** | **100 measured · 0 allocated** |
 
-**Why 14 / 14 / 7.** The measured block grew 50 → 65 when the account wall took
-its own published weight, so the allocated block shrank 50 → 35 and kept its
-existing 2:2:1 shape (20/20/10 → 14/14/7). The rule is the one worth stating: a
-published figure takes its full share first, and our judgement gets what is left.
+**The claim this licenses, and the one it does not.** Every *weight* is
+published. Every *test* is ours. The Presenc table names six causes and defines
+none of them — the page was fetched raw again on 2026-08-31 and the only prose
+about any row is one FAQ sentence about the 26 — so the tape marks each line
+`published weight · our stated test` rather than letting an all-measured bill
+imply the tests are published too. Claiming more than the source carries is the
+mistake that charged an account wall the CAPTCHA's 24 for a day.
 
-**A sentence this section had to withdraw, 2026-08-31.** It used to read: *"The
-three causes ReadyCounter does **not** check — price mismatch vs feed 18%,
-unsupported payment method 11%, ambiguous page structure 6% — happen to total the
-same 35% the allocated block is worth."* Two things were wrong with it.
+**What changed on 2026-08-31, wave 4.** Three lines used to carry weights we
+allocated ourselves — catalog schema 14, tool surface 14, availability 7, 35 in
+total. Availability folded into the 26 row, where the source itself puts stock
+(*"stale price **or stock** data at checkout"*). Catalog schema folded into the 6
+row, rebuilt as an emitted-markup test. The tool surface became a reported line
+worth zero. The allocated block is now **0**.
 
-1. ReadyCounter **does** detect the 18% row. "Price feed agrees with the shelf"
-   compares each SKU's `feedPrice` against its shelf price, which is precisely
-   *"price mismatch vs listed feed"*. We charge that line the **26** stale-data
-   row and never add the 18, so one mismatch is billed once — but calling the row
-   unchecked was false about our own citation.
-2. The sentence existed to defuse an adjacency — *35 allocated points ≈ 35% of
-   unchecked causes* — and its member set was wrong, which makes the defusal
-   worse than the adjacency it was defusing.
+**On the arithmetic we did not assert.** Before this build, 35 points were
+allocated by us, and the three then-unscored rows — 18 + 11 + 6 — also totalled
+35%. Those two numbers had nothing to do with one another: the 35 was a
+remainder, left over because the measured block was 65. Writing that they
+"lined up" would have been two correct numbers placed side by side to claim a
+relation nobody had checked. Earlier waves of this file did write a version of
+it, then withdrew it, then withdrew the withdrawal because its member set was
+also wrong (the 18% row *was* being detected, just billed at the 26's price).
+The build settles it: the three rows are scored at their own published shares,
+there is no remainder left to explain, and no relation is claimed.
 
-**The honest version is shorter.** The allocated block is **35 because the
-measured block is 65**. It is a remainder. It maps to nothing on the causes
-table. Of the six published rows, ReadyCounter *prices* three (26 stale
-price/stock · 24 CAPTCHA · 15 required account), *detects a fourth without
-charging for it* (18 price mismatch vs feed), and does not check the remaining
-two (11 unsupported payment method · 6 ambiguous page structure).
-
-**The honest limit.** 35 of these 100 points are still a judgement call, and the
-product does not hide it: the tape prints a `measured weight` or `allocated
-weight` tag on every line and the header reads *"65 priced by a published figure
-· 35 allocated by ReadyCounter"*. What is no longer a judgement call is the
-checkout. **Every checkout wall is charged the share its own published row
-states — 24 for a CAPTCHA, 15 for a forced account — and a store carrying both
-pays 39.** Neither figure is ours.
+**The fixture rule.** Both demo stores are written to EXERCISE the checks, never
+to land a score. Ember & Oak carries a CAPTCHA and a card on file; Neon Matcha
+carries a forced account, three payment methods that all need a human, and six
+SKUs with no GTIN. The totals — 70 and 65, read from `npm run verify` on
+2026-08-31 — are whatever falls out. Ember & Oak scored 70 before this rebuild
+too, out of an entirely different composition of lines; that is a coincidence and
+is recorded as one.
 
 **The check that keeps this honest.** `scripts/verify-score.mjs` runs on every
 `npm run verify` and fails the run if:
@@ -237,16 +238,22 @@ And in `scripts/verify-readiness.mjs`, added with the 15-point line:
    identified. Weights are now applied in one place and the call sites pass a
    fraction.)
 
-Proven red, not just green: setting `agent_checkout_path` to 30 points fails
-checks 1 and 5 and exits 1. A budget-neutral tamper is caught too — moving
-`account_wall` 15 → 16 and `stock_signals` 7 → 6 keeps the budget at exactly 100,
-passes check 1, and still fails checks 5, 7 and 8.
+Proven red, not just green, all run on 2026-08-31:
+
+| Tamper | What goes red |
+|---|---|
+| `agent_checkout_path` 24 → 30 | `verify-score` checks 1 and 5, exit 1 |
+| Budget-neutral: `payment_method` 11 → 12 **and** `page_structure` 6 → 5, still summing to exactly 100 | budget check still passes; **five** assertions fail across `verify-score` and `verify-readiness` |
+| `chargeForLine` bills `feedPrice` instead of the price the agent was shown | the 26-point probe prints 20/26 on both stores while the verifier recomputes 23 — `verify-stores` exit 1 |
+| `gtin13` quietly dropped from the machine-legibility field list | both stores print a perfect 6/6 they did not earn — four assertions red |
+| A charged line stops being a published weight (6 pts with no row) | `every charged line is a published weight — nothing allocated` — 94 measured · 6 allocated, exit 1 |
 
 **Observable consequence.** Clearing the CAPTCHA on Ember & Oak moves the score
 from **70 to 94** — a delta of exactly **24**, the published figure. Clearing the
-forced account on Neon Matcha Lab moves it from **71 to 86** — a delta of exactly
-**15**, a different published figure from the same table. Both are asserted in
-`scripts/verify-readiness.mjs`, not eyeballed.
+forced account on Neon Matcha Lab moves it from **65 to 80** — exactly **15**.
+Giving Neon one method a prepared agent order can complete on moves it from
+**65 to 76** — exactly **11**. Three different rows of one table, each asserted
+separately in `scripts/verify-readiness.mjs`, not eyeballed.
 
 ---
 
@@ -254,7 +261,7 @@ forced account on Neon Matcha Lab moves it from **71 to 86** — a delta of exac
 
 | Product surface | Stat applied |
 |-----------------|--------------|
-| Readiness weights (26 / 24 / 15) | Presenc 26% stale feed · 24% CAPTCHA · 15% required account — three rows of one table |
+| Readiness weights (26 / 24 / 18 / 15 / 11 / 6) | All six rows of Presenc's causes table, each line charged its own published share |
 | Readiness line detail | Digital Applied 19% Offer; Shopify 2× Catalog |
 | Landing screen facts | Shopify 8×/13×; Presenc 78.6%; YouGov 65/14 |
 | Co-shop / `prepare_checkout` gate | YouGov 65% compare vs 14% buy |

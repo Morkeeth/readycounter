@@ -42,6 +42,21 @@ export function decodeSharePayload(encoded: string): SharePayload | null {
     const data = JSON.parse(json) as SharePayload;
     if ((data.v !== 1 && data.v !== 2) || !data.order || !data.merchant) return null;
     if (!data.storeId) data.storeId = 'ember-oak';
+    /*
+     * A link built before 2026-08-31 encodes a merchant with no
+     * `paymentMethods`, because the field did not exist. Left alone, the
+     * recipient would see a store that accepts a card on file score 0/11 on the
+     * payment line and be told, on a judge-facing screen, that it has no route
+     * an agent can complete. Backfill from the store definition for a built-in
+     * store; a custom store that genuinely declares none still scores 0, which
+     * is the true answer for it.
+     */
+    if (!data.merchant.paymentMethods && isBuiltinStore(data.storeId)) {
+      data.merchant = {
+        ...data.merchant,
+        paymentMethods: getStore(data.storeId).merchant.paymentMethods,
+      };
+    }
     return data;
   } catch {
     return null;

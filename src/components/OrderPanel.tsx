@@ -32,8 +32,15 @@ export function OrderPanel() {
     if (result.blocked) {
       setCheckoutMsg(result.reason ?? 'Checkout blocked');
     } else {
+      /*
+       * The note is not a block. A store can clear both walls and still have no
+       * method a prepared agent order completes on, which is its own published
+       * row; saying so here is the difference between "checkout is clear" and
+       * "checkout is clear and the handoff still dead-ends".
+       */
       setCheckoutMsg(
-        `Ready for human payment — ${result.lineCount} items, $${result.subtotal?.toFixed(2)} subtotal.`,
+        `Ready for human payment — ${result.lineCount} items, $${result.subtotal?.toFixed(2)} subtotal.` +
+          (result.note ? ` ${result.note}` : ''),
       );
     }
   };

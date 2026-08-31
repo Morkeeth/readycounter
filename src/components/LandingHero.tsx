@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
 import { getSource } from '../data/sources';
-import { accountWallBecause, computeReadinessChecks, readinessScore } from '../lib/readiness';
+import {
+  accountWallBecause,
+  computeReadinessChecks,
+  POINT_BUDGET,
+  readinessScore,
+  reportedLines,
+} from '../lib/readiness';
 import { useShopStore } from '../store/shopStore';
 import { ReadinessTape } from './ReadinessTape';
 
@@ -49,6 +55,7 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
 
   // The landing tape is not a mock. It is this store, scored right now.
   const checks = computeReadinessChecks(merchant, registeredToolCount, products);
+  const reported = reportedLines(registeredToolCount);
   const score = readinessScore(checks);
 
   const captcha = getSource('presenc_captcha');
@@ -72,6 +79,7 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
         storeName={merchant.storeName}
         storeId={storeId}
         checks={checks}
+        reported={reported}
         score={score}
         block={block}
       />
@@ -80,9 +88,11 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
         <h2>Your store scores {score} to an agent. Here is the bill.</h2>
         <p>
           Assistants are shopping now and merchants cannot see why they leave.
-          ReadyCounter prices the store out of 100 and prints every point as a line
-          item — the check that took it, the fix that returns it, and the page the
-          weight came from. Then you and your assistant share one order in this tab.
+          ReadyCounter prices the store out of {POINT_BUDGET} and prints every point
+          as a line item — the check that took it, the fix that returns it, and the
+          page the weight came from. All {POINT_BUDGET} are published weights: one
+          line per row of the same causes-of-abandonment table. Then you and your assistant share
+          one order in this tab.
         </p>
 
         <ul className="landing__facts">

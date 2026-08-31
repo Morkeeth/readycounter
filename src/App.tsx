@@ -144,16 +144,21 @@ function App() {
           <code>research.md</code>. The numbers it <em>measures</em> off this store —
           SKU counts, GTIN coverage, points earned — are computed live from the
           catalog and cite nothing, because they are not claims about the world.
-          Three of the six weights are a published share
-          of abandoned agent carts, one per row of Presenc AI&rsquo;s causes table
-          ({getSource('presenc_stale_feed').figure} stale feed,{' '}
+ All six weights are a published share of
+          abandoned agent carts, one line per row of Presenc AI&rsquo;s causes table
+          ({getSource('presenc_stale_feed').figure} stale data at checkout,{' '}
           {getSource('presenc_captcha').figure} CAPTCHA,{' '}
-          {getSource('presenc_account_wall').figure} required account —{' '}
-          {getSource('presenc_account_wall').publisher}, read{' '}
-          {getSource('presenc_account_wall').accessed}); all six rows of that table
-          are reproduced in <code>research.md</code>. The other three weights we
-          allocated ourselves, and the tape says so on the line rather than in a
-          footnote.
+          {getSource('presenc_price_mismatch').figure} feed mismatch,{' '}
+          {getSource('presenc_account_wall').figure} required account,{' '}
+          {getSource('presenc_payment_method').figure} unsupported payment,{' '}
+          {getSource('presenc_page_structure').figure} ambiguous page structure —{' '}
+          {getSource('presenc_page_structure').publisher}, read{' '}
+          {getSource('presenc_page_structure').accessed}); the six sum to 100 on that
+          page and to 100 here, and all six rows are reproduced in{' '}
+          <code>research.md</code>. What is <em>not</em> published is the test behind
+          each line: the source names six causes and defines none of them, so every
+          test is ours and every line prints it. Checks with no published price — the
+          tool surface — are reported at zero rather than given a weight we made up.
         </p>
         <p>
           Humans confirm payment in the browser. Shopping assistants search, add to

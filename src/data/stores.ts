@@ -1,4 +1,4 @@
-import type { MerchantConfig, Product } from '../types/commerce';
+import type { MerchantConfig, PaymentMethod, Product } from '../types/commerce';
 
 export interface StoreDefinition {
   id: string;
@@ -200,6 +200,67 @@ const NEON_MATCHA_PRODUCTS: Product[] = [
   },
 ];
 
+/*
+ * PAYMENT METHODS ON THE DEMO STORES.
+ *
+ * The rule these fixtures are written under, and it is the same rule the
+ * CAPTCHA flag is written under: each fixture is chosen to EXERCISE a check —
+ * one store passes the line, one fails it — never to land a target score. The
+ * score is whatever falls out, and on 2026-08-31 it fell out at 70 and 65.
+ *
+ * `agentCompletable` is our classification, not a published fact. Presenc AI
+ * prices "unsupported payment method" at 11% and never says which methods an
+ * agent can complete, so the test is stated on the line: can a prepared agent
+ * order go through with no step only a human at the device can take?
+ */
+const EMBER_OAK_PAYMENT: PaymentMethod[] = [
+  {
+    id: 'card_on_file',
+    label: 'Card on file',
+    agentCompletable: true,
+  },
+  {
+    id: 'apple_pay',
+    label: 'Apple Pay',
+    agentCompletable: false,
+    humanStep: 'device biometric on the handset',
+  },
+  {
+    id: 'invoice_net30',
+    label: 'Invoice, net 30',
+    agentCompletable: false,
+    humanStep: 'manual approval by the wholesale desk',
+  },
+];
+
+const NEON_MATCHA_PAYMENT: PaymentMethod[] = [
+  {
+    id: 'card_3ds',
+    label: 'Card with 3-D Secure',
+    agentCompletable: false,
+    humanStep: '3-D Secure step-up on every transaction',
+  },
+  {
+    id: 'paypal',
+    label: 'PayPal',
+    agentCompletable: false,
+    humanStep: 'redirect to a PayPal login',
+  },
+  {
+    id: 'bank_transfer',
+    label: 'Bank transfer',
+    agentCompletable: false,
+    humanStep: 'the shopper moves the money by hand',
+  },
+];
+
+/** The method autopilot adds when a store has no agent-payable route. */
+export const STORED_CREDENTIAL_METHOD: PaymentMethod = {
+  id: 'card_on_file',
+  label: 'Card on file',
+  agentCompletable: true,
+};
+
 export const STORES: Record<string, StoreDefinition> = {
   'ember-oak': {
     id: 'ember-oak',
@@ -210,6 +271,7 @@ export const STORES: Record<string, StoreDefinition> = {
       storeName: 'Ember & Oak Coffee',
       checkoutRequiresCaptcha: true,
       checkoutRequiresAccount: false,
+      paymentMethods: EMBER_OAK_PAYMENT,
     },
     categories: ['beans', 'kits', 'equipment', 'beverages', 'merch', 'subscription'],
   },
@@ -222,6 +284,7 @@ export const STORES: Record<string, StoreDefinition> = {
       storeName: 'Neon Matcha Lab',
       checkoutRequiresCaptcha: false,
       checkoutRequiresAccount: true,
+      paymentMethods: NEON_MATCHA_PAYMENT,
     },
     categories: ['powder', 'kits', 'equipment', 'beverages', 'subscription'],
   },

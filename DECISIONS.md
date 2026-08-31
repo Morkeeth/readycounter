@@ -245,6 +245,87 @@ red before being left green. Full record in `NIGHTRUN-2026-08-31.md` § WAVE 3.
 
 ---
 
+## Decision 5e · The whole bill is published — RULED 2026-08-31 (wave 4)
+
+**Ruled: score all six published causes at their published shares. The allocated
+block goes to zero.** Before: 100 pts = 65 measured (26 stale feed, 24 CAPTCHA,
+15 account) + 35 allocated by us (catalog 14, tools 14, availability 7). After:
+100 pts = the six rows of Presenc AI's causes table — **26 / 24 / 18 / 15 / 11 /
+6** — which sum to 100 on their page and to 100 here.
+
+**Why this and not "bolt 18 + 11 + 6 onto the existing 65".** That would have
+double-billed. The 18% row is *"price mismatch vs listed feed"* and our
+26-point line was already comparing the feed price to the shelf price — wave 3
+established that in writing and then left the line charging the 26 anyway. So we
+were billing one cause at another cause's price while calling the weight
+published. The fix has two halves: the feed line takes the **18** that names what
+it detects, and the **26** buys a genuinely different check — every SKU is run
+through the real order path and survives only if the store still accepts it and
+bills the price the catalog quoted.
+
+**Where the three old allocated lines went.** Availability folded into the 26 row
+(the source itself says *"stale price **or stock** data"*). Catalog schema folded
+into the 6 row, rebuilt as a markup test. The tool surface became a **reported**
+line worth zero — printed, checked, charged nothing — because a tool surface is
+not a cause of cart abandonment on anybody's table; it is the instrument the six
+lines are measured through.
+
+**What we deliberately did NOT claim.** Not "the two 35s line up". Before this
+build 35 points were allocated by us and the three unscored rows also totalled
+35%, and that adjacency is exactly the defect this repo keeps finding — two
+correct numbers side by side asserting a relation nobody checked. The 35 was a
+remainder of 100 − 65 and mapped to nothing. We built the three checks instead of
+writing the sentence; there is now no remainder to explain.
+
+**And not "everything about this score is published".** Every *weight* is. Every
+*test* is ours — the source names six causes and defines none of them — so the
+tape marks each line `published weight · our stated test`, `billClaim()` is
+written in one place so no surface can widen it, and the payment classification
+and the JSON-LD field list are called out as ours in the UI, in `research.md` and
+in the types.
+
+**Numbers, read from `npm run verify` on 2026-08-31:** Ember & Oak **70/100**
+(23/26 · 0/24 · 16/18 · 15/15 · 11/11 · 5/6), Neon Matcha **65/100** (23/26 ·
+24/24 · 16/18 · 0/15 · 0/11 · 2/6). Ember scored 70 before this rebuild as well,
+out of an entirely different composition — that is a **coincidence**, recorded as
+one, not continuity.
+
+**Cost to reverse:** one constant table plus three check bodies.
+
+---
+
+## Decision 6 (wave 4) · Scoring "ambiguous page structure" — SUPERSEDES the wave-3 ruling
+
+**The wave-3 ruling, kept verbatim because the mistake is the point:**
+
+> `catalog_schema` … *"No published row prices a schema gap on its own. The
+> nearest row on the same Presenc table is 'Ambiguous page structure — 6%', and
+> we do not take it: this line scores product identifiers (GTIN), not page
+> markup, and adopting that row would be us choosing which cause fits."*
+
+**Superseded.** That objection was right about the check it was looking at: a
+check that counts `product.gtin` on a fixture is not a page-structure test, and
+taking a markup row for it would have been us choosing which cause fits. The
+check changed. `catalogLegibility` now reads back the **document the page
+emits** — `emittedProductRecords` walks the output of `catalogJsonLd`, the same
+function `ShopView` writes into the page's
+`<script type="application/ld+json">` — and requires each record to carry `name`,
+`sku`, `gtin13`, and an Offer with `price`, `priceCurrency`, `availability`. It
+is a markup test now, so the row is the right home for it.
+
+**What is still ours, and stated:** the field list. The source gives this row no
+definition anywhere on the page — checked in raw HTML, twice, 2026-08-31 — so the
+list *is* the definition, and `gtin13` being on it is the arguable choice: a
+store-local SKU identifies a product inside this store and resolves to nothing
+for an agent that has never seen it. `verify-stores.mjs` types the same list
+independently, so quietly dropping `gtin13` costs both stores a red build rather
+than handing them a free 6/6.
+
+**Cost to reverse:** drop one string from `REQUIRED_JSONLD_FIELDS` and its twin
+in the verifier.
+
+---
+
 ## Decision 6b · Two agents may push main — NEEDS OSCAR
 
 `DECISIONS.md` gives the cloud lane a done-when that includes *"`main` pushed"*,
