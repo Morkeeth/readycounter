@@ -8,6 +8,7 @@ import {
   reportedLines,
 } from '../lib/readiness';
 import { useShopStore } from '../store/shopStore';
+import { LandingFieldCompare } from './LandingFieldCompare';
 import { MerchantJourney } from './MerchantJourney';
 import { ReadinessTape } from './ReadinessTape';
 import type { JourneyStep } from '../data/journey';
@@ -126,6 +127,13 @@ export function LandingHero({
           Demo store shown ({storeId}). Paste your URL on Connect — persists on Render KV.
         </p>
       </div>
+
+      <LandingFieldCompare
+        score={score}
+        checks={checks}
+        products={products}
+        storeName={merchant.storeName}
+      />
     </section>
   );
 }

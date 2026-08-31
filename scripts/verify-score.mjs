@@ -169,6 +169,22 @@ check(
   'computed at render',
 );
 
+const fieldCompare = read('src/components/LandingFieldCompare.tsx');
+const fieldCompareLib = read('src/lib/field-compare.ts');
+check(
+  'landing shows 148-field compare',
+  landing.includes('LandingFieldCompare') &&
+    fieldCompare.includes('FIELD_RECEIPT') &&
+    fieldCompareLib.includes('deriveFieldBatchStats'),
+  'LandingFieldCompare wired',
+);
+check(
+  'field compare derives attempted count from receipt or live API, not a stray literal',
+  fieldCompareLib.includes('FIELD_RECEIPT.attempted') &&
+    fieldCompareLib.includes('rankings?.shopCount'),
+  'receipt + KV',
+);
+
 /* ---- 7b · a measured rationale must quote its own source's figure ---- */
 
 /*

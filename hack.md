@@ -90,6 +90,8 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
+**Slice RC-S1 (night):** Lighthouse comparison UI on landing — `LandingFieldCompare` shipped on branch `cursor/lighthouse-comparison-ui-2a8b`.
+
 **Long-run goal:** `GOAL-LONG-RUN.md` (Cursor goal armed 2026-08-31) — measurement layer for agent commerce.
 
 **Immediate queue:** Phase 0 film/Devpost (Oscar) → G2 batch at 50+ → R5 scanner compare.
@@ -144,3 +146,9 @@ Wave 4: Auth + domain + monitoring
   Merged with the integration lane's 16 tools, autopilot and Shopify import;
   their surfaces restyled into the counter tokens so the app has one token layer.
   `npm run build` + `npm run verify` exit 0. Branch `nightrun/l3-readycounter`.
+
+- 2026-08-31 — **RC-S1 Lighthouse compare UI:** `LandingFieldCompare` on landing —
+  urgency strip (crawl/GTIN/UCP gaps), width table (you vs 148-brand field), crawl
+  outcome bar. Numbers from `FIELD_RECEIPT` + live `GET /api/v1/rankings` when KV
+  responds. `verify-score` asserts landing wires compare. `npm run verify` still red
+  on missing `LAUNCH.md` (RC-S3 docs slice — `launch.md` exists lowercase only).

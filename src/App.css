@@ -2003,9 +2003,17 @@ a {
 .landing {
   display: grid;
   grid-template-columns: minmax(0, var(--tape-w)) minmax(0, 1fr);
-  gap: 2.5rem;
-  align-items: center;
+  gap: 2.5rem 2.5rem;
+  align-items: start;
   margin-top: 2rem;
+}
+
+.landing > .journey {
+  grid-column: 1 / -1;
+}
+
+.landing > .field-compare {
+  grid-column: 1 / -1;
 }
 
 @media (max-width: 860px) {
@@ -2013,6 +2021,179 @@ a {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+}
+
+/* ---------- field compare (landing lighthouse) ---------- */
+
+.field-compare {
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  padding: 1.1rem 1.2rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.field-compare__kicker {
+  margin: 0 0 0.6rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.field-compare__headline {
+  margin: 0 0 0.55rem;
+  font-family: var(--display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink);
+  max-width: 58ch;
+}
+
+.field-compare__strip {
+  display: flex;
+  gap: 2px;
+  min-height: 2.1rem;
+  margin-bottom: 0.45rem;
+  border: 1px solid var(--ink);
+}
+
+.field-compare__seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.35rem;
+  min-width: 0;
+  text-align: center;
+  font-size: 0.58rem;
+  line-height: 1.2;
+}
+
+.field-compare__seg span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.field-compare__seg--ok {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+
+.field-compare__seg--warn {
+  background: var(--ink-2);
+  color: var(--paper);
+}
+
+.field-compare__seg--urgent {
+  background: var(--stamp);
+  color: var(--paper);
+}
+
+.field-compare__seg--gap {
+  background: #c45a11;
+  color: var(--paper);
+}
+
+.field-compare__meta {
+  margin: 0 0 0.9rem;
+  color: var(--ink-soft);
+  font-size: 0.62rem;
+}
+
+.field-compare__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0.85rem;
+}
+
+.field-compare__table th,
+.field-compare__table td {
+  border: 1px solid var(--rule);
+  padding: 0.35rem 0.45rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.field-compare__table thead th {
+  background: var(--paper-2);
+  font-weight: 600;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.field-compare__table tbody th {
+  font-weight: 500;
+  color: var(--ink-2);
+  width: 28%;
+}
+
+.field-compare__row--urgent td:last-child {
+  color: var(--stamp);
+  font-weight: 600;
+}
+
+.field-compare__row--ahead td:first-of-type {
+  color: var(--ink);
+}
+
+.field-compare__outcomes-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.6rem;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.field-compare__outcome-bar {
+  display: flex;
+  gap: 2px;
+  min-height: 1.8rem;
+  margin-bottom: 0.7rem;
+  border: 1px solid var(--rule);
+}
+
+.field-compare__outcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  padding: 0.2rem;
+  min-width: 0;
+  font-size: 0.55rem;
+  background: var(--paper-2);
+}
+
+.field-compare__outcome b {
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.field-compare__outcome--crawled {
+  background: var(--paper-2);
+}
+
+.field-compare__outcome--403,
+.field-compare__outcome--429,
+.field-compare__outcome--timeout {
+  background: var(--ink-2);
+  color: var(--paper);
+}
+
+.field-compare__outcome--no-feed {
+  background: #8a6f4e;
+  color: var(--paper);
+}
+
+.field-compare__honesty {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.62rem;
+  max-width: 72ch;
 }
 
 .landing__copy h2 {
