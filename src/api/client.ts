@@ -230,6 +230,7 @@ export interface RankingsResponse {
   succeeded: number;
   avgCatalogScore: number;
   avgGtinPct: number;
+  avgOfferPct?: number | null;
   note: string;
   verticals?: string[];
   ucp?: {
@@ -244,6 +245,7 @@ export interface RankingsResponse {
     catalogScore?: number;
     catalogBudget?: number;
     gtinPct?: number;
+    offerPct?: number | null;
     captchaHint?: boolean;
     vertical?: string;
     error?: string;

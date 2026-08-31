@@ -2000,6 +2000,11 @@ a {
   color: var(--stamp);
 }
 
+.rankings__offer--low {
+  font-weight: 600;
+  color: var(--stamp);
+}
+
 .rankings__ucp-n {
   opacity: 0.65;
   font-weight: 400;

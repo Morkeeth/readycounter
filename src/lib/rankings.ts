@@ -19,6 +19,7 @@ export interface RankingsResponse {
   succeeded: number;
   avgCatalogScore: number;
   avgGtinPct: number;
+  avgOfferPct?: number | null;
   note: string;
   verticals: string[];
   ucp: {
@@ -74,6 +75,11 @@ export function buildRankingsResponse(batch: AuditBatchSummary | null): Rankings
   }
   const rows = sortRankingRows(enrichRowsWithVerticalsAndUcp(batch.rows));
   const gtinWhereCrawlZero = rows.filter((r) => r.ucpGtinWhereCrawlZero).length;
+  const withOffer = rows.filter((r) => !r.error && r.offerPct != null);
+  const avgOffer =
+    withOffer.length === 0
+      ? null
+      : Math.round(withOffer.reduce((n, r) => n + (r.offerPct ?? 0), 0) / withOffer.length);
   return {
     ok: true,
     at: batch.at,
@@ -81,6 +87,7 @@ export function buildRankingsResponse(batch: AuditBatchSummary | null): Rankings
     succeeded: batch.succeeded,
     avgCatalogScore: batch.avgCatalogScore,
     avgGtinPct: batch.avgGtinPct,
+    avgOfferPct: batch.avgOfferPct ?? avgOffer,
     note: 'Crawl + UCP census joined — public scrape GTIN ≠ Catalog MCP GTIN. Checkout lines still NOT MEASURED.',
     verticals: listCuratedVerticals(),
     ucp: {

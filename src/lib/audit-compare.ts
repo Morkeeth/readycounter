@@ -16,6 +16,7 @@ export interface AuditModeSnapshot {
   method?: string;
   error?: string;
   tools?: string[];
+  offerPct?: number | null;
 }
 
 export interface UcpCompareSnapshot {
@@ -74,6 +75,7 @@ function snapshot(
     fullScore: summary.fullScore,
     unmeasuredLineIds: summary.unmeasuredLineIds,
     method: audit.method,
+    offerPct: audit.signals.offerPct,
   };
 }
 
@@ -138,6 +140,8 @@ export function buildAuditCompare(
     }
   } else if (ucp?.available && ucp.gtinPct > crawlSnap.gtinPct) {
     headline = `UCP MCP: ${ucp.gtinPct}% identifier coverage vs ${crawlSnap.gtinPct}% on public crawl — agents should negotiate UCP, not scrape HTML.`;
+  } else if (crawlSnap.offerPct != null && crawlSnap.offerPct < 20) {
+    headline = `Offer JSON-LD on ${crawlSnap.offerPct}% of Product nodes (field ~19%) — ACP needs Offer + price + availability on PDPs.`;
   } else if (ucp && !ucp.available) {
     headline =
       crawlSnap.gtinPct === 0

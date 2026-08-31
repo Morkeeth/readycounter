@@ -64,7 +64,7 @@
 | **B4** | **Policy discovery** — find privacy + terms URLs from homepage/footer/JSON-LD | M | `policySmoke: { privacyUrl, termsUrl, privacyOk, termsOk }` | ✅ |
 | **B5** | **Policy HTTP smoke** — GET each URL; 200 = ok; missing = honest null | S | Smoke runs in audit path; no false “eligible” | ✅ |
 | **B6** | **Field review flags** — wire low `offerPct` → schema-offer; bad policy → acp-eligibility | S | `reviewAgainstField` fires when signals present | ✅ |
-| **B7** | **Rankings signal** (stretch) — Offer% column or chip on crawled rows | M | Rankings table or API row includes `offerPct` | ⬜ defer |
+| **B7** | **Rankings signal** (stretch) — Offer% column or chip on crawled rows | M | Rankings table or API row includes `offerPct` | ✅ |
 | **B8** | **R7 experiment doc** — `research/experiments/R7-offer-on-crawl.md` with 3 hosts + numbers | S | File on disk with curl repro | ✅ |
 | **B9** | **Verify script** — assert offer extractor on fixture HTML | S | `verify-url-audit.mjs` or sibling passes | ✅ |
 
@@ -85,7 +85,7 @@
 | **C5** | **`STRANGER-PASS`** — cold run on live URL; embarrassments listed | S | `audits/STRANGER-PASS-2026-08-31.md` with timestamp | ✅ |
 | **C6** | **Embarrassment grep** — overclaims: live checkout fix, full /100, 16 tools | S | Grep report or fixes in copy | ✅ |
 | **C7** | **Night LOG** — `hack.md` or `LAUNCH.md` wave receipt | S | Section: slices shipped tonight | ✅ |
-| **C8** | **`ONBOARDING.md` agent path** — WebMCP tools + compare + rankings for builders | M | Agent section < 2 min read | ⬜ defer |
+| **C8** | **`ONBOARDING.md` agent path** — WebMCP tools + compare + rankings for builders | M | Agent section < 2 min read | ✅ |
 
 **C done when:** LIGHTHOUSE-VISION + partner brief + README + DEVPOST aligned; stranger pass on disk. **✅**
 
@@ -119,7 +119,7 @@
 | ID | Slice | Size | Done when | Status |
 |----|-------|------|-----------|--------|
 | **E1** | OAuth pair ≥3 stores — Admin vs crawl GTIN table | L | `research/experiments/E1-oauth-pairs.md` + R2 table | 🚫 |
-| **E2** | Compare API headline on film store | S | `POST /audit/compare` on glossier shows UCP GTIN | ⬜ |
+| **E2** | Compare API headline on film store | S | `POST /audit/compare` on glossier shows UCP GTIN | ✅ |
 
 ---
 

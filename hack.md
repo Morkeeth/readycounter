@@ -155,3 +155,7 @@ Done-when (ran 2026-08-31T21:31Z):
   `demo/PITCH-TOMORROW.md` for morning pitch · `NIGHT-SLICES.md` ticked.
   `npm run verify && npm run build` exit 0. Branch `night/gates-that-lie-2026-08-31`.
   **Oscar:** `vercel --prod` · film · Devpost.
+
+- 2026-08-31 — **Hammer pass (autonomy):** B7 Offer% rankings column · batch publish fields ·
+  compare API offer headline · ONBOARDING agent path · E2 glossier doc ·
+  SESSION-STATUS + SUBMISSION-PACK sync · verify green.

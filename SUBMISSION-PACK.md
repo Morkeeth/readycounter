@@ -1,7 +1,8 @@
 # Submission pack — ReadyCounter · WebMCP Challenge
 
-**Deadline:** Wed 3 Sep 2026 @ 22:00 CEST  
-**Devpost:** https://webmcp.devpost.com/
+**Deadline:** Wed Sep 3, 2026 @ 1pm PDT  
+**Devpost:** https://webmcp.devpost.com/  
+**Pitch:** `demo/PITCH-TOMORROW.md`
 
 ---
 
@@ -9,6 +10,7 @@
 
 ```
 https://tooltruth-webmcp.vercel.app
+https://tooltruth-webmcp.vercel.app/?view=integrations&demo=1
 ```
 
 ## Repo
@@ -22,35 +24,22 @@ See [`DEVPOST.md`](./DEVPOST.md) for full text.
 | Field | Value |
 |-------|-------|
 | **Name** | ReadyCounter |
-| **Tagline** | Agent-ready storefront with readiness score + co-shop |
-| **Built with** | React, TypeScript, Vite, WebMCP, Zustand |
+| **Tagline** | Agent commerce. Now reviewable. Proof. |
+| **Built with** | React, TypeScript, Vite, WebMCP, Zustand, Render KV |
 
 ## Testing instructions (judges)
 
-1. Open **live URL** (no WebMCP flag required)
-2. Click **Start shopping**
-3. Add a product → refresh → order persists
-4. **Copy co-shop link** → open in incognito → same order
-5. Switch store to **Neon Matcha Lab** → **Readiness** tab → **65/100**, three different failures (account wall 0/15, payment 0/11, records 2/6) while the CAPTCHA line passes
-6. Open **Connect** → **Agent tool console** → run `get_readiness_score` + `prepare_checkout`
-7. Optional: Chrome `chrome://flags/#enable-webmcp-testing` → 16 tools register live
+1. Open **Connect** tab — **148** parsed · paste **colourpop.com** → audit
+2. Scroll **DTC rankings** — filter **UCP GTIN · scrape empty**
+3. **Re-audit** same URL → delta receipt
+4. **Prove in co-shop** or **Agent tool console** → `prepare_checkout` (never charges)
+5. **Readiness** → ember-oak CAPTCHA **70→94** sandbox proof
+6. Optional: Chrome `chrome://flags/#enable-webmcp-testing` → **18** tools live
 
 ## Video spine
 
-See [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md) — lead with share link, not harness.
+`demo/FILM-AND-SUBMIT.md` · `demo/voiceover.mp3` (~102s)
 
-## Sealed prediction (before submit)
+## Constitution
 
-| Prediction | Kill bar |
-|------------|----------|
-| Judges click live URL | ≥1 partner comment mentions merchant readiness |
-| Share link demo | Film shows incognito same-order |
-
----
-
-## Oscar-only clicks
-
-- [ ] Deploy Vercel
-- [ ] Paste URL above
-- [ ] Upload video
-- [ ] Submit Devpost
+`prepare_checkout` never charges a card.

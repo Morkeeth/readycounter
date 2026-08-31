@@ -23,12 +23,14 @@ export interface AuditBatchSummary {
   succeeded: number;
   avgCatalogScore: number;
   avgGtinPct: number;
+  avgOfferPct?: number | null;
   rows: Array<{
     url: string;
     storeId?: string;
     catalogScore?: number;
     catalogBudget?: number;
     gtinPct?: number;
+    offerPct?: number | null;
     captchaHint?: boolean;
     method?: string;
     products?: number;
@@ -77,6 +79,11 @@ export async function saveAuditBatchToKv(rows: AuditBatchSummary['rows']): Promi
     succeeded.length === 0
       ? 0
       : Math.round(succeeded.reduce((n, r) => n + (r.gtinPct ?? 0), 0) / succeeded.length);
+  const withOffer = succeeded.filter((r) => r.offerPct != null);
+  const avgOffer =
+    withOffer.length === 0
+      ? null
+      : Math.round(withOffer.reduce((n, r) => n + (r.offerPct ?? 0), 0) / withOffer.length);
 
   const summary: AuditBatchSummary = {
     at: new Date().toISOString(),
@@ -84,6 +91,7 @@ export async function saveAuditBatchToKv(rows: AuditBatchSummary['rows']): Promi
     succeeded: succeeded.length,
     avgCatalogScore: avgCatalog,
     avgGtinPct: avgGtin,
+    avgOfferPct: avgOffer,
     rows,
   };
   await kvSet(AUDIT_BATCH_KEY, JSON.stringify(summary));
