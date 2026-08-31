@@ -143,6 +143,14 @@ export interface FieldReviewPayload {
   companionTool: string;
 }
 
+export interface PolicySmokePayload {
+  privacyUrl: string | null;
+  termsUrl: string | null;
+  privacyOk: boolean | null;
+  termsOk: boolean | null;
+  note?: string;
+}
+
 export interface UrlAuditResponse {
   ok: true;
   storeId: string;
@@ -150,13 +158,23 @@ export interface UrlAuditResponse {
   productCount: number;
   score: number;
   scoreNote?: string;
+  offerPct?: number | null;
+  policySmoke?: PolicySmokePayload | null;
   summary?: {
     catalogScore: number;
     catalogBudget: number;
     fullScore: number;
     unmeasuredLineIds: string[];
   };
-  meta?: { url: string; method: string; gtinPct?: number; captchaHint?: boolean };
+  meta?: {
+    url: string;
+    method: string;
+    gtinPct?: number;
+    captchaHint?: boolean;
+    offerPct?: number | null;
+    offerSampleSize?: number;
+    policySmoke?: PolicySmokePayload | null;
+  };
   fieldReview?: FieldReviewPayload;
   bookmark: string;
   nextSteps?: string[];

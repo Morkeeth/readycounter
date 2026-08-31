@@ -1,6 +1,6 @@
 import type { Product } from '../types/commerce';
 import type { StoreDefinition } from '../data/stores';
-import type { StoreAuditMeta, StoreAuditSignals } from '../types/audit';
+import type { PolicySmokeResult, StoreAuditMeta, StoreAuditSignals } from '../types/audit';
 import { importShopifyFeed, type ShopifyCatalogExport } from '../integrations/shopify-catalog';
 import { assertSafeAuditUrl } from './ssrf';
 
@@ -91,18 +91,126 @@ function collectProductNodes(blocks: unknown[]): Record<string, unknown>[] {
   return out;
 }
 
-function offerPrice(offers: unknown): number {
-  if (!offers || typeof offers !== 'object') return 0;
+function offerNodes(offers: unknown): Record<string, unknown>[] {
+  if (!offers || typeof offers !== 'object') return [];
   const o = offers as Record<string, unknown>;
-  const list = asArray(o.offers ?? o);
-  for (const item of list) {
-    if (!item || typeof item !== 'object') continue;
-    const row = item as Record<string, unknown>;
+  return asArray(o.offers ?? o).filter(
+    (item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object',
+  );
+}
+
+function offerPrice(offers: unknown): number {
+  for (const row of offerNodes(offers)) {
     const price = row.price ?? row.lowPrice ?? row.highPrice;
     const n = typeof price === 'string' ? parseFloat(price) : typeof price === 'number' ? price : NaN;
     if (Number.isFinite(n) && n > 0) return n;
   }
   return 0;
+}
+
+/** Exported for verify scripts — % JSON-LD Product nodes with Offer+price. */
+export function computeOfferPct(nodes: Record<string, unknown>[]): {
+  offerPct: number | null;
+  sampleSize: number;
+} {
+  if (nodes.length === 0) return { offerPct: null, sampleSize: 0 };
+  let withOffer = 0;
+  for (const node of nodes) {
+    const offers = offerNodes(node.offers);
+    if (offers.length === 0) continue;
+    const hasPrice = offers.some((row) => {
+      const price = row.price ?? row.lowPrice ?? row.highPrice;
+      const n = typeof price === 'string' ? parseFloat(price) : typeof price === 'number' ? price : NaN;
+      return Number.isFinite(n) && n > 0;
+    });
+    if (hasPrice) withOffer += 1;
+  }
+  return {
+    offerPct: Math.round((withOffer / nodes.length) * 100),
+    sampleSize: nodes.length,
+  };
+}
+
+function resolvePolicyHref(href: string, origin: string): string | null {
+  try {
+    if (href.startsWith('//')) return `https:${href}`;
+    if (href.startsWith('http://') || href.startsWith('https://')) return href;
+    if (href.startsWith('/')) return `${origin}${href}`;
+    return new URL(href, `${origin}/`).href;
+  } catch {
+    return null;
+  }
+}
+
+function discoverPolicyUrls(html: string, origin: string): Pick<PolicySmokeResult, 'privacyUrl' | 'termsUrl'> {
+  let privacyUrl: string | null = null;
+  let termsUrl: string | null = null;
+  const hrefRe = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  let match: RegExpExecArray | null;
+  while ((match = hrefRe.exec(html)) !== null) {
+    const href = match[1] ?? '';
+    const text = stripHtml(match[2] ?? '').toLowerCase();
+    const lower = href.toLowerCase();
+    const abs = resolvePolicyHref(href, origin);
+    if (!abs) continue;
+    if (
+      !privacyUrl &&
+      (/\bprivacy\b/i.test(text) ||
+        /privacy[-_]?policy/i.test(lower) ||
+        /\/privacy/i.test(lower) ||
+        /data[-_]?privacy/i.test(lower))
+    ) {
+      privacyUrl = abs;
+    }
+    if (
+      !termsUrl &&
+      (/\bterms\b/i.test(text) ||
+        /terms[-_]?(of[-_]?service|and[-_]?conditions|of[-_]?use)?/i.test(lower) ||
+        /\/terms/i.test(lower) ||
+        /\/tos\b/i.test(lower))
+    ) {
+      termsUrl = abs;
+    }
+  }
+  return { privacyUrl, termsUrl };
+}
+
+async function smokePolicyUrl(url: string): Promise<boolean | null> {
+  const { text, status } = await fetchText(url);
+  if (status === 200 && text && text.trim().length > 80) return true;
+  if (status === 0) return null;
+  return false;
+}
+
+/** Exported for verify scripts. */
+export async function runPolicySmoke(
+  html: string | null,
+  origin: string,
+): Promise<PolicySmokeResult> {
+  if (!html) {
+    return {
+      privacyUrl: null,
+      termsUrl: null,
+      privacyOk: null,
+      termsOk: null,
+      note: 'Homepage not fetched — policy URLs unknown',
+    };
+  }
+  const { privacyUrl, termsUrl } = discoverPolicyUrls(html, origin);
+  if (!privacyUrl && !termsUrl) {
+    return {
+      privacyUrl: null,
+      termsUrl: null,
+      privacyOk: null,
+      termsOk: null,
+      note: 'No privacy or terms links found in homepage HTML',
+    };
+  }
+  const [privacyOk, termsOk] = await Promise.all([
+    privacyUrl ? smokePolicyUrl(privacyUrl) : Promise.resolve(null),
+    termsUrl ? smokePolicyUrl(termsUrl) : Promise.resolve(null),
+  ]);
+  return { privacyUrl, termsUrl, privacyOk, termsOk };
 }
 
 function jsonLdToProducts(nodes: Record<string, unknown>[]): Product[] {
@@ -253,16 +361,23 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
 
   const homepage = await fetchText(parsed.href);
   const htmlSignals = homepage.text ? detectSignals(homepage.text) : { captchaHints: false, accountWallHints: false };
+  const policySmoke = await runPolicySmoke(homepage.text, origin);
+  const homepageBlocks = homepage.text ? extractJsonLdBlocks(homepage.text) : [];
+  const homepageProductNodes = collectProductNodes(homepageBlocks);
+  const { offerPct, sampleSize: offerSampleSize } = computeOfferPct(homepageProductNodes);
 
   const fromJson = await fetchShopifyProductsJson(origin);
   if (fromJson) {
     const signals: StoreAuditSignals = {
       productsJson: true,
-      jsonLdBlocks: 0,
+      jsonLdBlocks: homepageBlocks.length,
       gtinCoverage: gtinCoverage(fromJson),
       captchaHints: htmlSignals.captchaHints,
       accountWallHints: htmlSignals.accountWallHints,
       checkoutProbed: false,
+      offerPct,
+      offerSampleSize,
+      policySmoke,
     };
     const store = attachAudit(
       {
@@ -319,6 +434,9 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
     captchaHints: htmlSignals.captchaHints,
     accountWallHints: htmlSignals.accountWallHints,
     checkoutProbed: false,
+    offerPct,
+    offerSampleSize,
+    policySmoke,
   };
 
   const store = attachAudit(

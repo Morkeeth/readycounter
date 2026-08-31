@@ -47,7 +47,7 @@ export function DevToolPanel() {
   };
 
   return (
-    <details className="dev-panel">
+    <details className="dev-panel" id="agent-tool-console">
       <summary>Path B — Agent tool console (no WebMCP flag)</summary>
       <div className="dev-panel__body">
         <p className="dev-panel__hint">

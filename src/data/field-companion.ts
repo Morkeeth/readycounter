@@ -249,6 +249,14 @@ export function reviewAgainstField(input: {
   catalogScore?: number;
   productsJsonOk?: boolean;
   accountWall?: boolean;
+  offerPct?: number | null;
+  policySmoke?: {
+    privacyUrl?: string | null;
+    termsUrl?: string | null;
+    privacyOk?: boolean | null;
+    termsOk?: boolean | null;
+    note?: string;
+  } | null;
   error?: string;
 }) {
   const feedBlocked = Boolean(input.error) || input.productsJsonOk === false;
@@ -291,6 +299,30 @@ export function reviewAgainstField(input: {
       severity: 'high',
       note: 'Account wall set — agents fail guest checkout (~22% of agent failures).',
     });
+  }
+
+  if (input.offerPct != null && input.offerPct < 50) {
+    flags.push({
+      issueId: 'schema-offer',
+      severity: 'medium',
+      note: `Offer JSON-LD coverage ${input.offerPct}% on homepage Product nodes — agents need Offer with price and availability.`,
+    });
+  }
+
+  const policy = input.policySmoke;
+  if (policy) {
+    const missingBoth = !policy.privacyUrl && !policy.termsUrl;
+    const privacyBad = policy.privacyUrl != null && policy.privacyOk === false;
+    const termsBad = policy.termsUrl != null && policy.termsOk === false;
+    if (missingBoth || privacyBad || termsBad) {
+      flags.push({
+        issueId: 'acp-eligibility',
+        severity: 'high',
+        note: missingBoth
+          ? (policy.note ?? 'Privacy and terms URLs not found on homepage — ACP Instant Checkout needs both.')
+          : `Policy smoke failed — privacy ${policy.privacyOk === false ? 'HTTP fail' : policy.privacyUrl ? 'ok' : 'missing'}, terms ${policy.termsOk === false ? 'HTTP fail' : policy.termsUrl ? 'ok' : 'missing'}.`,
+      });
+    }
   }
 
   const capped = flags.slice(0, 3);

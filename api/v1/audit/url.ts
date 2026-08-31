@@ -51,6 +51,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     catalogScore: summary.catalogScore,
     productsJsonOk: audited.meta.signals.productsJson || audited.meta.productCount > 0,
     accountWall: audited.meta.signals.accountWallHints,
+    offerPct: audited.meta.signals.offerPct,
+    policySmoke: audited.meta.signals.policySmoke,
   });
 
   return res.status(201).json({
@@ -62,12 +64,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     scoreNote: `Catalog-only score (${summary.catalogBudget} pt budget). ${summary.unmeasuredLineIds.length} checkout lines need OAuth or agent journey.`,
     summary,
     findings,
+    offerPct: audited.meta.signals.offerPct ?? null,
+    policySmoke: audited.meta.signals.policySmoke ?? null,
     meta: {
       url: audited.meta.url,
       method: audited.meta.method,
       source: audited.meta.source,
       gtinPct: audited.meta.signals.gtinCoverage,
       captchaHint: audited.meta.signals.captchaHints,
+      offerPct: audited.meta.signals.offerPct ?? null,
+      offerSampleSize: audited.meta.signals.offerSampleSize ?? 0,
+      policySmoke: audited.meta.signals.policySmoke ?? null,
     },
     fieldReview,
     bookmark: `/?store=${encodeURIComponent(audited.store.id)}&view=merchant`,

@@ -130,9 +130,8 @@ export function IntegrationsPanel({
           <p className="integrations__section-label">1 · Measure</p>
           <h3>Audit a storefront URL</h3>
           <p>
-            Read public <code>products.json</code> or JSON-LD. Checkout walls stay NOT MEASURED
-            until OAuth. After the crawl you see where you sit vs the field batch — then ≤3 “do
-            this week” steps.
+            Paste a URL — catalog bill, YOU·FIELD strip, handbook flags, Offer% and policy smoke on
+            the crawl.
           </p>
           <StorefrontAuditForm
             navigateToBill={navigateToBill}
@@ -141,14 +140,34 @@ export function IntegrationsPanel({
           />
         </article>
 
-        {/* 2 · Against the field */}
         <FieldCompanion />
 
-        {/* 3 · Prove / WebMCP */}
-        <WhyWebMCP webmcpLive={webmcpLive} toolCount={toolCount} />
+        <RankingsPanel
+          initialVertical={rankingsVertical}
+          initialUcpFilter={rankingsUcpFilter}
+          highlightHost={rankingsHost}
+        />
+
+        {/* 3 · Prove with WebMCP */}
+        <div id="prove-webmcp" className="integrations__prove">
+          <p className="integrations__section-label integrations__section-label--prove">
+            3 · Prove with WebMCP
+          </p>
+          <WhyWebMCP webmcpLive={webmcpLive} toolCount={toolCount} />
+          <DevToolPanel />
+        </div>
 
         <article className="integrations__card integrations__card--wide">
-          <p className="integrations__section-label">3 · Admin path</p>
+          <p className="integrations__section-label">4 · Re-measure</p>
+          <h3>Delta receipt · share link</h3>
+          <p>
+            Re-audit the same URL after a fix — delta prints above the bill. Copy the field receipt
+            or share <code>?audit_url=</code> so a stranger can re-run the crawl cold.
+          </p>
+        </article>
+
+        <article className="integrations__card integrations__card--wide">
+          <p className="integrations__section-label">Admin path</p>
           <h3>Connect Shopify OAuth</h3>
           <p>Read-only Admin API — full catalog, barcodes, prices. No payment scopes.</p>
           <p className="integrations__muted">
@@ -179,12 +198,6 @@ export function IntegrationsPanel({
           </div>
           {shopifyMsg ? <p className="integrations__ok">{shopifyMsg}</p> : null}
         </article>
-
-        <RankingsPanel
-          initialVertical={rankingsVertical}
-          initialUcpFilter={rankingsUcpFilter}
-          highlightHost={rankingsHost}
-        />
 
         <SandboxShowcase />
 
@@ -247,8 +260,6 @@ export function IntegrationsPanel({
           </button>
         </details>
       </div>
-
-      <DevToolPanel />
 
       <details className="launch-brief-details">
         <summary>Launch kit — research, test cases, demo script</summary>

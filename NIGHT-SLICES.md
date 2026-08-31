@@ -57,15 +57,15 @@
 
 | ID | Slice | Size | Done when | Status |
 |----|-------|------|-----------|--------|
-| **B1** | **Offer extractor** — % Product JSON-LD nodes with Offer+price+availability on crawl sample | M | `url-audit.ts` returns `offerPct`; unit logic in lib | ⬜ |
-| **B2** | **Audit API surface** — `POST /audit/url` includes `offerPct` + `policySmoke` in meta | S | `curl` colourpop returns both fields (null ok with reason) | ⬜ |
-| **B3** | **Audit UI chips** — Offer% + policy pass/fail on audit success panel | S | `StorefrontAuditForm` shows chips after audit | ⬜ |
-| **B4** | **Policy discovery** — find privacy + terms URLs from homepage/footer/JSON-LD | M | `policySmoke: { privacyUrl, termsUrl, privacyOk, termsOk }` | ⬜ |
-| **B5** | **Policy HTTP smoke** — GET each URL; 200 = ok; missing = honest null | S | Smoke runs in audit path; no false “eligible” | ⬜ |
-| **B6** | **Field review flags** — wire low `offerPct` → schema-offer; bad policy → acp-eligibility | S | `reviewAgainstField` fires when signals present | ⬜ |
+| **B1** | **Offer extractor** — % Product JSON-LD nodes with Offer+price+availability on crawl sample | M | `url-audit.ts` returns `offerPct`; unit logic in lib | ✅ |
+| **B2** | **Audit API surface** — `POST /audit/url` includes `offerPct` + `policySmoke` in meta | S | `curl` colourpop returns both fields (null ok with reason) | ✅ |
+| **B3** | **Audit UI chips** — Offer% + policy pass/fail on audit success panel | S | `StorefrontAuditForm` shows chips after audit | ✅ |
+| **B4** | **Policy discovery** — find privacy + terms URLs from homepage/footer/JSON-LD | M | `policySmoke: { privacyUrl, termsUrl, privacyOk, termsOk }` | ✅ |
+| **B5** | **Policy HTTP smoke** — GET each URL; 200 = ok; missing = honest null | S | Smoke runs in audit path; no false “eligible” | ✅ |
+| **B6** | **Field review flags** — wire low `offerPct` → schema-offer; bad policy → acp-eligibility | S | `reviewAgainstField` fires when signals present | ✅ |
 | **B7** | **Rankings signal** (stretch) — Offer% column or chip on crawled rows | M | Rankings table or API row includes `offerPct` | ⬜ |
-| **B8** | **R7 experiment doc** — `research/experiments/R7-offer-on-crawl.md` with 3 hosts + numbers | S | File on disk with curl repro | ⬜ |
-| **B9** | **Verify script** — assert offer extractor on fixture HTML | S | `verify-url-audit.mjs` or sibling passes | ⬜ |
+| **B8** | **R7 experiment doc** — `research/experiments/R7-offer-on-crawl.md` with 3 hosts + numbers | S | File on disk with curl repro | ✅ |
+| **B9** | **Verify script** — assert offer extractor on fixture HTML | S | `verify-url-audit.mjs` or sibling passes | ✅ |
 
 **B done when:** audit returns offerPct + policySmoke; UI shows them; R7 doc exists; verify green.
 

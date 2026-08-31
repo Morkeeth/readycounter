@@ -90,17 +90,17 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Night wave RC-C (2026-08-31):** Partner-grade narrative — `LIGHTHOUSE-VISION.md`, `SHOPIFY-PARTNER-BRIEF.md`, README stranger hero, `audits/STRANGER-PASS-2026-08-31.md`, DEVPOST sync.
+**Night wave RC-WEBMCP-SHAPE (2026-08-31):** Connect arc Measure → Compare → Prove → Re-measure; `offerPct` + `policySmoke` on audit API + UI chips; WebMCP proof CTA; `LAUNCH.md` real file.
 
-**Slice 1 (this run):** Lighthouse narrative + stranger audit on live URL.
+**Slice 1 (this run):** WebMCP shape + Offer/ACP measure on crawl.
 
 ```text
-Done-when (ran 2026-08-31T21:31Z):
-  test -f LIGHTHOUSE-VISION.md && test -f SHOPIFY-PARTNER-BRIEF.md && test -f audits/STRANGER-PASS-2026-08-31.md → exit 0
+Done-when (ran 2026-08-31T21:52Z):
+  node scripts/verify-launch.mjs → exit 0
   npm run verify → exit 0
   npm run build → exit 0
-  PLAYWRIGHT_BASE_URL=https://tooltruth-webmcp.vercel.app npx playwright test e2e/stranger-pass.spec.ts → 1 passed
-  curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,ucp}' → 148, 78, gtinWhereCrawlZero 11
+  node --import tsx/esm -e "import { auditStorefrontUrl } from './src/server/url-audit.ts'; ..." (colourpop/glossier/allbirds) → offerPct + policySmoke printed
+  test -f research/experiments/R7-offer-on-crawl.md → exit 0
 ```
 
 ## LOG
@@ -146,3 +146,5 @@ Done-when (ran 2026-08-31T21:31Z):
 - 2026-08-31 — **RC-A lighthouse UI:** `ConnectLighthouseHero` (148 width live from rankings API, 78.6% abandon from `sources.ts` only) · `FieldCompareStrip` YOU·FIELD·DELTA · `field-compare.ts` percentile join · rankings CTA with vertical/UCP gap filter · `?audit_url=` deep link + copy receipt · `verify-field-compare.mjs`.
 
 - 2026-08-31 — **RC-C narrative wave:** `LIGHTHOUSE-VISION.md` · `SHOPIFY-PARTNER-BRIEF.md` · README lighthouse stranger hero (148 width, 3-step path) · `DEVPOST.md` elevator sync with `demo/AMBITION.md` · `audits/STRANGER-PASS-2026-08-31.md` (live URL Playwright + API) · `e2e/stranger-pass.spec.ts` · README 16→18 tools fix.
+
+- 2026-08-31 — **RC-WEBMCP-SHAPE:** `LAUNCH.md` real file (symlink removed) · `offerPct` + `policySmoke` on `POST /api/v1/audit/url` + audit UI chips · `reviewAgainstField` flags for schema-offer + acp-eligibility · Connect labels 1–4 (Measure/Compare/Prove/Re-measure) · WebMCP + DevToolPanel after audit path · **Prove in co-shop** CTA · `research/experiments/R7-offer-on-crawl.md` (3 hosts) · `verify-url-audit.mjs` offer+policy fixtures · branch `cursor/rc-webmcp-shape-de03`.

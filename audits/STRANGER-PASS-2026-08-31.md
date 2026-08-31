@@ -15,6 +15,17 @@
 | 2 | Rankings width | **PASS** — DTC rankings table **148** rows, UCP filter **UCP GTIN · scrape empty · 11** |
 | 3 | Paste audit (colourpop.com) | **PASS** — catalog bill, navigates to merchant audit view, **0/24** catalog |
 | 4 | Re-audit delta | **PASS** — **Re-audit & show delta** button, delta/prior copy appears |
+| 5 | **Prove Path B (branch)** | **PASS** — after audit: **Prove in co-shop** + **Tool console** buttons; scroll to **3 · Prove with WebMCP**; run `search_catalog` in Agent tool console |
+
+### WebMCP Path B (branch — film this after deploy)
+
+1. Audit `https://colourpop.com` on Connect  
+2. Click **Prove in co-shop** → lands `/?view=shop&store=audit-colourpop-com`  
+3. Or click **Tool console** → expand **Path B — Agent tool console**  
+4. Run **search_catalog: espresso** (or first SKU on audited catalog)  
+5. Header shows **18 tools** on `GET /api/v1/tools`
+
+**Path A:** Chrome `chrome://flags/#enable-webmcp-testing` → reload → assistant calls same tools in-tab.
 
 **Command:**
 

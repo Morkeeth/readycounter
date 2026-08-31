@@ -52,6 +52,10 @@ export function StorefrontAuditForm({
   } | null>(null);
   const [priorReady, setPriorReady] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [auditSignals, setAuditSignals] = useState<{
+    offerPct: number | null;
+    policySmoke: import('../api/client').PolicySmokePayload | null;
+  } | null>(null);
 
   const hasPrior = useMemo(() => {
     if (priorReady) return true;
@@ -86,6 +90,7 @@ export function StorefrontAuditForm({
     setDelta(null);
     setFieldCompare(null);
     setYouSnapshot(null);
+    setAuditSignals(null);
     const prior = loadPriorAudit(target);
     const result = await apiAuditUrl(target);
     setBusy(false);
@@ -150,13 +155,56 @@ export function StorefrontAuditForm({
       `${data.name}: ${data.productCount} SKUs · catalog ${catalogScore}/${catalogBudget} pts (catalog budget — never /100 for field crawls)`,
     );
     setFieldReview(data.fieldReview ?? null);
+    setAuditSignals({
+      offerPct: data.offerPct ?? data.meta?.offerPct ?? null,
+      policySmoke: data.policySmoke ?? data.meta?.policySmoke ?? null,
+    });
     onSuccess?.(data.storeId);
     if (navigateToBill) onOpenBill?.();
+    document.getElementById('prove-webmcp')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const openBill = () => {
     if (!lastStoreId) return;
     onOpenBill?.();
+  };
+
+  const openProveCoShop = () => {
+    if (!lastStoreId) return;
+    const next = new URL(window.location.href);
+    next.searchParams.set('view', 'shop');
+    next.searchParams.set('store', lastStoreId);
+    window.location.href = next.toString();
+  };
+
+  const openProveConsole = () => {
+    document.getElementById('agent-tool-console')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const details = document.querySelector('#agent-tool-console details') as HTMLDetailsElement | null;
+    if (details) details.open = true;
+  };
+
+  const policyLabel = (smoke: import('../api/client').PolicySmokePayload | null) => {
+    if (!smoke) return 'Policy · not measured';
+    if (!smoke.privacyUrl && !smoke.termsUrl) return 'Policy · URLs not found';
+    const privacy = smoke.privacyUrl
+      ? smoke.privacyOk === true
+        ? 'privacy ok'
+        : smoke.privacyOk === false
+          ? 'privacy fail'
+          : 'privacy ?'
+      : 'privacy missing';
+    const terms = smoke.termsUrl
+      ? smoke.termsOk === true
+        ? 'terms ok'
+        : smoke.termsOk === false
+          ? 'terms fail'
+          : 'terms ?'
+      : 'terms missing';
+    const pass =
+      (smoke.privacyUrl ? smoke.privacyOk === true : true) &&
+      (smoke.termsUrl ? smoke.termsOk === true : true) &&
+      Boolean(smoke.privacyUrl || smoke.termsUrl);
+    return pass ? `Policy · pass (${privacy}, ${terms})` : `Policy · fail (${privacy}, ${terms})`;
   };
 
   const openRankings = () => {
@@ -167,6 +215,12 @@ export function StorefrontAuditForm({
     });
     document.getElementById('rankings-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  const policyPass = auditSignals?.policySmoke
+    ? (auditSignals.policySmoke.privacyUrl ? auditSignals.policySmoke.privacyOk === true : true) &&
+      (auditSignals.policySmoke.termsUrl ? auditSignals.policySmoke.termsOk === true : true) &&
+      Boolean(auditSignals.policySmoke.privacyUrl || auditSignals.policySmoke.termsUrl)
+    : null;
 
   return (
     <div className="audit-form" id="audit-storefront">
@@ -201,6 +255,16 @@ export function StorefrontAuditForm({
             Open bill
           </button>
         ) : null}
+        {lastStoreId ? (
+          <>
+            <button type="button" className="btn btn--secondary" onClick={openProveCoShop}>
+              Prove in co-shop
+            </button>
+            <button type="button" className="btn btn--ghost" onClick={openProveConsole}>
+              Tool console
+            </button>
+          </>
+        ) : null}
         {fieldCompare ? (
           <>
             <button type="button" className="btn btn--secondary" onClick={openRankings}>
@@ -218,8 +282,42 @@ export function StorefrontAuditForm({
         ) : null}
       </div>
 
+      {auditSignals ? (
+        <div className="audit-form__chips" aria-label="Crawl signals">
+          <span
+            className={
+              auditSignals.offerPct == null
+                ? 'audit-form__chip audit-form__chip--muted'
+                : auditSignals.offerPct >= 50
+                  ? 'audit-form__chip audit-form__chip--ok'
+                  : 'audit-form__chip audit-form__chip--warn'
+            }
+          >
+            Offer%{' '}
+            {auditSignals.offerPct == null ? 'n/a (no JSON-LD products)' : `${auditSignals.offerPct}%`}
+          </span>
+          <span
+            className={
+              policyPass === true
+                ? 'audit-form__chip audit-form__chip--ok'
+                : policyPass === false
+                  ? 'audit-form__chip audit-form__chip--warn'
+                  : 'audit-form__chip audit-form__chip--muted'
+            }
+          >
+            {policyLabel(auditSignals.policySmoke)}
+          </span>
+        </div>
+      ) : null}
+
       {fieldCompare && youSnapshot ? (
         <FieldCompareStrip compare={fieldCompare} you={youSnapshot} delta={delta} />
+      ) : null}
+
+      {delta ? (
+        <p className="integrations__ok audit-form__remeasure">
+          4 · Re-measure — delta on catalog, GTIN, and SKU count from your prior audit.
+        </p>
       ) : null}
 
       {msg ? <p className="integrations__ok">{msg}</p> : null}

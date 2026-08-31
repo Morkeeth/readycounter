@@ -1156,6 +1156,51 @@ a {
 
 /* ---------- why webmcp ---------- */
 
+.integrations__section-label--prove {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+}
+
+.integrations__prove {
+  display: contents;
+}
+
+.audit-form__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.65rem 0 0.25rem;
+}
+
+.audit-form__chip {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--rule);
+  background: var(--paper-2);
+}
+
+.audit-form__chip--ok {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.audit-form__chip--warn {
+  border-color: var(--stamp);
+  color: var(--stamp);
+}
+
+.audit-form__chip--muted {
+  color: var(--ink-soft);
+}
+
+.audit-form__remeasure {
+  margin-top: 0.5rem;
+  font-size: 0.82rem;
+}
+
 .why-webmcp__lead {
   margin: 0 0 1rem;
   font-size: 0.85rem;
