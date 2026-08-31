@@ -249,6 +249,14 @@ export function reviewAgainstField(input: {
   catalogScore?: number;
   productsJsonOk?: boolean;
   accountWall?: boolean;
+  offerPct?: number | null;
+  policySmoke?: {
+    privacyUrl: string | null;
+    termsUrl: string | null;
+    privacyOk: boolean | null;
+    termsOk: boolean | null;
+    reason?: string;
+  };
   error?: string;
 }) {
   const feedBlocked = Boolean(input.error) || input.productsJsonOk === false;
@@ -290,6 +298,26 @@ export function reviewAgainstField(input: {
       issueId: 'account-wall',
       severity: 'high',
       note: 'Account wall set — agents fail guest checkout (~22% of agent failures).',
+    });
+  }
+  if (input.offerPct != null && input.offerPct < 20) {
+    flags.push({
+      issueId: 'schema-offer',
+      severity: 'medium',
+      note: `Offer JSON-LD on ${input.offerPct}% of Product nodes — field benchmark ~19% (Digital Applied). Add Offer with price + availability on PDPs.`,
+    });
+  }
+  const ps = input.policySmoke;
+  if (ps && (ps.privacyOk === false || ps.termsOk === false || (!ps.privacyUrl && !ps.termsUrl))) {
+    const parts: string[] = [];
+    if (!ps.privacyUrl) parts.push('privacy URL not found');
+    else if (ps.privacyOk === false) parts.push('privacy URL not reachable');
+    if (!ps.termsUrl) parts.push('terms URL not found');
+    else if (ps.termsOk === false) parts.push('terms URL not reachable');
+    flags.push({
+      issueId: 'acp-eligibility',
+      severity: 'medium',
+      note: `ACP policy smoke: ${parts.join('; ')} — Instant Checkout needs live privacy + ToS.`,
     });
   }
 

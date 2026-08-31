@@ -51,6 +51,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     catalogScore: summary.catalogScore,
     productsJsonOk: audited.meta.signals.productsJson || audited.meta.productCount > 0,
     accountWall: audited.meta.signals.accountWallHints,
+    offerPct: audited.meta.offerPct,
+    policySmoke: audited.meta.policySmoke,
   });
 
   return res.status(201).json({
@@ -68,6 +70,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       source: audited.meta.source,
       gtinPct: audited.meta.signals.gtinCoverage,
       captchaHint: audited.meta.signals.captchaHints,
+      offerPct: audited.meta.offerPct,
+      policySmoke: audited.meta.policySmoke,
     },
     fieldReview,
     bookmark: `/?store=${encodeURIComponent(audited.store.id)}&view=merchant`,

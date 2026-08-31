@@ -156,7 +156,20 @@ export interface UrlAuditResponse {
     fullScore: number;
     unmeasuredLineIds: string[];
   };
-  meta?: { url: string; method: string; gtinPct?: number; captchaHint?: boolean };
+  meta?: {
+    url: string;
+    method: string;
+    gtinPct?: number;
+    captchaHint?: boolean;
+    offerPct?: number | null;
+    policySmoke?: {
+      privacyUrl: string | null;
+      termsUrl: string | null;
+      privacyOk: boolean | null;
+      termsOk: boolean | null;
+      reason?: string;
+    };
+  };
   fieldReview?: FieldReviewPayload;
   bookmark: string;
   nextSteps?: string[];

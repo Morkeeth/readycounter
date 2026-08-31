@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { apiAuditUrl, apiFetchServerStore, apiRankings, type FieldReviewPayload } from '../api/client';
+import { apiAuditUrl, apiFetchServerStore, apiRankings, type FieldReviewPayload, type UrlAuditResponse } from '../api/client';
 import { reviewAgainstField } from '../data/field-companion';
 import { registerCustomStore } from '../data/stores';
 import {
@@ -49,6 +49,8 @@ export function StorefrontAuditForm({
     catalogBudget: number;
     gtinPct: number;
     productCount: number;
+    offerPct: number | null;
+    policySmoke: NonNullable<UrlAuditResponse['meta']>['policySmoke'];
   } | null>(null);
   const [priorReady, setPriorReady] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -107,6 +109,8 @@ export function StorefrontAuditForm({
     const catalogBudget = data.summary?.catalogBudget ?? 24;
     const catalogScore = data.summary?.catalogScore ?? data.score;
     const gtinPct = data.meta?.gtinPct ?? 0;
+    const offerPct = data.meta?.offerPct ?? null;
+    const policySmoke = data.meta?.policySmoke;
     const current = snapshotFromAudit({
       url: data.meta?.url ?? target,
       catalogScore,
@@ -127,6 +131,8 @@ export function StorefrontAuditForm({
       catalogBudget,
       gtinPct,
       productCount: data.productCount,
+      offerPct,
+      policySmoke,
     };
     setYouSnapshot(you);
 
@@ -168,6 +174,21 @@ export function StorefrontAuditForm({
     document.getElementById('rankings-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const proveInCoShop = () => {
+    if (!lastStoreId) return;
+    const next = new URL(window.location.href);
+    next.searchParams.set('view', 'shop');
+    next.searchParams.set('store', lastStoreId);
+    window.location.href = next.toString();
+  };
+
+  const scrollToProve = () => {
+    document.getElementById('run-webmcp')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const policyLabel = (ok: boolean | null | undefined) =>
+    ok === true ? 'pass' : ok === false ? 'fail' : 'not found';
+
   return (
     <div className="audit-form" id="audit-storefront">
       <label className="integrations__shop-label">
@@ -201,6 +222,16 @@ export function StorefrontAuditForm({
             Open bill
           </button>
         ) : null}
+        {lastStoreId ? (
+          <>
+            <button type="button" className="btn btn--secondary" onClick={proveInCoShop}>
+              Prove in co-shop
+            </button>
+            <button type="button" className="btn btn--ghost" onClick={scrollToProve}>
+              WebMCP tools
+            </button>
+          </>
+        ) : null}
         {fieldCompare ? (
           <>
             <button type="button" className="btn btn--secondary" onClick={openRankings}>
@@ -220,6 +251,29 @@ export function StorefrontAuditForm({
 
       {fieldCompare && youSnapshot ? (
         <FieldCompareStrip compare={fieldCompare} you={youSnapshot} delta={delta} />
+      ) : null}
+
+      {youSnapshot ? (
+        <div className="audit-form__chips" role="list" aria-label="Crawl signals">
+          <span className="audit-chip" role="listitem">
+            Offer JSON-LD{' '}
+            <strong>
+              {youSnapshot.offerPct != null ? `${youSnapshot.offerPct}%` : 'no Product nodes'}
+            </strong>
+          </span>
+          <span className="audit-chip" role="listitem">
+            Privacy policy{' '}
+            <strong className={youSnapshot.policySmoke?.privacyOk ? 'integrations__ok' : 'integrations__warn'}>
+              {policyLabel(youSnapshot.policySmoke?.privacyOk)}
+            </strong>
+          </span>
+          <span className="audit-chip" role="listitem">
+            Terms{' '}
+            <strong className={youSnapshot.policySmoke?.termsOk ? 'integrations__ok' : 'integrations__warn'}>
+              {policyLabel(youSnapshot.policySmoke?.termsOk)}
+            </strong>
+          </span>
+        </div>
       ) : null}
 
       {msg ? <p className="integrations__ok">{msg}</p> : null}

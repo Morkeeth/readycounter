@@ -141,14 +141,26 @@ export function IntegrationsPanel({
           />
         </article>
 
-        {/* 2 · Against the field */}
+        {/* 2 · Compare */}
         <FieldCompanion />
 
-        {/* 3 · Prove / WebMCP */}
+        <RankingsPanel
+          initialVertical={rankingsVertical}
+          initialUcpFilter={rankingsUcpFilter}
+          highlightHost={rankingsHost}
+        />
+
+        {/* 3 · Prove with WebMCP */}
         <WhyWebMCP webmcpLive={webmcpLive} toolCount={toolCount} />
 
+        <article className="integrations__card integrations__card--wide integrations__card--prove">
+          <h3>Agent tool console</h3>
+          <p className="integrations__muted">Path B — same handlers as native WebMCP, no Chrome flag required.</p>
+          <DevToolPanel />
+        </article>
+
         <article className="integrations__card integrations__card--wide">
-          <p className="integrations__section-label">3 · Admin path</p>
+          <p className="integrations__section-label">Admin path</p>
           <h3>Connect Shopify OAuth</h3>
           <p>Read-only Admin API — full catalog, barcodes, prices. No payment scopes.</p>
           <p className="integrations__muted">
@@ -179,12 +191,6 @@ export function IntegrationsPanel({
           </div>
           {shopifyMsg ? <p className="integrations__ok">{shopifyMsg}</p> : null}
         </article>
-
-        <RankingsPanel
-          initialVertical={rankingsVertical}
-          initialUcpFilter={rankingsUcpFilter}
-          highlightHost={rankingsHost}
-        />
 
         <SandboxShowcase />
 
@@ -247,8 +253,6 @@ export function IntegrationsPanel({
           </button>
         </details>
       </div>
-
-      <DevToolPanel />
 
       <details className="launch-brief-details">
         <summary>Launch kit — research, test cases, demo script</summary>

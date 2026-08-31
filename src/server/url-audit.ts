@@ -1,7 +1,9 @@
 import type { Product } from '../types/commerce';
 import type { StoreDefinition } from '../data/stores';
-import type { StoreAuditMeta, StoreAuditSignals } from '../types/audit';
+import type { PolicySmoke, StoreAuditMeta, StoreAuditSignals } from '../types/audit';
 import { importShopifyFeed, type ShopifyCatalogExport } from '../integrations/shopify-catalog';
+import { computeOfferPct } from '../lib/offer-schema';
+import { discoverPolicyUrls, smokePolicyUrls } from '../lib/policy-smoke';
 import { assertSafeAuditUrl } from './ssrf';
 
 const FETCH_MS = 15_000;
@@ -16,6 +18,8 @@ export interface UrlAuditMeta {
   jsonLdBlocks: number;
   productCount: number;
   signals: StoreAuditSignals;
+  offerPct: number | null;
+  policySmoke: PolicySmoke;
 }
 
 export type UrlAuditResult =
@@ -253,16 +257,25 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
 
   const homepage = await fetchText(parsed.href);
   const htmlSignals = homepage.text ? detectSignals(homepage.text) : { captchaHints: false, accountWallHints: false };
+  const blocks = homepage.text ? extractJsonLdBlocks(homepage.text) : [];
+  const productNodes = collectProductNodes(blocks);
+  const offerPct = computeOfferPct(productNodes);
+  const policyUrls = homepage.text
+    ? discoverPolicyUrls(homepage.text, origin)
+    : { privacyUrl: null, termsUrl: null };
+  const policySmoke = await smokePolicyUrls(policyUrls.privacyUrl, policyUrls.termsUrl);
 
   const fromJson = await fetchShopifyProductsJson(origin);
   if (fromJson) {
     const signals: StoreAuditSignals = {
       productsJson: true,
-      jsonLdBlocks: 0,
+      jsonLdBlocks: blocks.length,
       gtinCoverage: gtinCoverage(fromJson),
+      offerPct,
       captchaHints: htmlSignals.captchaHints,
       accountWallHints: htmlSignals.accountWallHints,
       checkoutProbed: false,
+      policySmoke,
     };
     const store = attachAudit(
       {
@@ -286,9 +299,11 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
         url: input,
         origin,
         method: 'shopify-products-json',
-        jsonLdBlocks: 0,
+        jsonLdBlocks: blocks.length,
         productCount: fromJson.length,
         signals,
+        offerPct,
+        policySmoke,
       },
     };
   }
@@ -300,8 +315,7 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
     };
   }
 
-  const blocks = extractJsonLdBlocks(homepage.text);
-  const nodes = collectProductNodes(blocks);
+  const nodes = productNodes;
   const products = jsonLdToProducts(nodes);
 
   if (products.length === 0) {
@@ -316,9 +330,11 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
     productsJson: false,
     jsonLdBlocks: blocks.length,
     gtinCoverage: gtinCoverage(products),
+    offerPct,
     captchaHints: htmlSignals.captchaHints,
     accountWallHints: htmlSignals.accountWallHints,
     checkoutProbed: false,
+    policySmoke,
   };
 
   const store = attachAudit(
@@ -347,6 +363,8 @@ export async function auditStorefrontUrl(input: string): Promise<UrlAuditResult>
       jsonLdBlocks: blocks.length,
       productCount: products.length,
       signals,
+      offerPct,
+      policySmoke,
     },
   };
 }
