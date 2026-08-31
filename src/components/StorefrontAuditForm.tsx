@@ -1,8 +1,16 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { apiAuditUrl, apiFetchServerStore, type FieldReviewPayload } from '../api/client';
 import { reviewAgainstField } from '../data/field-companion';
 import { registerCustomStore } from '../data/stores';
+import {
+  computeAuditDelta,
+  loadPriorAudit,
+  savePriorAudit,
+  snapshotFromAudit,
+  type AuditDelta,
+} from '../lib/audit-delta';
 import { useShopStore } from '../store/shopStore';
+import { AuditDeltaReceipt } from './AuditDeltaReceipt';
 import { FieldReviewPanel } from './FieldReviewPanel';
 
 interface StorefrontAuditFormProps {
@@ -27,6 +35,13 @@ export function StorefrontAuditForm({
   const [err, setErr] = useState<string | null>(null);
   const [lastStoreId, setLastStoreId] = useState<string | null>(null);
   const [fieldReview, setFieldReview] = useState<FieldReviewPayload | null>(null);
+  const [delta, setDelta] = useState<AuditDelta | null>(null);
+  const [priorReady, setPriorReady] = useState(false);
+
+  const hasPrior = useMemo(() => {
+    if (priorReady) return true;
+    return Boolean(url.trim() && loadPriorAudit(url.trim()));
+  }, [url, priorReady]);
 
   const audit = async () => {
     const target = url.trim();
@@ -35,6 +50,8 @@ export function StorefrontAuditForm({
     setErr(null);
     setMsg(null);
     setFieldReview(null);
+    setDelta(null);
+    const prior = loadPriorAudit(target);
     const result = await apiAuditUrl(target);
     setBusy(false);
 
@@ -52,9 +69,25 @@ export function StorefrontAuditForm({
     if (store) registerCustomStore(store);
     switchStore(data.storeId);
     setLastStoreId(data.storeId);
-    const catalogBudget = data.summary?.catalogBudget ?? 100;
+    const catalogBudget = data.summary?.catalogBudget ?? 24;
+    const catalogScore = data.summary?.catalogScore ?? data.score;
+    const gtinPct = data.meta?.gtinPct ?? 0;
+    const current = snapshotFromAudit({
+      url: data.meta?.url ?? target,
+      catalogScore,
+      catalogBudget,
+      gtinPct,
+      productCount: data.productCount,
+      method: data.meta?.method,
+    });
+    if (prior) {
+      setDelta(computeAuditDelta(prior, current));
+    }
+    savePriorAudit(current);
+    setPriorReady(true);
+
     setMsg(
-      `${data.name}: ${data.productCount} SKUs · catalog ${data.score}/${catalogBudget} (${data.meta?.method ?? 'audit'})`,
+      `${data.name}: ${data.productCount} SKUs · catalog ${catalogScore}/${catalogBudget} pts (catalog budget — never /100 for field crawls)`,
     );
     setFieldReview(data.fieldReview ?? null);
     onSuccess?.(data.storeId);
@@ -88,7 +121,11 @@ export function StorefrontAuditForm({
           disabled={!url.trim() || busy}
           onClick={() => void audit()}
         >
-          {busy ? 'Crawling catalog…' : 'Audit storefront'}
+          {busy
+            ? 'Crawling catalog…'
+            : hasPrior
+              ? 'Re-audit & show delta'
+              : 'Audit storefront'}
         </button>
         {lastStoreId && !navigateToBill ? (
           <button type="button" className="btn btn--secondary" onClick={openBill}>
@@ -98,6 +135,7 @@ export function StorefrontAuditForm({
       </div>
       {msg ? <p className="integrations__ok">{msg}</p> : null}
       {err ? <p className="integrations__warn">{err}</p> : null}
+      {delta ? <AuditDeltaReceipt delta={delta} /> : null}
       {fieldReview ? (
         <FieldReviewPanel
           review={fieldReview}
@@ -106,8 +144,9 @@ export function StorefrontAuditForm({
         />
       ) : null}
       <p className="integrations__muted">
-        Public <code>products.json</code> or JSON-LD — checkout lines marked NOT MEASURED until
-        OAuth. Saved to Render KV; return via <code>?store=…</code>.
+        Public <code>products.json</code> or JSON-LD — catalog budget only, never a full /100 for
+        field crawls. Re-run the same URL after a fix to get a delta receipt. Checkout walls stay
+        NOT MEASURED until OAuth. Saved to Render KV; return via <code>?store=…</code>.
       </p>
     </div>
   );

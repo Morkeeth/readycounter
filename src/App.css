@@ -1516,6 +1516,67 @@ a {
 
 /* ---------- field review (audit → companion loop) ---------- */
 
+.audit-delta {
+  margin: 0.85rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--counter) 40%, transparent);
+}
+
+.audit-delta--up {
+  border-color: color-mix(in srgb, var(--stamp) 45%, var(--rule));
+}
+
+.audit-delta--down {
+  border-color: color-mix(in srgb, var(--stamp) 25%, var(--rule));
+}
+
+.audit-delta__kicker {
+  margin: 0 0 0.35rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.audit-delta__summary {
+  margin: 0 0 0.65rem;
+  font-size: 0.92rem;
+}
+
+.audit-delta__grid {
+  display: grid;
+  gap: 0.45rem 1rem;
+  margin: 0 0 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.audit-delta__grid dt {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.audit-delta__grid dd {
+  margin: 0.1rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.audit-delta__pp {
+  color: var(--ink-soft);
+  font-size: 0.85em;
+}
+
+.audit-delta__prior,
+.audit-delta__note {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
 .field-review {
   margin-top: 0.85rem;
   padding: 0.75rem 0 0;

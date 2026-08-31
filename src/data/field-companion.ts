@@ -48,11 +48,11 @@ export const PRESSING_ISSUES: PressingIssue[] = [
     rank: 1,
     id: 'gtin-gap',
     title: 'Empty variant barcodes (GTIN / MPN)',
-    why: 'Instant Checkout and AI matching keys are identifiers. Shopify stores them on variant barcode.',
-    fails: 'Agent cannot match your SKU; feed rows reject or rank last.',
+    why: 'Instant Checkout and AI matching keys are identifiers. OpenAI: provide valid gtin or mpn when identifier_exists is yes/omitted. Stripe: mpn required if GTIN missing. Shopify stores them on variant barcode.',
+    fails: 'Agent cannot match your SKU; feed rows reject or rank last; Instant Checkout eligibility stalls.',
     doThisWeek:
-      'Export products → fill Variant Barcode → re-import → curl /products.json and check variants[].barcode. Aim ≥90%.',
-    evidence: 'OpenAI + Stripe feeds · ReadyCounter R1 (0% public GTIN)',
+      'Fill Variant Barcode (GTIN) or MPN for every sellable variant. If no GTIN exists, set identifier_exists=false (or omit) and supply mpn. Re-import → curl /products.json → check variants[].barcode. Aim ≥90% identifier coverage.',
+    evidence: 'OpenAI products feed · Stripe agentic feed · ReadyCounter R1 (0% public GTIN)',
   },
   {
     rank: 2,
@@ -116,9 +116,10 @@ export const PRESSING_ISSUES: PressingIssue[] = [
     rank: 8,
     id: 'acp-eligibility',
     title: 'Instant Checkout policy / eligibility gaps',
-    why: 'ACP requires search eligibility before checkout, plus privacy/ToS URLs.',
+    why: 'ACP requires search eligibility before checkout, plus privacy/ToS URLs when checkout-eligible. OpenAI: is_eligible_checkout requires is_eligible_search=true.',
     fails: 'Discoverable products that never become buyable in-chat.',
-    doThisWeek: 'Publish stable policy URLs; flip search then checkout flags; align feed links with live PDPs.',
+    doThisWeek:
+      'Publish live privacy + ToS URLs; set is_eligible_search then is_eligible_checkout; ensure gtin or mpn when identifier_exists is yes/omitted; align feed links with live PDPs.',
     evidence: 'OpenAI products upload spec · Stripe feed',
   },
   {
@@ -262,7 +263,9 @@ export function reviewAgainstField(input: {
   } else {
     const gtinNotes: string[] = [];
     if ((input.gtinPct ?? 0) < 50) {
-      gtinNotes.push(`GTIN coverage ${input.gtinPct ?? 0}% — Instant Checkout matching will fail.`);
+      gtinNotes.push(
+        `GTIN coverage ${input.gtinPct ?? 0}% — fill barcode or MPN (Stripe requires mpn if GTIN missing; OpenAI uses identifier_exists).`,
+      );
     }
     if ((input.catalogScore ?? 0) === 0) {
       gtinNotes.push('Catalog legibility 0 — matches the field default (0/24 on crawled DTC).');

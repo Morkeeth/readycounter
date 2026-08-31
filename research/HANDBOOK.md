@@ -35,11 +35,11 @@ Ranked by “will this stop an agent order this quarter?”
 
 ### 1. Empty variant barcodes (GTIN / MPN)
 
-**Why it bites:** Instant Checkout and AI matching keys are identifiers. OpenAI/Stripe feeds expect GTIN or MPN; Shopify stores them on **variant `barcode`**, not product title.
+**Why it bites:** Instant Checkout and AI matching keys are identifiers. OpenAI: provide valid `gtin` or `mpn` when `identifier_exists` is yes/omitted. Stripe: **`mpn` required if GTIN missing**. Shopify stores them on **variant `barcode`**, not product title.
 
-**What fails:** Agent cannot match your SKU to a knowledge graph; feed rows reject or rank last.
+**What fails:** Agent cannot match your SKU; feed rows reject or rank last; Instant Checkout eligibility stalls.
 
-**Do this week:** Export products → fill Variant Barcode → re-import → `curl` `/products.json` and check `variants[].barcode`. Aim ≥90% filled.
+**Do this week:** Fill Variant Barcode (GTIN) or MPN for every sellable variant. If no GTIN exists, set `identifier_exists=false` (or omit) and supply `mpn`. Re-import → `curl` `/products.json` → check `variants[].barcode`. Aim ≥90% identifier coverage. Re-audit the same URL in ReadyCounter to get a delta receipt.
 
 **Evidence:** OpenAI product feed · Stripe agentic feed · ReadyCounter R1 (0% public GTIN).
 
@@ -123,7 +123,7 @@ Ranked by “will this stop an agent order this quarter?”
 
 **What fails:** Discoverable products that never become buyable in-chat.
 
-**Do this week:** Publish stable policy URLs; flip search then checkout flags; align feed links with live PDP 200s.
+**Do this week:** Publish live privacy + ToS URLs; set `is_eligible_search` then `is_eligible_checkout`; ensure `gtin` or `mpn` when `identifier_exists` is yes/omitted; align feed links with live PDP 200s.
 
 **Evidence:** OpenAI products upload spec · Stripe feed.
 

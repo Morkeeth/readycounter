@@ -38,7 +38,7 @@ Merchant journey from `HOLISTIC-EXPANSION.md` §7:
 | **Diagnose** | **Yes** | URL audit → catalog bill; sandbox full bill | Live checkout / payment diagnose |
 | **Prioritize** | **Yes (thin)** | `reviewAgainstField` → ≤3 flags; vertical advice in handbook | Auto-branch: low-crawl → feed/UCP first vs high-crawl → barcodes (logic in docs, weak in UI) |
 | **Fix steps** | **Yes (static)** | `PRESSING_ISSUES[].doThisWeek` + `FieldReviewPanel` | No store-specific deep links (Admin barcode CSV, Agentic channel toggles, feed row diffs) |
-| **Re-measure** | **Partial** | Re-run URL audit manually; rankings batch ops | No “fix applied → delta receipt”; OAuth pair re-score unused in field |
+| **Re-measure** | **Yes** | Same URL twice → delta receipt (catalog / GTIN / SKUs) in audit form | UCP delta still via Compare; OAuth pair re-score unused in field |
 | **Prove** | **Sandbox / WebMCP only** | Journey + `prepare_checkout` (never charges) | No consented live proof; co-shop ≠ merchant fix proof |
 
 Help is a **handbook projector**, not a remediation engine. Checklist items (guest, Agentic, UCP, policy) are not auto-verified after the crawl.
@@ -75,13 +75,13 @@ Falsifiable, ordered:
 
 1. **Rankings show UCP GTIN beside crawl GTIN** for the 148 — **DONE** (2026-08-31): `GET /api/v1/rankings` joins `src/data/ucp-census.json`; RankingsPanel columns + filter **UCP GTIN · scrape empty**.
 2. **E1 ≥3 OAuth crawl↔Admin pairs** — done when: R2 table with Admin vs public GTIN; gap narrative either locked or killed.
-3. **Help loop: re-audit after claimed fix** — done when: same URL twice yields delta receipt (gtinPct / catalog / UCP) in UI, not only fresh crawl.
+3. **Help loop: re-audit after claimed fix** — **DONE** (2026-08-31): same URL twice → `AuditDeltaReceipt` (catalog / scrape GTIN / SKUs) via `src/lib/audit-delta.ts` local prior snapshot.
 4. **Offer/schema line measured on crawl path** — done when: % Product nodes with Offer+price+availability on sampled PDPs or feed; not handbook-only.
 5. **ACP eligibility smoke (non-upload)** — done when: store-level checks for live privacy/ToS URLs + documented eligibility flags (or honest “not measurable without partner feed”).
-6. **One consented live checkout probe class (or permanent label)** — done when: either N≥5 measured walls *or* product never shows full /100 for field crawls (already mostly true — enforce in Devpost/film).
-7. **MPN / identifier_exists in help + optional score** — done when: companion issue #1 and review flags mention OpenAI/Stripe identifier rules, not barcode-only.
+6. **One consented live checkout probe class (or permanent label)** — **DONE (label)** (2026-08-31): audit form + delta receipt state catalog budget only — never /100 for field crawls.
+7. **MPN / identifier_exists in help + optional score** — **DONE (help)** (2026-08-31): companion issue #1 + ACP #8 + handbook cite OpenAI/Stripe identifier rules (score line still optional).
 
-Until 1–3 + 6: **do not** claim full holistic rank+help.
+Until **E1 OAuth pairs** + Offer measurement + ACP smoke: **do not** claim full holistic rank+help. Gaps 1, 3, 6 (label), 7 (help) are closed.
 
 ---
 
