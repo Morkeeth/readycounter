@@ -111,3 +111,19 @@ See `DEMO.md` for beat-by-beat narration. Short version:
 | `DEMO.md` | Video script |
 | `USE-CASE.md` | Shopify + Render architecture |
 | `PARTNERSHIP-RENDER.md` | Render partnership ops |
+
+---
+
+## LOG — night wave RC-C (2026-08-31)
+
+| Deliverable | Status |
+|-------------|--------|
+| `LIGHTHOUSE-VISION.md` | Shipped — problem / compare·width·delta·WebMCP / 2027 ambition / honest gaps |
+| `SHOPIFY-PARTNER-BRIEF.md` | Shipped — partner tone, field 0% GTIN, UCP gap, co-shop proof |
+| README stranger hero | Shipped — live link + 3-step path + film/Devpost |
+| `audits/STRANGER-PASS-2026-08-31.md` | Shipped — 12 Playwright pass; prod missing RC-A hero until deploy |
+| `DEVPOST.md` elevator | Synced with `demo/AMBITION.md` lighthouse + 148 width + gap naming |
+
+**Verified:** `curl …/api/v1/rankings` → 148/78/0% GTIN/11 UCP gaps · `npx playwright test e2e/*.spec.ts` → 12 passed · `npm run verify` → exit 0.
+
+**Wrong:** Prod Vercel not redeployed — stranger does not see `ConnectLighthouseHero` yet. E1 OAuth pairs still 0.
