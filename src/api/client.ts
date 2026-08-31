@@ -219,6 +219,12 @@ export interface RankingsResponse {
   avgGtinPct: number;
   note: string;
   verticals?: string[];
+  ucp?: {
+    at: string;
+    available: number;
+    withGtin: number;
+    gtinWhereCrawlZero: number;
+  };
   rows: Array<{
     url: string;
     storeId?: string;
@@ -228,6 +234,10 @@ export interface RankingsResponse {
     captchaHint?: boolean;
     vertical?: string;
     error?: string;
+    ucpAvailable?: boolean | null;
+    ucpGtinPct?: number | null;
+    ucpProducts?: number | null;
+    ucpGtinWhereCrawlZero?: boolean;
   }>;
 }
 

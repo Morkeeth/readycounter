@@ -1690,6 +1690,25 @@ a {
   color: var(--stamp);
 }
 
+.rankings__row--ucp-gap td {
+  background: color-mix(in srgb, var(--stamp) 7%, transparent);
+}
+
+.rankings__ucp {
+  font-variant-numeric: tabular-nums;
+}
+
+.rankings__ucp--gap {
+  font-weight: 600;
+  color: var(--stamp);
+}
+
+.rankings__ucp-n {
+  opacity: 0.65;
+  font-weight: 400;
+  font-size: 0.85em;
+}
+
 .rankings__err {
   font-size: 0.72rem;
 }

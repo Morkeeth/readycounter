@@ -63,6 +63,23 @@ async function main() {
   const outFile = path.join(root, 'audits', 'ucp-census-latest.json');
   writeFileSync(outFile, JSON.stringify(summary, null, 2));
 
+  // Slim snapshot committed for rankings UI (crawl × UCP join without gitignored audits/).
+  const slim = {
+    at: summary.at,
+    attempted: summary.attempted,
+    ucpAvailable: summary.ucpAvailable,
+    ucpWithGtin: summary.ucpWithGtin,
+    rows: summary.rows.map((r) => ({
+      url: r.url,
+      available: !!r.available,
+      gtinPct: typeof r.gtinPct === 'number' ? r.gtinPct : 0,
+      productCount: typeof r.productCount === 'number' ? r.productCount : 0,
+    })),
+  };
+  const slimFile = path.join(root, 'src', 'data', 'ucp-census.json');
+  writeFileSync(slimFile, `${JSON.stringify(slim, null, 2)}\n`);
+  console.log(`Wrote ${slimFile}`);
+
   const md = `# E3: UCP Storefront Catalog census
 
 **Date:** ${summary.at.slice(0, 10)}  

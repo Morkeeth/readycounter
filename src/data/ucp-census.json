@@ -1,0 +1,896 @@
+{
+  "at": "2026-08-31T18:18:34.509Z",
+  "attempted": 148,
+  "ucpAvailable": 81,
+  "ucpWithGtin": 13,
+  "rows": [
+    {
+      "url": "https://colourpop.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://kyliecosmetics.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://jeffreestarcosmetics.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.glossier.com",
+      "available": true,
+      "gtinPct": 99,
+      "productCount": 125
+    },
+    {
+      "url": "https://www.fentybeauty.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.morphe.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.elfcosmetics.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.drunkelephant.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.rarebeauty.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://kosas.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.tower28beauty.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.milkmakeup.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.saiebeauty.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.honest.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.tatcha.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 56
+    },
+    {
+      "url": "https://www.fresh.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.dermalogica.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.beautycounter.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.rhode.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.glowrecipe.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.summerfridays.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.soldejaneiro.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.theordinary.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.iliabeauty.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.meritbeauty.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.jonesroadbeauty.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.gymshark.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.allbirds.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.tentree.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.brooklinen.com",
+      "available": true,
+      "gtinPct": 72,
+      "productCount": 241
+    },
+    {
+      "url": "https://www.everlane.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.outdoorvoices.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.patagonia.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.buckmason.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://rothys.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://bombas.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.mvmt.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.chubbiesshorts.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.skims.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.aloyoga.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 123
+    },
+    {
+      "url": "https://www.reformation.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.lululemon.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.fashionnova.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 171
+    },
+    {
+      "url": "https://www.princesspolly.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://vuori.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://girlfriend.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.onequince.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://knix.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.cupshe.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.tracksmith.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.rhone.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.puravida.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.parachutehome.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.burrow.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.article.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.casper.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.snowe.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.boll-and-branch.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.helixsleep.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.interiordefine.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.joybird.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.leesa.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.saatva.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.floydhome.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.theinside.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://fromourplace.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.carawayhome.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.ruggable.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.cozyearth.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.eightsleep.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://buffy.co",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 40
+    },
+    {
+      "url": "https://www.drinktrade.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.bluebottlecoffee.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.partakefoods.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://magicspoon.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.graza.co",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.drinkolipop.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.drinkhydrant.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.magicmind.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.daily-harvest.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.imperfectfoods.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.athleticbrewing.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.sietefoods.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.chamberlaincoffee.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://mudwtr.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.foursigmatic.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.deathwishcoffee.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://ritual.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.hims.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.seed.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.therabody.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.whoop.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.oura.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.nutrafol.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.huel.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://drinkag1.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.livemomentous.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.careof.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.levelshealth.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.barkbox.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.wildone.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.petplate.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.thefarmersdog.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.chewy.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.olipet.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.ollie.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.nomnomnow.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.spotandtango.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.tryfi.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.mejuri.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 207
+    },
+    {
+      "url": "https://www.gorjana.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 80
+    },
+    {
+      "url": "https://www.bellroy.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://ridge.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.nomadgoods.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.peakdesign.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 1
+    },
+    {
+      "url": "https://www.cuyana.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.dagnedover.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 1
+    },
+    {
+      "url": "https://baggu.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.monos.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://liquiddeath.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.drsquatch.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.meundies.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.feals.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.cotopaxi.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.hydroflask.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.fezzari.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.unitedbyblue.com",
+      "available": true,
+      "gtinPct": 64,
+      "productCount": 120
+    },
+    {
+      "url": "https://www.yeti.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.blackdiamondequipment.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.backcountry.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.rei.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.stio.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 243
+    },
+    {
+      "url": "https://www.kuhl.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.outdoorresearch.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.topodesigns.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.mysteryranch.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.keenfootwear.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.primary.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.maisonette.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.lovecvery.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.hannaandersson.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://kytebaby.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.littlesleepies.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.teacollection.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://monicaandandy.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.kyliecosmetics.com",
+      "available": true,
+      "gtinPct": 0,
+      "productCount": 0
+    },
+    {
+      "url": "https://www.awaytravel.com",
+      "available": true,
+      "gtinPct": 100,
+      "productCount": 27
+    },
+    {
+      "url": "https://www.rimowa.com",
+      "available": false,
+      "gtinPct": 0,
+      "productCount": 0
+    }
+  ]
+}

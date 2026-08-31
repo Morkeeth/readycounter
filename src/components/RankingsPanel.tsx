@@ -10,12 +10,14 @@ import {
 
 type VerticalFilter = 'all' | string;
 type OutcomeFilter = 'all' | CrawlOutcome;
+type UcpFilter = 'all' | 'ucp-on' | 'ucp-gtin-gap';
 
 export function RankingsPanel() {
   const [data, setData] = useState<RankingsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [vertical, setVertical] = useState<VerticalFilter>('all');
   const [outcome, setOutcome] = useState<OutcomeFilter>('all');
+  const [ucpFilter, setUcpFilter] = useState<UcpFilter>('all');
 
   useEffect(() => {
     void apiRankings()
@@ -44,13 +46,21 @@ export function RankingsPanel() {
     return counts;
   }, [rows]);
 
+  const ucpOnCount = useMemo(() => rows.filter((r) => r.ucpAvailable).length, [rows]);
+  const ucpGapCount = useMemo(
+    () => rows.filter((r) => r.ucpGtinWhereCrawlZero).length,
+    [rows],
+  );
+
   const filtered = useMemo(() => {
     return rows.filter((r) => {
       if (vertical !== 'all' && r.vertical !== vertical) return false;
       if (outcome !== 'all' && r.outcome !== outcome) return false;
+      if (ucpFilter === 'ucp-on' && !r.ucpAvailable) return false;
+      if (ucpFilter === 'ucp-gtin-gap' && !r.ucpGtinWhereCrawlZero) return false;
       return true;
     });
-  }, [rows, vertical, outcome]);
+  }, [rows, vertical, outcome, ucpFilter]);
 
   const filterStats = useMemo(() => {
     const crawled = filtered.filter((r) => !r.error);
@@ -58,8 +68,24 @@ export function RankingsPanel() {
       crawled.length === 0
         ? 0
         : Math.round(crawled.reduce((a, r) => a + (r.gtinPct ?? 0), 0) / crawled.length);
-    return { n: filtered.length, crawled: crawled.length, avgGtin };
+    const withUcp = filtered.filter((r) => r.ucpAvailable);
+    const avgUcp =
+      withUcp.length === 0
+        ? null
+        : Math.round(
+            withUcp.reduce((a, r) => a + (r.ucpGtinPct ?? 0), 0) / withUcp.length,
+          );
+    return {
+      n: filtered.length,
+      crawled: crawled.length,
+      avgGtin,
+      ucpOn: withUcp.length,
+      avgUcp,
+      gap: filtered.filter((r) => r.ucpGtinWhereCrawlZero).length,
+    };
   }, [filtered]);
+
+  const filtersActive = vertical !== 'all' || outcome !== 'all' || ucpFilter !== 'all';
 
   return (
     <article className="rankings integrations__card integrations__card--wide">
@@ -69,7 +95,11 @@ export function RankingsPanel() {
           {loading
             ? 'Loading from Render KV…'
             : data?.at
-              ? `Batch ${data.succeeded}/${data.shopCount} shops · avg catalog ${data.avgCatalogScore} · avg GTIN ${data.avgGtinPct}% · ${new Date(data.at).toLocaleDateString()}`
+              ? `Batch ${data.succeeded}/${data.shopCount} shops · avg catalog ${data.avgCatalogScore} · scrape GTIN ${data.avgGtinPct}% · UCP ${data.ucp?.available ?? '—'} live${
+                  data.ucp?.gtinWhereCrawlZero
+                    ? ` · ${data.ucp.gtinWhereCrawlZero} with UCP GTIN where scrape is empty`
+                    : ''
+                } · ${new Date(data.at).toLocaleDateString()}`
               : 'No batch published yet'}
         </p>
       </header>
@@ -134,15 +164,57 @@ export function RankingsPanel() {
               );
             })}
           </div>
+
+          <p className="rankings__filter-label">UCP (Catalog MCP)</p>
+          <div className="rankings__filters" role="tablist" aria-label="Filter by UCP">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={ucpFilter === 'all'}
+              className={ucpFilter === 'all' ? 'rankings__chip rankings__chip--on' : 'rankings__chip'}
+              onClick={() => setUcpFilter('all')}
+            >
+              all · {rows.length}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={ucpFilter === 'ucp-on'}
+              className={
+                ucpFilter === 'ucp-on' ? 'rankings__chip rankings__chip--on' : 'rankings__chip'
+              }
+              onClick={() => setUcpFilter('ucp-on')}
+            >
+              UCP live · {ucpOnCount}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={ucpFilter === 'ucp-gtin-gap'}
+              className={
+                ucpFilter === 'ucp-gtin-gap' ? 'rankings__chip rankings__chip--on' : 'rankings__chip'
+              }
+              onClick={() => setUcpFilter('ucp-gtin-gap')}
+            >
+              UCP GTIN · scrape empty · {ucpGapCount}
+            </button>
+          </div>
         </>
       ) : null}
 
-      {!loading && (vertical !== 'all' || outcome !== 'all') ? (
+      {!loading && filtersActive ? (
         <p className="rankings__filter-stat">
-          {[vertical !== 'all' ? vertical : null, outcome !== 'all' ? CRAWL_OUTCOME_LABEL[outcome] : null]
+          {[
+            vertical !== 'all' ? vertical : null,
+            outcome !== 'all' ? CRAWL_OUTCOME_LABEL[outcome] : null,
+            ucpFilter === 'ucp-on' ? 'UCP live' : null,
+            ucpFilter === 'ucp-gtin-gap' ? 'UCP GTIN · scrape empty' : null,
+          ]
             .filter(Boolean)
             .join(' · ')}
-          : {filterStats.crawled}/{filterStats.n} crawled · avg GTIN {filterStats.avgGtin}%
+          : {filterStats.crawled}/{filterStats.n} crawled · scrape GTIN {filterStats.avgGtin}%
+          {filterStats.avgUcp != null ? ` · UCP GTIN ${filterStats.avgUcp}%` : ''}
+          {filterStats.gap ? ` · ${filterStats.gap} protocol-vs-scrape gaps` : ''}
         </p>
       ) : null}
 
@@ -160,12 +232,30 @@ export function RankingsPanel() {
                 <th>Vertical</th>
                 <th>Outcome</th>
                 <th>Catalog</th>
-                <th>GTIN%</th>
+                <th>Scrape GTIN</th>
+                <th>UCP GTIN</th>
                 <th>Signals</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((row, i) => {
+                const ucpCell =
+                  row.ucpAvailable == null
+                    ? '—'
+                    : row.ucpAvailable
+                      ? `${row.ucpGtinPct ?? 0}%`
+                      : 'off';
+                const signals = [
+                  row.captchaHint ? 'captcha?' : '',
+                  !row.error && (row.gtinPct ?? 0) < 50 ? 'low-scrape-gtin' : '',
+                  row.ucpGtinWhereCrawlZero ? 'ucp-gtin-gap' : '',
+                  row.ucpAvailable && !row.ucpGtinWhereCrawlZero && (row.ucpGtinPct ?? 0) > 0
+                    ? 'ucp-gtin'
+                    : '',
+                ]
+                  .filter(Boolean)
+                  .join(' · ');
+
                 if (row.error) {
                   return (
                     <tr key={row.url} className="rankings__row--fail">
@@ -173,14 +263,21 @@ export function RankingsPanel() {
                       <td>{hostname(row.url)}</td>
                       <td className="rankings__vert">{row.vertical}</td>
                       <td className="rankings__vert">{CRAWL_OUTCOME_LABEL[row.outcome]}</td>
-                      <td colSpan={3} className="rankings__err">
-                        {row.error.slice(0, 80)}
+                      <td colSpan={2} className="rankings__err">
+                        {row.error.slice(0, 72)}
                       </td>
+                      <td className={row.ucpAvailable ? 'rankings__ucp' : 'rankings__err'}>
+                        {ucpCell}
+                      </td>
+                      <td className="rankings__sig">{signals || '—'}</td>
                     </tr>
                   );
                 }
                 return (
-                  <tr key={row.url}>
+                  <tr
+                    key={row.url}
+                    className={row.ucpGtinWhereCrawlZero ? 'rankings__row--ucp-gap' : undefined}
+                  >
                     <td>{i + 1}</td>
                     <td>
                       {row.storeId ? (
@@ -198,11 +295,13 @@ export function RankingsPanel() {
                       {row.catalogBudget ? `/${row.catalogBudget}` : ''}
                     </td>
                     <td>{row.gtinPct ?? 0}%</td>
-                    <td className="rankings__sig">
-                      {[row.captchaHint ? 'captcha?' : '', (row.gtinPct ?? 0) < 50 ? 'low-gtin' : '']
-                        .filter(Boolean)
-                        .join(' · ') || '—'}
+                    <td className={row.ucpGtinWhereCrawlZero ? 'rankings__ucp rankings__ucp--gap' : 'rankings__ucp'}>
+                      {ucpCell}
+                      {row.ucpProducts != null && row.ucpAvailable ? (
+                        <span className="rankings__ucp-n"> · {row.ucpProducts}</span>
+                      ) : null}
                     </td>
+                    <td className="rankings__sig">{signals || '—'}</td>
                   </tr>
                 );
               })}
@@ -211,8 +310,9 @@ export function RankingsPanel() {
         </div>
       )}
       <p className="integrations__muted">
-        <code>GET /api/v1/rankings</code> · no-feed ≈ headless/empty public catalog · see{' '}
-        <code>research/HANDBOOK.md</code>
+        <code>GET /api/v1/rankings</code> joins crawl batch × committed UCP census · filter “UCP
+        GTIN · scrape empty” for the protocol-vs-scrape gap · compare one store via{' '}
+        <code>POST /api/v1/audit/compare</code>
       </p>
     </article>
   );

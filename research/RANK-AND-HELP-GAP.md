@@ -18,7 +18,7 @@
 | **Discovery feed** (`/products.json` / homepage JSON-LD) | **Yes** | Crawl outcome + catalog budget (~24); rankings by vertical + failure taxonomy | Curated 148, not random Shopify; 50-SKU cap |
 | **Identifiers (GTIN/MPN)** | **Yes (public)** | `gtinPct` → `page_structure`; field 78/78 @ 0% | No Admin GTIN (E1=0 pairs); MPN / `identifier_exists` not scored |
 | **Schema (Product + Offer)** | **Partial** | Offers/gtin in scraped structure; handbook cites Digital Applied | No Rich Results–style PDP Offer audit at scale |
-| **UCP / Catalog MCP** | **Probe + census, weak in rankings UI** | E3: 81/148 UCP; E3b: **11** UCP GTIN >0 where crawl=0%; compare API exists | Rankings table is crawl-only (no UCP GTIN column) |
+| **UCP / Catalog MCP** | **Yes (joined)** | E3 census in rankings: UCP GTIN col + filter; E3b gap count on header; compare API | Live re-probe on every request (snapshot); Admin still E1 |
 | **ACP feed / Instant Checkout** | **No (checklist only)** | Issue #8 + handbook copy | No feed validator, no `is_eligible_*` measurement |
 | **Checkout walls** | **Sandbox yes / field no** | Presenc-weighted flags on demos; crawls **NOT MEASURED** | Homepage captcha hints ≠ walls (R3) |
 | **Payments (agent-completable)** | **Sandbox only** | 11-pt line on declared methods | No live PSP / ACP checkout session test |
@@ -73,7 +73,7 @@ Help is a **handbook projector**, not a remediation engine. Checklist items (gue
 
 Falsifiable, ordered:
 
-1. **Rankings show UCP GTIN beside crawl GTIN** for the 148 — done when: table columns + filter; E3b “11” visible without opening research.md.
+1. **Rankings show UCP GTIN beside crawl GTIN** for the 148 — **DONE** (2026-08-31): `GET /api/v1/rankings` joins `src/data/ucp-census.json`; RankingsPanel columns + filter **UCP GTIN · scrape empty**.
 2. **E1 ≥3 OAuth crawl↔Admin pairs** — done when: R2 table with Admin vs public GTIN; gap narrative either locked or killed.
 3. **Help loop: re-audit after claimed fix** — done when: same URL twice yields delta receipt (gtinPct / catalog / UCP) in UI, not only fresh crawl.
 4. **Offer/schema line measured on crawl path** — done when: % Product nodes with Offer+price+availability on sampled PDPs or feed; not handbook-only.
