@@ -136,8 +136,8 @@ fix** in Readiness autopilot, which does the same thing and says it is a sandbox
 **On screen:** scroll the merchant page to the **Every source this tape can
 cite** panel — nine rows, publisher, figure, published date, read date.
 
-> Nine sources. A figure with no row here cannot be printed anywhere in the
-> product, and the build fails if a row is not quoted in research.md.
+> Nine sources. A figure this product cites cannot be printed without a row
+> here, and the build fails if a row is not quoted in research.md.
 > ReadyCounter — the counter prints the score.
 
 ---

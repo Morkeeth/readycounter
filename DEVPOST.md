@@ -1,9 +1,11 @@
 # Devpost submission copy — ReadyCounter
 
 Paste-ready fields for the [WebMCP Challenge](https://webmcp.devpost.com/).
-Every figure below resolves to a row in [`src/data/sources.ts`](./src/data/sources.ts)
-and a quoted sentence in [`research.md`](./research.md). `npm run verify` fails
-the build if a figure loses its source.
+Every figure below that is *cited* — every share, multiple and survey result —
+resolves to a row in [`src/data/sources.ts`](./src/data/sources.ts) and a quoted
+sentence in [`research.md`](./research.md). `npm run verify` fails the build if a
+cited figure loses its source. Scores and catalog counts are *measured* off the
+shipped fixtures and cite nothing.
 
 **Oscar: this is final — nothing left to fill in.** Deploy is live; the remaining
 clicks are the video and the Devpost submit.
@@ -99,8 +101,8 @@ Merchants are told agents are coming. Nobody tells them **which door is locked**
 Most readiness scores are a number with a nice ring around it. This one ships
 its own audit:
 
-- **A figure with no row in `src/data/sources.ts` cannot be printed anywhere in
-  the product.** Nine rows, each with publisher, figure, URL, publish date,
+- **A figure the product cites cannot be printed without a row in
+  `src/data/sources.ts`.** Nine rows, each with publisher, figure, URL, publish date,
   read date, and the honest limit of the source (Presenc is a vendor page and
   says its metrics are modelled; the "81% lack Offer" line is our subtraction).
 - **`scripts/verify-score.mjs`** fails `npm run verify` if the budget stops

@@ -31,6 +31,11 @@ function check(label, ok, got) {
   if (!ok) failures += 1;
 }
 
+const stripComments = (src) =>
+  src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+const componentFilesForLiterals = () =>
+  readdirSync(join(root, 'src/components')).filter((f) => f.endsWith('.tsx'));
+
 const sourcesSrc = read('src/data/sources.ts');
 const readinessSrc = read('src/lib/readiness.ts');
 const manifestSrc = read('src/webmcp/toolManifest.ts');
@@ -164,6 +169,67 @@ check(
   'computed at render',
 );
 
+/* ---- 7b · a measured rationale must quote its own source's figure ---- */
+
+/*
+ * The weight is asserted against the source figure by check 5. The SENTENCE
+ * beside it was not, so a weight could move, the check could be re-pointed, and
+ * the prose the merchant actually reads would keep quoting the old share. That
+ * is the shape this whole repo keeps finding: a sentence its own cited source
+ * contradicts. The rationale must contain its source's figure verbatim.
+ */
+for (const w of weightBlocks.filter((x) => x.basis === 'measured')) {
+  const src = sources.get(w.sourceIds[0]);
+  const block = readinessSrc.slice(readinessSrc.indexOf(`id: '${w.id}'`));
+  const rationale = block.slice(0, block.indexOf('},'));
+  check(
+    `the rationale for ${w.id} quotes its own source figure`,
+    Boolean(src?.figure) && rationale.includes(src.figure),
+    `looking for ${src?.figure}`,
+  );
+}
+
+/* ---- 7c · no surface retypes a weight the table already owns ---- */
+
+/*
+ * The clamp bug of 2026-08-31 was a weight copied out of the table into a call
+ * site (`20 * (withGtin / total)` against a 14-point weight). The display layer
+ * had the same disease: "worth 24 pts", "worth 15 pts", "Unblocks ~24%", and an
+ * account-wall sentence hardcoded IDENTICALLY in two components while the
+ * CAPTCHA branch beside it read its sentence off the source row. Re-tune a
+ * weight and every one of those drifts with nothing red.
+ *
+ * `src/lib/readiness.ts` is the one file allowed to type a weight, because
+ * check 5 pins it to the published figure. Everywhere else must interpolate
+ * `weightFor(...)` or a `SOURCES` row. Comments are stripped: a comment
+ * describing the bug is not the bug.
+ */
+const weightConsumers = [
+  ...componentFilesForLiterals().map((f) => `src/components/${f}`),
+  'src/lib/autopilot.ts',
+  'src/lib/agent-journey.ts',
+  'src/store/shopStore.ts',
+  'src/webmcp/registerTools.ts',
+  'src/App.tsx',
+];
+const retyped = [];
+for (const rel of weightConsumers) {
+  const src = stripComments(read(rel));
+  // A bare percentage counts too: `shopStore.ts` printed "24% of agent carts
+  // abandon here" straight into the blocked-checkout message, on screen, with
+  // nothing tying it to the row it quotes. `${...}%` and CSS widths are skipped.
+  for (const m of src.matchAll(
+    /(?:(?<![$}\w.])\d{1,3}\s*%|\b\d{1,3}\s*(?:pts|points)\b)/g,
+  )) {
+    retyped.push(`${rel.split('/').pop()}: "${m[0].trim()}"`);
+  }
+}
+check(
+  'no surface outside readiness.ts retypes a weight or a published share',
+  retyped.length === 0,
+  retyped.length ? retyped.join(' · ') : `${weightConsumers.length} surfaces interpolate`,
+);
+
 /* ---- 8 · no store getter called inside a selector ---- */
 
 /*
@@ -178,10 +244,8 @@ check(
  * every pass and React throws #185 (maximum update depth). Select the getter,
  * call it during render. This check makes the pattern un-mergeable.
  */
-const componentFiles = readdirSync(join(root, 'src/components')).filter((f) => f.endsWith('.tsx'));
+const componentFiles = componentFilesForLiterals();
 const offenders = [];
-const stripComments = (src) =>
-  src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 
 for (const f of componentFiles) {
   // Comments describing the bug are not the bug.

@@ -52,9 +52,12 @@ the same table; a store carrying both pays 39. All six rows of that table are
 reproduced in [`research.md`](./research.md) — reproducing only two of them is
 how this product shipped a wrong weight for a day.
 
-Nothing is a constant typed into a component: a figure with no row in
-[`src/data/sources.ts`](./src/data/sources.ts) cannot be printed anywhere in the
-product, and `npm run verify` fails the build if a measured weight stops
+Nothing is a constant typed into a component: a figure the product *cites* — a
+share, a multiple, a survey result — cannot be printed without a row in
+[`src/data/sources.ts`](./src/data/sources.ts). (Numbers it *measures* off your
+catalog — SKU counts, GTIN coverage, points earned — are computed live and cite
+nothing; they are not claims about the world.) `npm run verify` fails the build
+if a measured weight stops
 equalling the figure its source publishes, if a source loses its URL or its read
 date, or if a source URL is not quoted in [`research.md`](./research.md).
 

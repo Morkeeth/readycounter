@@ -124,7 +124,9 @@ export function ReadinessTape({
           </span>
         </p>
 
-        <p className="tape__section">Allocated by ReadyCounter — no source itemises these</p>
+        <p className="tape__section">
+          Allocated by ReadyCounter — no published row prices these on their own
+        </p>
         <ul className="tape__lines">
           {allocated.map((c) => (
             <TapeLine key={c.id} check={c} />

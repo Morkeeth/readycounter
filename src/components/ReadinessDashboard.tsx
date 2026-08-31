@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { getSource, SOURCE_IDS } from '../data/sources';
 import type { SourceId } from '../data/sources';
-import { computeReadinessChecks, pointsLost, readinessScore } from '../lib/readiness';
+import {
+  accountWallBecause,
+  computeReadinessChecks,
+  pointsLost,
+  readinessScore,
+  weightFor,
+} from '../lib/readiness';
 import { useShopStore } from '../store/shopStore';
 import { AutopilotPanel } from './AutopilotPanel';
 import { ReadinessTape } from './ReadinessTape';
@@ -51,8 +57,7 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
     : merchant.checkoutRequiresAccount
       ? {
           kind: 'A forced account',
-          because:
-            'Presenc AI gives a required account or login its own row in the same table it prices the CAPTCHA on: 15% of abandoned agent carts. ReadyCounter charges exactly 15 points. Every checkout wall on this tape costs the share its own published row states — none of it is a number we picked.',
+          because: accountWallBecause(),
           sourceId: 'presenc_account_wall' as SourceId,
         }
       : null;
@@ -97,7 +102,10 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
               />
               <span>
                 CAPTCHA on checkout
-                <em>worth 24 pts — Presenc AI, read {captchaSource.accessed}</em>
+                <em>
+                  worth {weightFor('agent_checkout_path')} pts — Presenc AI, read{' '}
+                  {captchaSource.accessed}
+                </em>
               </span>
             </label>
             <label className="switch">
@@ -109,8 +117,8 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
               <span>
                 Require an account
                 <em>
-                  worth 15 pts — its own row in the same table, Presenc AI, read{' '}
-                  {accountSource.accessed}
+                  worth {weightFor('account_wall')} pts — its own row in the same table,
+                  Presenc AI, read {accountSource.accessed}
                 </em>
               </span>
             </label>
@@ -120,7 +128,9 @@ export function ReadinessDashboard({ registeredToolCount }: ReadinessDashboardPr
             <h3>Every source this tape can cite</h3>
             <p className="slab__lead">
               {SOURCE_IDS.length} rows in <code>src/data/sources.ts</code>. A figure
-              with no row here cannot be printed anywhere in the product.
+              this product <em>cites</em> — a share, a multiple, a survey result —
+              cannot be printed without a row here. The figures it measures off your
+              catalog are computed live and cite nothing.
             </p>
             <ul className="register">
               {SOURCE_IDS.map((id) => {

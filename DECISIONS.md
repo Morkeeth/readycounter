@@ -171,8 +171,12 @@ listed feed · **15% required account or login** · 11% unsupported payment meth
    both pays 39. That was not expressible before, because one line covered both.
 2. **The allocated block shrinks 50 → 35, keeping its 2:2:1 shape** (20/20/10 →
    14/14/7). The rule: a published figure takes its full share first; our
-   judgement gets the remainder. The three causes we do not check happen to total
-   35% as well — that is arithmetic, not a mapping, and `research.md` says so.
+   judgement gets the remainder. (An earlier draft added *"and the three causes
+   we do not check happen to total 35% too"* — **withdrawn 2026-08-31**: the
+   price line does detect the 18% "price mismatch vs listed feed" row, it is just
+   not charged for it, so the member set was wrong. The allocated block is 35
+   because the measured block is 65, and it maps to nothing on the table.
+   `research.md` carries the withdrawal in full.)
 3. **The pitch gets stronger, not weaker.** Not "half our score is a guess" but
    *"no checkout wall on this tape is priced by us, and here is the whole table."*
    The claim is narrower than "nothing is assigned by us" — 35 points still are —
@@ -200,6 +204,44 @@ doc that said "score drops" on the store switch was corrected.
 **Proven red.** A budget-neutral tamper — `account_wall` 15 → 16 with
 `stock_signals` 7 → 6, still summing to exactly 100 — passes the old budget check
 and still fails three assertions.
+
+---
+
+## Decision 5d · Cold verification of 5c — RULED 2026-08-31 (wave 3)
+
+**Ruled: 5c's arithmetic holds; 5c's write-up did not.** The source was fetched
+again, independently, on 2026-08-31 — all six rows returned exactly as `research.md`
+reproduces them. Build and verify exit 0. Neon Matcha recomputes **by hand** to
+71 (23 + 24 + 0 + 4 + 14 + 6) and Ember & Oak to 70. Nothing in the score moved.
+
+**What did move — four sentences of the same shape, all closed:**
+
+1. **The clamp write-up was false about its own code.** It said *"two stores
+   printed 14/14 and 7/7 on catalogs that were 88% and 25% identified."* The
+   pre-fix state was restored and re-run: **Ember** was the falsely perfect one
+   (17.5 clamped to 14/14 on 88%); **Neon's catalog line was never clamped**
+   (20 × 2/8 = 5, under the 14-point weight, printed 5/14). The clamp lies only
+   where the stale literal overshoots the new weight — so a check on the default
+   store alone catches it by luck. `verify-stores.mjs` now recomputes
+   `ratio × weight` outside the product, per store, per line. Both stores also
+   printed **73** under the bug: the two-stores-differ beat would have died too.
+2. **"No source itemises these"** — printed as a tape subheading on every screen
+   and screenshot. Our own `stock_signals` rationale says Presenc groups stock
+   *inside* the 26% row, and row 6 is "Ambiguous page structure — 6%". Narrowed
+   to **"no published row prices these on their own"**, and each allocated line
+   now names the nearest row and says why we do not take it.
+3. **The 35%-coincidence paragraph** — withdrawn, see Decision 5c point 2.
+4. **"A figure with no row in sources.ts cannot be printed anywhere"** — false as
+   an absolute (the tape prints `7/8 SKUs agree`, `25% identified`, `$18.00`).
+   Narrowed on all eight surfaces to *cited* figures.
+
+**The class fix.** A weight may be typed in exactly one file, `src/lib/readiness.ts`,
+where check 5 pins it to its published figure. Everywhere else interpolates
+`weightFor()` or a `SOURCES` row — including `shopStore.ts`, which was printing
+*"24% of agent carts abandon here"* on screen. `verify-score.mjs` fails the build
+if any surface retypes a point value or a bare share, and if a measured weight's
+**prose** stops quoting its own source figure. Four new assertions, each proven
+red before being left green. Full record in `NIGHTRUN-2026-08-31.md` § WAVE 3.
 
 ---
 

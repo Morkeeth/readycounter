@@ -172,10 +172,10 @@ claim, so it is stated in full:
 
 | Check | Points | Basis | Where the number comes from |
 |---|---|---|---|
-| Price feed agrees with the shelf | **26** | **measured** | Presenc AI attributes **26%** of abandoned agent carts to stale price or stock data at checkout. The weight *is* that share. |
+| Price feed agrees with the shelf | **26** | **measured** | Presenc AI attributes **26%** of abandoned agent carts to stale price or stock data at checkout. The weight *is* that share. The same table also carries **"Price mismatch vs listed feed — 18%"**, which names the defect this line actually detects; we charge the 26 row only and never add the 18, so one mismatch is billed once. |
 | No CAPTCHA on the checkout path | **24** | **measured** | Row two of the table: **24%**, "Captcha or verification wall". The weight *is* that share. |
 | No forced account on the checkout path | **15** | **measured** | Row four of the table: **15%**, "Required account or login". The weight *is* that share. Until 2026-08-31 this line did not exist and the wall was charged the CAPTCHA's 24 — see the correction above. |
-| Catalog an agent can read | **14** | *allocated* | No source itemises schema gaps as an abandonment cause. We allocate 14 because an agent that cannot read price and availability never reaches a cart to abandon. Context: only **19%** of Product schemas carry the Offer object (Digital Applied, 5,000 sites). |
+| Catalog an agent can read | **14** | *allocated* | No published row prices a schema gap on its own. The nearest row is **"Ambiguous page structure — 6%"**, and we do not take it: this line scores product identifiers (GTIN), not page markup, and adopting that row would be us choosing which cause fits. So the 14 is ours and labelled ours. Context: only **19%** of Product schemas carry the Offer object (Digital Applied, 5,000 sites). |
 | Structured tool surface | **14** | *allocated* | Allocated, not measured. Shopify reports catalog-powered AI search converts **2×** scraped search; a WebMCP tool surface is that same bet made explicit. |
 | Availability stated, not implied | **7** | *allocated* | Presenc groups stock **with** price in one 26% figure. We split off 7 points for explicit availability flags rather than double-count the measured share. |
 | **Total** | **100** | **65 measured · 35 allocated** | |
@@ -185,11 +185,26 @@ its own published weight, so the allocated block shrank 50 → 35 and kept its
 existing 2:2:1 shape (20/20/10 → 14/14/7). The rule is the one worth stating: a
 published figure takes its full share first, and our judgement gets what is left.
 
-**One number that is a coincidence, not a mapping.** The three causes ReadyCounter
-does **not** check — price mismatch vs feed 18%, unsupported payment method 11%,
-ambiguous page structure 6% — happen to total the same **35%** the allocated block
-is worth. That is arithmetic, nothing more. Our three allocated checks are *not*
-those three causes and must not be read as standing in for them.
+**A sentence this section had to withdraw, 2026-08-31.** It used to read: *"The
+three causes ReadyCounter does **not** check — price mismatch vs feed 18%,
+unsupported payment method 11%, ambiguous page structure 6% — happen to total the
+same 35% the allocated block is worth."* Two things were wrong with it.
+
+1. ReadyCounter **does** detect the 18% row. "Price feed agrees with the shelf"
+   compares each SKU's `feedPrice` against its shelf price, which is precisely
+   *"price mismatch vs listed feed"*. We charge that line the **26** stale-data
+   row and never add the 18, so one mismatch is billed once — but calling the row
+   unchecked was false about our own citation.
+2. The sentence existed to defuse an adjacency — *35 allocated points ≈ 35% of
+   unchecked causes* — and its member set was wrong, which makes the defusal
+   worse than the adjacency it was defusing.
+
+**The honest version is shorter.** The allocated block is **35 because the
+measured block is 65**. It is a remainder. It maps to nothing on the causes
+table. Of the six published rows, ReadyCounter *prices* three (26 stale
+price/stock · 24 CAPTCHA · 15 required account), *detects a fourth without
+charging for it* (18 price mismatch vs feed), and does not check the remaining
+two (11 unsupported payment method · 6 ambiguous page structure).
 
 **The honest limit.** 35 of these 100 points are still a judgement call, and the
 product does not hide it: the tape prints a `measured weight` or `allocated
@@ -245,8 +260,12 @@ forced account on Neon Matcha Lab moves it from **71 to 86** — a delta of exac
 | Co-shop / `prepare_checkout` gate | YouGov 65% compare vs 14% buy |
 | README / Devpost pitch | Full table above |
 
-**The rule, enforced in code:** a figure with no row in `src/data/sources.ts`
-cannot be printed anywhere in the product, and a row in that file whose URL is
-not quoted on this page fails `npm run verify`. Scores are re-derived from the
+**The rule, enforced in code:** a figure the product *cites* — a share, a
+multiple, a survey result — cannot be printed without a row in
+`src/data/sources.ts`, and a row in that file whose URL is not quoted on this
+page fails `npm run verify`. Figures the product *measures* off the store (SKU
+counts, GTIN coverage, points earned) are computed live and cite nothing; they
+are not claims about the world, and saying "every figure" without that split was
+itself an overclaim, corrected 2026-08-31. Scores are re-derived from the
 live catalog and merchant flags on every render — nothing is a constant typed
 into a component.

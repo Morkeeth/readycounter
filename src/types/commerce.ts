@@ -65,7 +65,9 @@ export interface ReadinessCheck {
   maxPoints?: number;
   /**
    * `measured` = the weight IS a figure a named source published.
-   * `allocated` = no source itemises this; the weight is ReadyCounter's call.
+   * `allocated` = no published row prices this on its own; the weight is
+   * ReadyCounter's call, and the line's `rationale` names the nearest row on the
+   * source table rather than claiming the table is silent.
    */
   basis?: 'measured' | 'allocated';
   /** Rows in `src/data/sources.ts` that back this line. */

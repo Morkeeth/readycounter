@@ -1,5 +1,5 @@
 import type { MerchantConfig, Product, ReadinessCheck } from '../types/commerce';
-import { computeReadinessChecks, readinessScore } from './readiness';
+import { computeReadinessChecks, readinessScore, weightFor } from './readiness';
 
 export type AutopilotFix =
   | 'disable_captcha'
@@ -23,14 +23,14 @@ export function suggestFixes(
     suggestions.push({
       id: 'disable_captcha',
       label: 'Remove CAPTCHA on checkout',
-      impact: 'Unblocks ~24% of agent sessions (Presenc AI 2026)',
+      impact: `Clears the wall behind ~${weightFor('agent_checkout_path')}% of abandoned agent carts (Presenc AI 2026)`,
     });
   }
   if (merchant.checkoutRequiresAccount) {
     suggestions.push({
       id: 'disable_account_wall',
       label: 'Remove forced account login',
-      impact: 'Clears account-wall agent path',
+      impact: `Clears account-wall agent path (~${weightFor('account_wall')}% of agent carts, Presenc AI 2026)`,
     });
   }
   const mismatches = products.filter(
@@ -40,7 +40,7 @@ export function suggestFixes(
     suggestions.push({
       id: 'sync_feed_prices',
       label: `Sync feed prices (${mismatches.length} SKU)`,
-      impact: 'Fixes stale-price abandon risk (~26%)',
+      impact: `Fixes stale-price abandon risk (~${weightFor('price_consistency')}%)`,
     });
   }
 

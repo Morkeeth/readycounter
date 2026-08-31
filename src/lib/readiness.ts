@@ -1,4 +1,5 @@
 import type { MerchantConfig, Product, ReadinessCheck } from '../types/commerce';
+import { getSource } from '../data/sources';
 import type { SourceId } from '../data/sources';
 
 /**
@@ -6,8 +7,14 @@ import type { SourceId } from '../data/sources';
  *
  * 100 points across six checks. THREE are MEASURED — the weight is literally a
  * row in Presenc AI's published causes-of-abandonment table, reproduced in full
- * in `research.md`. The other three are ALLOCATED by us, because no source
- * itemises them, and every surface that prints the score says which is which.
+ * in `research.md`. The other three are ALLOCATED by us, because no published
+ * row prices them on its own, and every surface that prints the score says
+ * which is which. That is the narrow claim, and it is narrow deliberately: the
+ * table DOES carry rows adjacent to two of our allocated lines — "Ambiguous
+ * page structure, 6%" sits near the catalog line, and stock is named inside the
+ * 26% price row — and the rationales below name both rather than claim the
+ * table is silent. Claiming a source is silent is the exact mistake that put an
+ * account wall on the CAPTCHA's price for a day.
  *
  *   measured   26  price + stock feed goes stale         presenc_stale_feed
  *   measured   24  CAPTCHA or verification wall          presenc_captcha
@@ -52,7 +59,7 @@ export const WEIGHTS: WeightRow[] = [
     basis: 'measured',
     sourceIds: ['presenc_stale_feed'],
     rationale:
-      'Presenc AI attributes 26% of abandoned agent carts to stale price or stock data at checkout. The weight is that share.',
+      'Presenc AI attributes 26% of abandoned agent carts to stale price or stock data at checkout. The weight is that share. The same table also carries "Price mismatch vs listed feed — 18%", which names the defect this line actually detects; ReadyCounter charges the 26 row only and never adds the 18, so one mismatch is never billed twice.',
   },
   {
     id: 'agent_checkout_path',
@@ -76,7 +83,7 @@ export const WEIGHTS: WeightRow[] = [
     basis: 'allocated',
     sourceIds: ['schema_offer_gap', 'shopify_catalog_2x'],
     rationale:
-      'No source itemises schema gaps as an abandonment cause. We allocate 14 because agents that cannot read price and availability never reach a cart at all.',
+      'No published row prices a schema gap on its own. The nearest row on the same Presenc table is "Ambiguous page structure — 6%", and we do not take it: this line scores product identifiers (GTIN), not page markup, and adopting that row would be us choosing which cause fits. So the 14 is ours, and labelled ours. We allocate it because agents that cannot read price and availability never reach a cart at all.',
   },
   {
     id: 'webmcp_tools',
@@ -97,6 +104,37 @@ export const WEIGHTS: WeightRow[] = [
 ];
 
 const WEIGHT_BY_ID = new Map(WEIGHTS.map((w) => [w.id, w]));
+
+/**
+ * The one way any surface may print a weight. Every "worth 24 pts" string in a
+ * component used to be a literal copied out of the table above — the same
+ * mechanism as the clamp bug, one layer up: re-tune a weight and the copy drifts
+ * with nothing red. `scripts/verify-score.mjs` fails the build if a component
+ * hardcodes a point value again.
+ */
+export function weightFor(id: string): number {
+  const w = WEIGHT_BY_ID.get(id);
+  if (!w) throw new Error(`no weight row for ${id}`);
+  return w.max;
+}
+
+/**
+ * The sentence the VOID stamp prints when a forced account is the blocker.
+ *
+ * It used to exist TWICE, hardcoded, in `ReadinessDashboard` and `LandingHero`,
+ * with the 15 typed in as a literal both times — while the CAPTCHA branch two
+ * lines above read its sentence off the source row. That asymmetry is how the
+ * old "no published figure prices an account wall separately" claim survived on
+ * four surfaces at once: nobody edits four copies. Composed here, from the
+ * source row and the weight table, and written nowhere else.
+ */
+export function accountWallBecause(): string {
+  return (
+    `${getSource('presenc_account_wall').claim} ` +
+    `ReadyCounter charges exactly ${weightFor('account_wall')} points. Every checkout wall on ` +
+    `this tape costs the share its own published row states — none of it is a number we picked.`
+  );
+}
 
 export const MEASURED_POINTS = WEIGHTS.filter((w) => w.basis === 'measured').reduce(
   (n, w) => n + w.max,
@@ -121,8 +159,24 @@ function statusFor(earned: number, max: number): ReadinessCheck['status'] {
  * had copied out of the table above: `20 * (withGtin / total)`. When the weights
  * were rebalanced on 2026-08-31 those literals stayed at 20 and 10 while the
  * table moved to 14 and 7, and `Math.min(w.max, …)` quietly clamped the result
- * to a perfect score instead of failing. Two stores printed 14/14 and 7/7 on
- * catalogs that were 88% and 25% identified.
+ * to a perfect score instead of failing.
+ *
+ * The first write-up of this bug said "two stores printed 14/14 and 7/7 on
+ * catalogs that were 88% and 25% identified." That sentence is false, so the
+ * pre-fix state was restored and re-run on 2026-08-31 against both shipped
+ * fixtures. `node scripts/verify-stores.mjs` (exit 1) printed:
+ *
+ *   ember-oak    score 73 · catalog_schema printed 14 want 12 · stock 7 want 6
+ *   neon-matcha  score 73 · catalog_schema printed  5 want  4 · stock 7 want 6
+ *
+ * What is true: ember-oak's catalog line was the falsely PERFECT one — 20 × 7/8
+ * = 17.5 clamped down to 14/14 on a catalog only 88% identified. Neon's catalog
+ * line was never clamped: 20 × 2/8 = 5 sits under the 14-point weight, so it
+ * printed 5/14 and looked correct while still being one point wrong. The clamp
+ * only lies where the stale literal OVERSHOOTS the new weight, which is why a
+ * check that runs on the default store alone would have caught this by luck.
+ * Availability was wrong on both (7/7, true value 6/7), and both stores landed
+ * on the same 73 — the two-stores-differ beat would have died with it.
  *
  * A fraction cannot drift from the weight, because the weight is applied here
  * and stated in exactly one place.
@@ -200,7 +254,7 @@ export function computeReadinessChecks(
       'No CAPTCHA on the checkout path',
       captchaOn ? 0 : 1,
       captchaOn
-        ? 'A CAPTCHA stands between a prepared order and payment. Presenc AI attributes 24% of abandoned agent carts to a CAPTCHA or verification wall, so this line costs 24.'
+        ? `A CAPTCHA stands between a prepared order and payment. Presenc AI attributes ${weightFor('agent_checkout_path')}% of abandoned agent carts to a CAPTCHA or verification wall, so this line costs ${weightFor('agent_checkout_path')}.`
         : 'No CAPTCHA. An agent can carry a prepared order to the point a human pays.',
       captchaOn ? 'CAPTCHA ON' : 'CLEAR',
       captchaOn
@@ -212,7 +266,7 @@ export function computeReadinessChecks(
       'No forced account on the checkout path',
       accountOn ? 0 : 1,
       accountOn
-        ? 'A forced account or login stands between a prepared order and payment. Presenc AI gives that its own row — 15% of abandoned agent carts — so this line costs 15, not the CAPTCHA\'s 24. Both walls are priced by the same published table; neither price is ours.'
+        ? `A forced account or login stands between a prepared order and payment. Presenc AI gives that its own row — ${weightFor('account_wall')}% of abandoned agent carts — so this line costs ${weightFor('account_wall')}, not the CAPTCHA's ${weightFor('agent_checkout_path')}. Both walls are priced by the same published table; neither price is ours.`
         : 'No forced account. An agent can reach checkout without creating a login first.',
       accountOn ? 'ACCOUNT WALL ON' : 'CLEAR',
       accountOn

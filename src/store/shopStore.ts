@@ -4,7 +4,8 @@ import { DEFAULT_STORE_ID, getStore, storeIdFromLocation } from '../data/stores'
 import { applySharePayload, clearShareParam, decodeSharePayload, hydrateShareAtBoot } from '../lib/shareSession';
 import type { AutopilotFix } from '../lib/autopilot';
 import { applyAutopilotFix, previewFixImpact } from '../lib/autopilot';
-import { computeReadinessChecks, readinessScore } from '../lib/readiness';
+import { computeReadinessChecks, readinessScore, weightFor } from '../lib/readiness';
+import { getSource } from '../data/sources';
 import { WEBMCP_TOOL_COUNT } from '../webmcp/toolManifest';
 import type {
   FunnelEvent,
@@ -246,21 +247,36 @@ const storeLogic = (
     if (order.lineCount === 0) {
       return { ok: false, blocked: true, reason: 'Order is empty' };
     }
+    /*
+     * Both walls state the same three things — what blocked, whose row prices it,
+     * and how far the tape moves when it clears — and BOTH read those numbers off
+     * the source register. The CAPTCHA branch used to hardcode "24% ... 24 points
+     * higher" while the account branch said only "account login required": the
+     * exact asymmetry that let a forced account keep the CAPTCHA's price for a day.
+     */
     if (merchant.checkoutRequiresCaptcha) {
       get().recordFunnel('checkout_blocked', actor, 'captcha');
+      const src = getSource('presenc_captcha');
       return {
         ok: false,
         blocked: true,
         reason:
-          'Checkout blocked: CAPTCHA required. 24% of agent carts abandon here (Presenc AI 2026). Clear it on the Readiness tab and the tape reprints 24 points higher.',
+          `Checkout blocked: CAPTCHA required. ${src.figure} of abandoned agent carts stop at a ` +
+          `CAPTCHA or verification wall (${src.publisher}, read ${src.accessed}). Clear it on the ` +
+          `Readiness tab and the tape reprints ${weightFor('agent_checkout_path')} points higher.`,
       };
     }
     if (merchant.checkoutRequiresAccount) {
       get().recordFunnel('checkout_blocked', actor, 'account');
+      const src = getSource('presenc_account_wall');
       return {
         ok: false,
         blocked: true,
-        reason: 'Checkout blocked: account login required.',
+        reason:
+          `Checkout blocked: account login required. ${src.figure} of abandoned agent carts stop at a ` +
+          `required account or login — its own row in the same table (${src.publisher}, read ` +
+          `${src.accessed}). Allow guest checkout and the tape reprints ` +
+          `${weightFor('account_wall')} points higher.`,
       };
     }
 

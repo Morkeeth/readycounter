@@ -22,8 +22,13 @@ const root = path.join(__dirname, '..');
 
 const script = `
 import { STORES, STORE_IDS } from './src/data/stores.ts';
-import { computeReadinessChecks, readinessScore } from './src/lib/readiness.ts';
+import { computeReadinessChecks, readinessScore, TOOL_FLOOR } from './src/lib/readiness.ts';
+import { SOURCES } from './src/data/sources.ts';
 import { WEBMCP_TOOL_COUNT } from './src/webmcp/toolManifest.ts';
+
+/** '24%' -> 24. A wall's price is pinned to its SOURCE ROW, never to a literal
+ *  retyped in this file — retyping the table is the bug this repo just fixed. */
+const pubPct = (id) => Number(SOURCES[id].figure.replace('%', ''));
 
 // Read from the manifest, not typed here. This literal said 13 while the
 // product registered 16 — harmless only because both clear the floor of 6,
@@ -67,11 +72,59 @@ const rows = STORE_IDS.map((id) => {
       : checks.find((c) => c.id === lineFor).points === 0,
     'blocker ' + blocker + ' · captcha ' + captchaLine.points + '/' + captchaLine.maxPoints + ' · account ' + accountLine.points + '/' + accountLine.maxPoints,
   );
+  const wallSource = { captcha: 'presenc_captcha', account: 'presenc_account_wall' }[blocker];
   assert(
     id + ' charges the blocked wall its own published weight',
-    lineFor === undefined || checks.find((c) => c.id === lineFor).maxPoints === (blocker === 'captcha' ? 24 : 15),
-    blocker + ' costs ' + (lineFor ? checks.find((c) => c.id === lineFor).maxPoints : 0) + ' pts',
+    lineFor === undefined || checks.find((c) => c.id === lineFor).maxPoints === pubPct(wallSource),
+    blocker + ' costs ' + (lineFor ? checks.find((c) => c.id === lineFor).maxPoints : 0) + ' pts vs ' + SOURCES[wallSource].publisher + ' ' + SOURCES[wallSource].figure,
   );
+
+  /*
+   * THE CLAMP CHECK, run per store.
+   *
+   * On 2026-08-31 the weights moved to 14/14/7 while the call sites still
+   * multiplied by 20/20/10, and Math.min(w.max, ...) turned 17.5 into a PERFECT
+   * 14/14 on a catalog only 88% identified. Nothing went red: a wrong number
+   * wearing a right number's clothes.
+   *
+   * A replay of that state shows why one store is not enough. ember-oak's
+   * catalog line overshot (17.5 -> clamped to 14/14) but neon-matcha's did not
+   * (20 x 2/8 = 5, under the 14-point weight, printed 5/14 and looked correct).
+   * The clamp only lies where the stale literal overshoots the new weight, so a
+   * check that runs on the default store alone catches it BY LUCK.
+   *
+   * Below, each line's expected points are recomputed here from the fixture --
+   * ratio x weight, arithmetic this file owns -- and compared to what the
+   * product printed. Any weight applied anywhere but line() fails it, on
+   * every store, whether or not the drift happens to overshoot.
+   */
+  const t = store.products.length;
+  const ratios = {
+    price_consistency:
+      store.products.filter((p) => p.feedPrice === undefined || p.feedPrice === p.price).length / t,
+    agent_checkout_path: store.merchant.checkoutRequiresCaptcha ? 0 : 1,
+    account_wall: store.merchant.checkoutRequiresAccount ? 0 : 1,
+    catalog_schema: store.products.filter((p) => p.gtin).length / t,
+    webmcp_tools: Math.min(TOOL_COUNT, TOOL_FLOOR) / TOOL_FLOOR,
+    stock_signals: store.products.filter((p) => p.inStock).length / t,
+  };
+  const drift = checks.filter((c) => c.points !== Math.round(c.maxPoints * ratios[c.id]));
+  assert(
+    id + ' — every line equals ratio x weight, recomputed outside the product',
+    drift.length === 0,
+    drift.length
+      ? drift.map((c) => c.id + ' printed ' + c.points + ' want ' + Math.round(c.maxPoints * ratios[c.id])).join(' · ')
+      : checks.map((c) => c.id.slice(0, 5) + ' ' + c.points + '/' + c.maxPoints).join(' · '),
+  );
+  const falselyPerfect = checks.filter((c) => ratios[c.id] < 1 && c.points >= c.maxPoints);
+  assert(
+    id + ' — no partial ratio prints a perfect line',
+    falselyPerfect.length === 0,
+    falselyPerfect.length
+      ? falselyPerfect.map((c) => c.id + ' ' + c.points + '/' + c.maxPoints).join(' · ')
+      : checks.filter((c) => ratios[c.id] < 1).map((c) => c.id + ' ' + c.points + '/' + c.maxPoints).join(' · ') || 'no partial lines',
+  );
+
   return { id, score, blocker };
 });
 

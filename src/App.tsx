@@ -139,9 +139,12 @@ function App() {
 
       <footer className="app-footer">
         <p>
-          Every figure ReadyCounter prints resolves to a row in{' '}
+          Every figure ReadyCounter <em>cites</em> resolves to a row in{' '}
           <code>src/data/sources.ts</code> and a quoted sentence in{' '}
-          <code>research.md</code>. Three of the six weights are a published share
+          <code>research.md</code>. The numbers it <em>measures</em> off this store —
+          SKU counts, GTIN coverage, points earned — are computed live from the
+          catalog and cite nothing, because they are not claims about the world.
+          Three of the six weights are a published share
           of abandoned agent carts, one per row of Presenc AI&rsquo;s causes table
           ({getSource('presenc_stale_feed').figure} stale feed,{' '}
           {getSource('presenc_captcha').figure} CAPTCHA,{' '}

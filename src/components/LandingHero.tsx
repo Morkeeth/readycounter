@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { getSource } from '../data/sources';
-import { computeReadinessChecks, readinessScore } from '../lib/readiness';
+import { accountWallBecause, computeReadinessChecks, readinessScore } from '../lib/readiness';
 import { useShopStore } from '../store/shopStore';
 import { ReadinessTape } from './ReadinessTape';
 
@@ -61,8 +61,7 @@ export function LandingHero({ onShop, onReadiness, registeredToolCount }: Landin
     : merchant.checkoutRequiresAccount
       ? {
           kind: 'A forced account',
-          because:
-            'Presenc AI gives a required account or login its own row in the same table it prices the CAPTCHA on: 15% of abandoned agent carts. ReadyCounter charges exactly 15 points. Every checkout wall on this tape costs the share its own published row states — none of it is a number we picked.',
+          because: accountWallBecause(),
           sourceId: 'presenc_account_wall' as const,
         }
       : null;
