@@ -64,6 +64,36 @@ Merchants are told agents are coming. Nobody tells them **which door is locked**
 | Product schemas carrying the Offer object | **19%** | [Digital Applied, 5,000-site audit, 2026-04-26](https://www.digitalapplied.com/blog/schema-markup-adoption-5k-site-audit-2026) |
 | Trust AI to compare prices vs to place the order | **65% vs 14%** | [YouGov US for Checkout.com, 2025-12-04](https://yougov.com/en-us/articles/53808-american-trust-in-ai-for-retail-consumer-sentiment-in-2025) |
 
+### Judge criteria — evidence map
+
+Paste one subsection per Devpost criterion. Full map: [`submission/JUDGES.md`](./submission/JUDGES.md).
+
+#### WebMCP Leverage
+
+**18** `document.modelContext.registerTool` handlers share one co-shop order store — human and agent edits land on the same lines with `HUMAN`/`AGENT` chips. `prepare_checkout` validates totals and **never charges a card** (constitution in [`src/webmcp/registerTools.ts`](./src/webmcp/registerTools.ts)). Path B works without the Chrome flag via Connect → Agent tool console; Path A is native WebMCP ([`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md)).
+
+**One click:** https://tooltruth-webmcp.vercel.app/?judge=1 → Co-shop tab + judge banner → `add_to_order` → `prepare_checkout`.
+
+#### Execution
+
+Shipped product, not a POC: live Vercel URL · **`npm run verify`** (10 scripts, exits non-zero on drift) · Playwright e2e (`e2e/judge-mode.spec.ts`, `e2e/stranger-pass.spec.ts`) · automated film pipeline · itemised bill UI where every point names its Presenc row.
+
+**One click:** `npm run verify && npm run test:e2e` · 60s judge path [`JUDGE-60s.md`](./JUDGE-60s.md).
+
+#### Potential Impact
+
+**78.6%** agent cart abandonment ([Presenc AI](./src/data/sources.ts)) · we crawled **148** curated DTC brands — **78** opened a public feed at **0% scrape GTIN** · **11** still return GTIN via Shopify UCP Catalog MCP where scrape is empty. Merchants paste a URL, compare to the field, re-audit for a delta receipt.
+
+**One click:** `curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,ucp:.ucp.gtinWhereCrawlZero}'` → **78, 148, 11** · Connect → audit **colourpop.com**.
+
+#### Creativity & Ambition
+
+Novel insight: **UCP ≠ scrape** — GTIN can exist on UCP while public crawl is empty (glossier, tatcha, brooklinen…). Score uses Presenc's six published abandonment shares (26/24/18/15/11/6), not invented weights. Re-audit prints a **delta receipt** merchants can share.
+
+**One click:** Rankings → filter **UCP GTIN · scrape empty** → re-audit same URL for before/after.
+
+---
+
 ### What we built
 
 **A readiness score you can audit line by line, on a store an agent can actually use.**
@@ -238,7 +268,7 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 
 1. **The tape** — landing screen shows Ember & Oak at **70/100** with a
    CHECKOUT VOID stamp. Click any line: arithmetic, fix, source, dates.
-2. **Co-shop** — *Start shopping* → add an item → **Connect → Agent tool
+2. **Co-shop** — **Co-shop** tab → add an item → **Connect → Agent tool
    console** → `add_to_order`, then `get_order`. One order, `HUMAN`/`AGENT` chips.
 3. **The refusal** — *Prepare checkout*. It refuses and cites Presenc AI.
 4. **The fix** — **Readiness** → uncheck CAPTCHA (or use Readiness autopilot) →
@@ -250,7 +280,7 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 ### Optional: native WebMCP
 
 Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → the header badge reads
-**Assistant tools active · 16 connected**.
+**Assistant tools active · 18 connected**.
 
 ---
 

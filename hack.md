@@ -90,17 +90,14 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Night wave RC-C (2026-08-31):** Partner-grade narrative — `LIGHTHOUSE-VISION.md`, `SHOPIFY-PARTNER-BRIEF.md`, README stranger hero, `audits/STRANGER-PASS-2026-08-31.md`, DEVPOST sync.
-
-**Slice 1 (this run):** Lighthouse narrative + stranger audit on live URL.
+**RC-WIN wave (2026-09-01):** Criteria-max Devpost + judge UX — per-criterion evidence in `submission/DEVPOST-PASTE.md`, embarrassment grep in verify, `e2e/judge-mode.spec.ts`.
 
 ```text
-Done-when (ran 2026-08-31T21:31Z):
-  test -f LIGHTHOUSE-VISION.md && test -f SHOPIFY-PARTNER-BRIEF.md && test -f audits/STRANGER-PASS-2026-08-31.md → exit 0
-  npm run verify → exit 0
-  npm run build → exit 0
-  PLAYWRIGHT_BASE_URL=https://tooltruth-webmcp.vercel.app npx playwright test e2e/stranger-pass.spec.ts → 1 passed
-  curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,ucp}' → 148, 78, gtinWhereCrawlZero 11
+Done-when:
+  test -f submission/JUDGES.md && test -f submission/DEVPOST-PASTE.md → exit 0
+  npm run verify → exit 0 (includes verify-embarrassment.mjs)
+  npm run test:e2e → exit 0 (judge-mode + stranger-pass green)
+  node scripts/check-numbers.mjs → exit 0
 ```
 
 ## LOG
@@ -156,7 +153,7 @@ Done-when (ran 2026-08-31T21:31Z):
   `npm run verify && npm run build` exit 0. Branch `night/gates-that-lie-2026-08-31`.
   **Oscar:** `vercel --prod` · film · Devpost.
 
-- 2026-09-01 — **PROD DEPLOY** (`vercel --prod`) — `dpl_oQfTmaaDXEe9CxTWUoMpvXwf5v46` ·
+- 2026-09-01 — **RC-WIN judge UX:** per-criterion Devpost sections · embarrassment verify · stale copy fixes (16→18, Start shopping→Co-shop) · SUBMIT-READY WebMCP paragraph · `verify-embarrassment.mjs` in verify pipeline · rankings KV timeout 3s→10s (cold bundle was returning empty batch while render/status had 148 rows).
   https://tooltruth-webmcp.vercel.app · rankings 78/148 · share-stranger + stranger-pass e2e green on prod.
   **Oscar:** film · Devpost (video URL required).
 

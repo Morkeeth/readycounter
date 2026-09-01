@@ -67,7 +67,7 @@ ok('room sse pub', events === 1);
 const score = readinessScore(
   computeReadinessChecks(STORES['ember-oak'].merchant, WEBMCP_TOOL_COUNT, STORES['ember-oak'].products),
 );
-console.log('ember score with 16 tools:', score);
+console.log('ember score with', WEBMCP_TOOL_COUNT, 'tools:', score);
 done();
 `;
 
