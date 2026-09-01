@@ -1,0 +1,13 @@
+ReadyCounter — WebMCP Challenge demo
+
+Agent commerce. Now reviewable. Proof.
+
+Lighthouse for agentic commerce: field rankings (78/148 crawled, 0% scrape GTIN, 11 UCP gaps), URL audit with delta receipt, sandbox readiness bill traced to Presenc AI abandonment shares, 18 WebMCP tools for human+agent co-shop. prepare_checkout never charges.
+
+🔗 Live: https://tooltruth-webmcp.vercel.app
+📦 Repo: https://github.com/Morkeeth/tooltruth-webmcp
+🎬 Film mode: https://tooltruth-webmcp.vercel.app/?film=1&view=integrations&demo=1
+
+Built with React, TypeScript, Vite, WebMCP, Zustand, Vercel.
+
+#WebMCP #AgenticCommerce #Shopify #Hackathon #OpenSource

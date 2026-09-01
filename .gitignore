@@ -36,3 +36,16 @@ audits/*
 test-results/
 playwright-report/
 
+# Film build intermediates (keep demo-final.*)
+demo/.vo-parts/
+demo/.browser-raw/
+demo/.slides-raw/
+demo/.slide-shots/
+demo/.intro30.mp4
+demo/.browser30.mp4
+demo/.outro30.mp4
+demo/.seg30.txt
+demo/.picture.mp4
+demo/seg-*.mp4
+film/__pycache__/
+

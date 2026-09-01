@@ -1,0 +1,77 @@
+{
+  "name": "readycounter",
+  "title": "Agent commerce. Now reviewable. Proof.",
+  "fps": 30,
+  "brand": {
+    "label": "READYCOUNTER · WEBMCP",
+    "accent": "#c45c26"
+  },
+  "sources": {
+    "field": {
+      "read_from": "GET https://tooltruth-webmcp.vercel.app/api/v1/rankings",
+      "read_at": "2026-09-01",
+      "cmd": "curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'",
+      "note": "Field batch receipt — crawled count, scrape GTIN %, UCP gap filter size."
+    }
+  },
+  "data": {
+    "crawled": { "value": 78, "source": "field", "at": "succeeded" },
+    "parsed": { "value": 148, "source": "field", "at": "shopCount" },
+    "scrape_gtin_pct": { "value": 0, "source": "field", "at": "avgGtinPct" },
+    "ucp_gaps": { "value": 11, "source": "field", "at": "ucp.gtinWhereCrawlZero" },
+    "panel": {
+      "source": "field",
+      "values": [
+        {
+          "head": "THE FIELD",
+          "value": "78 / 148 crawled",
+          "body": "ReadyCounter already parsed one hundred forty eight popular DTC brands. Seventy eight opened a public feed. Width, not a vanity score in a vacuum."
+        },
+        {
+          "head": "SCRAPE ≠ PROTOCOL",
+          "value": "0% GTIN in scrape",
+          "body": "Zero percent barcodes in what agents scrape. Eleven brands still return GTIN on Shopify UCP Catalog MCP where scrape is empty."
+        },
+        {
+          "head": "THE LOOP",
+          "value": "Measure · Act · Re-measure",
+          "body": "Paste a URL. Fix something. Re-audit. We print the delta. Every point on the sandbox bill traces to a published abandonment share."
+        },
+        {
+          "head": "PROOF",
+          "value": "18 WebMCP tools",
+          "body": "Human and agent, one cart. prepare_checkout never charges a card. Open source. Live now."
+        }
+      ]
+    }
+  },
+  "scenes": [
+    {
+      "id": "title",
+      "type": "title",
+      "seconds": 5.0,
+      "step": "hook",
+      "heading": "Agent commerce.",
+      "em": "Now reviewable. Proof.",
+      "items": []
+    },
+    {
+      "id": "field",
+      "type": "columns",
+      "seconds": 8.0,
+      "step": "width",
+      "heading": "The lighthouse for agentic commerce",
+      "em": "compare yourself to the field.",
+      "items": "@panel"
+    },
+    {
+      "id": "close",
+      "type": "title",
+      "seconds": 4.0,
+      "step": "close",
+      "heading": "ReadyCounter",
+      "em": "Open source · live · Shopify catalog · WebMCP proof",
+      "items": []
+    }
+  ]
+}

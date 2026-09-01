@@ -5,6 +5,14 @@ function filmEnabled(): boolean {
   return new URLSearchParams(window.location.search).get('film') === '1';
 }
 
+/** Hide director cues during automated capture (`record=1`) or manual off (`cues=0`). */
+function cuesVisible(): boolean {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('cues') === '0') return false;
+  if (params.get('record') === '1') return false;
+  return true;
+}
+
 function beatFromUrl(): number {
   const raw = new URLSearchParams(window.location.search).get('beat');
   const n = raw ? Number.parseInt(raw, 10) : 0;
@@ -17,7 +25,7 @@ export function FilmGuide() {
 
   const beat = useMemo(() => DEMO_BEATS[index], [index]);
 
-  if (!filmEnabled()) {
+  if (!filmEnabled() || !cuesVisible()) {
     return null;
   }
 

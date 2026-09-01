@@ -27,6 +27,8 @@ curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,sho
 https://tooltruth-webmcp.vercel.app/?film=1&view=integrations&demo=1
 ```
 
+**Automated capture** (`film/browser.py`) appends `&record=1&cues=0` so the director cue bar is not baked in.
+
 | Beat | Deep link |
 |------|-----------|
 | 0 — Hook | `/?film=1&beat=0&store=ember-oak&view=merchant` |

@@ -1,5 +1,6 @@
 # Submission pack — ReadyCounter · WebMCP Challenge
 
+**Full pack:** [`submission/README.md`](./submission/README.md) · film: `./film/build.sh`  
 **Deadline:** Wed Sep 3, 2026 @ 1pm PDT  
 **Devpost:** https://webmcp.devpost.com/  
 **Pitch:** `demo/PITCH-TOMORROW.md`

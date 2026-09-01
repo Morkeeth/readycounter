@@ -4,7 +4,8 @@
 **Say the product name twice.** ReadyCounter.  
 **Length:** ≤2:30 preferred · hard cap <3:00 (Devpost).  
 **Live:** https://tooltruth-webmcp.vercel.app  
-**Film mode:** https://tooltruth-webmcp.vercel.app/?film=1&view=integrations&demo=1  
+**Film mode:** `/?film=1&view=integrations&demo=1`  
+**Capture (no cue bar):** add `&record=1` or `&cues=0`  
 **Deadline:** Wed Sep 3, 2026 · 1pm PDT
 
 ---
@@ -55,7 +56,16 @@ curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,sho
 
 ---
 
-## Path B — silent capture + Kokoro (ATA method)
+## Path B — automated build (ATA method)
+
+```bash
+cd ~/CODE/tooltruth-webmcp
+./film/build.sh
+```
+
+Outputs `demo/demo-final.mp4`, `demo/voiceover.mp3`, `demo/demo-final.srt`.
+
+Manual Kokoro only:
 
 ```bash
 cd ~/CODE/voice-generation
