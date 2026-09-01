@@ -21,7 +21,7 @@
 
 | Time | Step |
 |------|------|
-| 0:00 | Open Connect — lighthouse hero 148/78 |
+| 0:00 | Open Connect — lighthouse hero 78/148 |
 | 0:15 | Audit colourpop — YOU·FIELD strip |
 | 0:35 | Scroll rankings — UCP gap filter |
 | 0:50 | Prove in co-shop or tool console |

@@ -43,7 +43,7 @@ Open **http://localhost:5173** (or live URL when deployed).
 ## 0:45–0:60 · Platform (store B + audit wedge)
 
 1. Header **Store** → **Neon Matcha Lab** (or `?store=neon-matcha`)
-2. **Readiness** — **65/80**: account wall 0/15, payment 0/11, catalog 2/6
+2. **Readiness** — **65/100**: account wall 0/15, payment 0/11, page structure 2/6
 3. **Connect** → paste a storefront URL → audit → rankings table shows batch
 4. Harness → **`get_readiness_score`** — JSON shows store-specific checks
 

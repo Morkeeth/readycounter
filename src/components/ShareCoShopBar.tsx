@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { apiCreateRoom } from '../api/client';
 import { buildShareUrl } from '../lib/shareSession';
 import { isBuiltinStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
@@ -10,10 +9,8 @@ export function ShareCoShopBar() {
   const merchant = useShopStore((s) => s.merchant);
   const funnel = useShopStore((s) => s.funnel);
   const [copied, setCopied] = useState(false);
-  const [roomMsg, setRoomMsg] = useState<string | null>(null);
 
   const lineCount = order.lines.length;
-  const roomId = new URLSearchParams(window.location.search).get('room');
   const importedStore = !isBuiltinStore(storeId);
 
   const share = async () => {
@@ -25,24 +22,8 @@ export function ShareCoShopBar() {
     } catch {
       window.prompt('Copy link to share this cart:', url);
     }
-  };
-
-  const startLiveRoom = async () => {
-    const created = await apiCreateRoom(storeId, merchant);
-    if (!created) {
-      setRoomMsg('Could not create room — API may be offline.');
-      return;
-    }
-    const url = new URL(window.location.href);
-    url.searchParams.set('room', created.roomId);
-    url.searchParams.set('store', storeId);
-    window.history.replaceState({}, '', url.toString());
-    try {
-      await navigator.clipboard.writeText(url.toString());
-      setRoomMsg('Live session started — link copied. Synced via Render KV.');
-    } catch {
-      setRoomMsg(`Live session: ${url.toString()}`);
-    }
+    const next = new URL(url);
+    window.history.replaceState({}, '', next.pathname + next.search + next.hash);
   };
 
   return (
@@ -50,11 +31,9 @@ export function ShareCoShopBar() {
       <div>
         <strong>Share this cart</strong>
         <p>
-          {roomId
-            ? 'Live sync active — cart updates across tabs (Render KV).'
-            : importedStore
-              ? 'Link includes your catalog — works in incognito.'
-              : 'Anyone with the link sees this cart and can keep shopping.'}
+          {importedStore
+            ? 'Link embeds your catalog — works in incognito for judges.'
+            : 'Anyone with the link sees this cart on the same demo store.'}
         </p>
       </div>
       <div className="share-bar__actions">
@@ -66,16 +45,7 @@ export function ShareCoShopBar() {
         >
           {copied ? 'Link copied' : 'Copy cart link'}
         </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          onClick={() => void startLiveRoom()}
-          disabled={lineCount === 0}
-        >
-          Start live session
-        </button>
       </div>
-      {roomMsg && <p className="share-bar__msg">{roomMsg}</p>}
     </div>
   );
 }

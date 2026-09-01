@@ -21,7 +21,8 @@
     "audit:ucp-vs-crawl": "node scripts/ucp-vs-crawl.mjs",
     "audit:oauth-pairs": "npx tsx scripts/oauth-pairs.mjs",
     "audit:journey": "npx tsx scripts/journey-batch.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:numbers": "node scripts/check-numbers.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",
