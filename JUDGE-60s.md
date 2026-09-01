@@ -1,87 +1,60 @@
 # Judge path — 60 seconds
 
-No API keys. No WebMCP flag. One cold clone.
+No API keys. **Path B** works without WebMCP flag. **Path A:** [`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md)
 
-```bash
-git clone https://github.com/Morkeeth/tooltruth-webmcp.git
-cd tooltruth-webmcp && npm install && npm run dev
-```
-
-Open **http://localhost:5173** (or live URL when deployed).
+**Live:** https://tooltruth-webmcp.vercel.app
 
 ---
 
-## 0:00–0:15 · Shop
+## 0:00–0:20 · Co-shop (WebMCP proof)
 
-1. Click **Start shopping**
-2. **Add** any product → appears in co-shop order panel
+1. Open `/?view=shop`
+2. **Add to order** on any product
+3. **Connect** tab → **Agent tool console**
+4. Run **`add_to_order`** → **`get_order`**
 
-**Pass:** item visible in <10 seconds.
-
----
-
-## 0:15–0:30 · Agent co-shop
-
-1. Open the **Connect** tab → **Agent tool console**
-2. Run **`add_to_order`** (pick any SKU)
-3. Run **`get_order`**
-
-**Pass:** same order, human + agent lines, badges show `addedBy`.
+**Pass:** same order · HUMAN + AGENT chips · `prepare_checkout` refuses (never charges).
 
 ---
 
-## 0:30–0:45 · Readiness tab (store A)
+## 0:20–0:35 · Readiness sandbox
 
-1. **Readiness** tab — Ember & Oak, score **70/100**, CAPTCHA **ON**
-2. **Run agent journey** — blocked at `prepare_checkout`
-3. Toggle CAPTCHA **off** → score goes **70 → 94** → journey succeeds
+1. **Readiness** tab (ember-oak) — **70/100** · CAPTCHA **ON**
+2. Toggle CAPTCHA **off** (or Autopilot) → **70 → 94**
 
-**Pass:** score changes; journey + checkout gate match toggle.
+**Pass:** delta = exactly **24** (Presenc CAPTCHA row).
 
 ---
 
-## 0:45–0:60 · Platform (store B + audit wedge)
+## 0:35–0:50 · Field width
 
-1. Header **Store** → **Neon Matcha Lab** (or `?store=neon-matcha`)
-2. **Readiness** — **65/100**: account wall 0/15, payment 0/11, page structure 2/6
-3. **Connect** → paste a storefront URL → audit → rankings table shows batch
-4. Harness → **`get_readiness_score`** — JSON shows store-specific checks
+1. **Connect** → paste **colourpop.com** → **Audit**
+2. Rankings → filter **UCP GTIN · scrape empty**
 
-**Pass:** two merchants, audit path, rankings from Render KV.
+**Pass:** **78/148** crawled · **0%** scrape GTIN · **11** UCP gaps.
+
+---
+
+## 0:50–1:00 · Delta
+
+1. **Re-audit** same URL → delta receipt
+
+**Pass:** before/after catalog lines print.
 
 ---
 
 ## Optional +30s
 
-| Action | Why it matters |
-|--------|----------------|
-| **Copy co-shop link** → incognito | Shareable session |
-| **Crawl vs OAuth** on Readiness | A2 comparison panel |
-| View page source → `application/ld+json` | Product schema for agents |
+| Action | Why |
+|--------|-----|
+| `?store=neon-matcha` | Second merchant **65/100** |
+| Native WebMCP flag | Badge **18 connected** — see CHATGPT-JUDGE.md |
 | `npm run verify` | Automated proof |
 
 ---
 
 ## 18 WebMCP tools
 
-`search_catalog` · `get_product` · `add_to_order` · `update_line_quantity` · `remove_line` · `get_order` · `get_delivery_quote` · `prepare_checkout` · `get_readiness_score` · `get_merchant_config` · `simulate_agent_journey` · …
+`GET /api/v1/tools` · source: `src/webmcp/registerTools.ts`
 
-Source: `src/webmcp/registerTools.ts` · `GET /api/v1/tools`
-
----
-
-## Fork in 5 min
-
-Duplicate one entry in `src/data/stores.ts` → `?store=your-id`  
-Full guide: [`FORK.md`](./FORK.md)
-
----
-
-## Live URL (when deployed)
-
-```text
-https://tooltruth-webmcp.vercel.app
-https://tooltruth-webmcp.vercel.app/?store=neon-matcha
-```
-
-Constitution: **`prepare_checkout` never charges a card.**
+**Constitution:** `prepare_checkout` never charges a card.

@@ -1,4 +1,7 @@
-"""Browser segment — drives the LIVE ReadyCounter film beats in Chromium."""
+"""Browser segment — drives the LIVE ReadyCounter film beats in Chromium.
+
+v2: co-shop + WebMCP proof in the first 30s (EYES submit rank).
+"""
 from playwright.sync_api import sync_playwright
 import pathlib
 import shutil
@@ -12,21 +15,21 @@ TMP = ROOT / "demo" / ".browser-raw"
 
 RECORD = "film=1&record=1&cues=0"
 
+# Co-shop first → CAPTCHA → lighthouse → audit → rankings → delta → ambition
 BEATS = [
-    (f"/?{RECORD}&beat=0&store=ember-oak&view=merchant", 8000),
-    (f"/?{RECORD}&beat=1&store=ember-oak&view=merchant", 10000),
-    (f"/?{RECORD}&beat=2&store=ember-oak&view=merchant", 8000),
+    (f"/?{RECORD}&beat=7&view=shop", 13000),
+    (f"/?{RECORD}&view=integrations", 8000),
+    (f"/?{RECORD}&beat=6&store=ember-oak&view=merchant", 10000),
+    (f"/?{RECORD}&beat=0&store=ember-oak&view=merchant", 6000),
     (
         f"/?{RECORD}&beat=3&view=integrations&demo=1&audit_url=https://colourpop.com",
-        14000,
-    ),
-    (f"/?{RECORD}&beat=4&view=integrations", 14000),
-    (
-        f"/?{RECORD}&beat=5&view=integrations&demo=1&audit_url=https://colourpop.com",
         12000,
     ),
-    (f"/?{RECORD}&beat=6&store=ember-oak&view=merchant", 12000),
-    (f"/?{RECORD}&beat=7&view=shop", 10000),
+    (f"/?{RECORD}&beat=4&view=integrations", 12000),
+    (
+        f"/?{RECORD}&beat=5&view=integrations&demo=1&audit_url=https://colourpop.com",
+        10000,
+    ),
     (f"/?{RECORD}&beat=8&view=integrations", 5000),
 ]
 
@@ -84,23 +87,25 @@ def main():
             pg.evaluate(CURSOR)
             pg.wait_for_timeout(1200)
 
-            if "beat=4" in path:
-                maybe_click(pg, "text=UCP GTIN")
-                maybe_click(pg, "text=scrape empty")
-                scroll(pg, 500, 2000)
-                scroll(pg, 500, 2000)
-            elif "beat=3" in path or "beat=5" in path:
-                maybe_click(pg, "button:has-text('Audit')")
-                scroll(pg, 400, 1500)
+            if "view=shop" in path:
+                maybe_click(pg, "button:has-text('Add to order')")
+                scroll(pg, 300, 1500)
+            elif "view=integrations" in path and "beat=" not in path:
+                scroll(pg, 400, 1000)
+                maybe_click(pg, "text=Agent tool")
             elif "beat=6" in path:
                 maybe_click(pg, "text=Autopilot")
                 maybe_click(pg, "text=Journey")
                 scroll(pg, 350, 1500)
-            elif "beat=7" in path:
-                scroll(pg, 300, 1500)
-                maybe_click(pg, "text=Agent tool")
-            elif "beat=2" in path:
-                scroll(pg, 450, 2000)
+            elif "beat=4" in path:
+                maybe_click(pg, "text=UCP GTIN")
+                maybe_click(pg, "text=scrape empty")
+                scroll(pg, 500, 2000)
+            elif "beat=3" in path or "beat=5" in path:
+                maybe_click(pg, "button:has-text('Audit')")
+                scroll(pg, 400, 1500)
+            elif "beat=0" in path:
+                scroll(pg, 350, 1500)
 
             remaining = max(0, wait_ms - 2500)
             pg.wait_for_timeout(remaining)

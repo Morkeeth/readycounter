@@ -127,9 +127,9 @@
 
 | ID | Slice | Owner | Done when |
 |----|-------|-------|-----------|
-| **O1** | Record film | Oscar | `demo/demo-final.mp4` ≤2:30 |
-| **O2** | Upload YouTube | Oscar | Incognito plays |
-| **O3** | `vercel --prod` | Oscar | ✅ 2026-09-01 · rankings 78/148 live |
+| **O1** | Film | ✅ | `demo/demo-final.mp4` v2 · 94.6s · co-shop @12s |
+| **O2** | Upload YouTube | Oscar | `submission/SUBMIT-READY.md` |
+| **O3** | `vercel --prod` | Oscar | ✅ 2026-09-01 · KV restored |
 | **O4** | Devpost submit | Oscar | Before Sep 3 1pm PDT |
 | **O5** | Connect Shopify OAuth | Oscar | Enables E1 |
 

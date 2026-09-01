@@ -6,17 +6,17 @@ PARTS = pathlib.Path("demo/.vo-parts")
 OUT = pathlib.Path("demo/voiceover.mp3")
 SR = 24000
 
-# Chained cues: each starts ~0.2s after the prior paragraph ends (max gap ≤2s).
+# v2: co-shop-first picture — tune after ./film/build.sh
 CUES = {
     0: 0.4,
     1: 3.8,
-    2: 20.5,
-    3: 35.0,
-    4: 52.5,
-    5: 63.0,
-    6: 72.0,
-    7: 81.0,
-    8: 92.0,
+    2: 13.0,
+    3: 22.5,
+    4: 38.5,
+    5: 53.5,
+    6: 71.0,
+    7: 81.5,
+    8: 85.0,
 }
 
 
