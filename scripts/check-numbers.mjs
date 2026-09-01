@@ -39,6 +39,7 @@ try {
 
 const DOC_FILES = [
   'JUDGE-60s.md',
+  'CHATGPT-JUDGE.md',
   'DEMO.md',
   'README.md',
   'SUBMISSION-PACK.md',

@@ -156,9 +156,9 @@ Done-when (ran 2026-08-31T21:31Z):
   `npm run verify && npm run build` exit 0. Branch `night/gates-that-lie-2026-08-31`.
   **Oscar:** `vercel --prod` · film · Devpost.
 
-- 2026-09-01 — **PROD DEPLOY** (`vercel --prod`) — `dpl_oQfTmaaDXEe9CxTWUoMpvXwf5v46` ·
-  https://tooltruth-webmcp.vercel.app · rankings 78/148 · share-stranger + stranger-pass e2e green on prod.
-  **Oscar:** film · Devpost (video URL required).
+- 2026-09-01 — **RC-JUDGE doc sync:** `JUDGE-60s.md` rewritten for Connect/Co-shop tabs ·
+  `CHATGPT-JUDGE.md` (Path A flag/ChatGPT + Path B console) · `submission/SUBMIT-READY.md` ·
+  DEVPOST/submission sync · embarrassment grep fixes · `npm run verify && npm run check:numbers` green.
 
 - 2026-08-31 — **Hammer pass (autonomy):** B7 Offer% rankings column · batch publish fields ·
   compare API offer headline · ONBOARDING agent path · E2 glossier doc ·

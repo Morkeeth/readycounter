@@ -125,13 +125,13 @@
 
 ## O · Oscar gates (cloud MUST NOT)
 
-| ID | Slice | Owner | Done when |
-|----|-------|-------|-----------|
-| **O1** | Record film | Oscar | `demo/demo-final.mp4` ≤2:30 |
-| **O2** | Upload YouTube | Oscar | Incognito plays |
-| **O3** | `vercel --prod` | Oscar | ✅ 2026-09-01 · rankings 78/148 live |
-| **O4** | Devpost submit | Oscar | Before Sep 3 1pm PDT |
-| **O5** | Connect Shopify OAuth | Oscar | Enables E1 |
+| ID | Slice | Owner | Done when | Status |
+|----|-------|-------|-----------|--------|
+| **O1** | Record film | Oscar | `demo/demo-final.mp4` ≤2:30 | ✅ v1 on disk (v2 optional RC-FILM) |
+| **O2** | Upload YouTube | Oscar | Incognito plays | ⬜ Oscar — see `submission/SUBMIT-READY.md` |
+| **O3** | `vercel --prod` | Oscar | Rankings 78/148 live | ✅ 2026-09-01 |
+| **O4** | Devpost submit | Oscar | Before Sep 3 1pm PDT | ⬜ Oscar — paste `submission/DEVPOST-PASTE.md` |
+| **O5** | Connect Shopify OAuth | Oscar | Enables E1 | ⬜ |
 
 ---
 

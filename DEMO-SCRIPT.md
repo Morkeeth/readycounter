@@ -71,7 +71,7 @@ eight ships without a GTIN, and the fix names the field that is missing.
 
 ## 0:55 – 1:20 · Co-shop — one order, two actors
 
-**Do:** click **Start shopping**, land on the **Shop** tab.
+**Do:** open `/?view=shop` (Co-shop tab).
 
 1. Click **Add to order** on *House Espresso Blend*. It appears in the order
    panel with a solid `HUMAN` chip.

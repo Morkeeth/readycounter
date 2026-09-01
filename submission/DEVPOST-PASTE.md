@@ -7,9 +7,10 @@ sentence in [`research.md`](./research.md). `npm run verify` fails the build if 
 cited figure loses its source. Scores and catalog counts are *measured* off the
 shipped fixtures and cite nothing.
 
-**Oscar: film + Devpost submit remain.** Prod deployed 2026-09-01 with lighthouse UI,
-share link, Offer/ACP on audit API. Use `demo/FILM-AND-SUBMIT.md` + `demo/voiceover.mp3`. Deadline
-Wed Sep 3, 2026 1pm PDT.
+**Film:** `demo/demo-final.mp4` on disk (v1). RC-FILM lane may ship v2 via `film/build.sh` —
+re-watch before YouTube upload. **Devpost submit:** Oscar only — see
+[`submission/SUBMIT-READY.md`](./submission/SUBMIT-READY.md). Prod deployed 2026-09-01 with
+lighthouse UI, share link, Offer/ACP on audit API. Deadline Wed Sep 3, 2026 1pm PDT.
 
 ---
 
@@ -231,8 +232,8 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 
 1. **The tape** — landing screen shows Ember & Oak at **70/100** with a
    CHECKOUT VOID stamp. Click any line: arithmetic, fix, source, dates.
-2. **Co-shop** — *Start shopping* → add an item → **Connect → Agent tool
-   console** → `add_to_order`, then `get_order`. One order, `HUMAN`/`AGENT` chips.
+2. **Co-shop** — `/?view=shop` → **Add** an item → **Connect → Agent tool
+   console** → `add_to_order`, then `get_order`. One order, `human`/`agent` chips.
 3. **The refusal** — *Prepare checkout*. It refuses and cites Presenc AI.
 4. **The fix** — **Readiness** → uncheck CAPTCHA (or use Readiness autopilot) →
    **70 → 94**, a delta of exactly 24.
@@ -242,8 +243,9 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 
 ### Optional: native WebMCP
 
-Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → the header badge reads
-**Assistant tools active · 16 connected**.
+Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → header badge **WebMCP live · 18 tools**.
+ChatGPT in-app browser path: [`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md). No flag: Connect →
+**Path B — Agent tool console**.
 
 ---
 

@@ -10,6 +10,8 @@
 | **Voice script** | `demo/voiceover.txt` → Kokoro `demo/voiceover.mp3` |
 | **Devpost paste** | [`DEVPOST-PASTE.md`](./DEVPOST-PASTE.md) (from root `DEVPOST.md`) |
 | **60-second judge path** | [`../JUDGE-60s.md`](../JUDGE-60s.md) |
+| **ChatGPT / WebMCP judge path** | [`../CHATGPT-JUDGE.md`](../CHATGPT-JUDGE.md) |
+| **Oscar submit checklist** | [`SUBMIT-READY.md`](./SUBMIT-READY.md) |
 | **Morning pitch** | [`../demo/PITCH-TOMORROW.md`](../demo/PITCH-TOMORROW.md) |
 
 - **Deadline:** Wed Sep 3, 2026 · **1pm PDT**
@@ -25,7 +27,7 @@
 curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
 # expect: succeeded 78, shopCount 148, avgGtinPct 0, ucp.gtinWhereCrawlZero 11
 
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/tools | jq 'length'
+curl -s https://tooltruth-webmcp.vercel.app/api/v1/tools | jq '.toolCount'
 # expect: 18
 ```
 
@@ -68,11 +70,21 @@ Beat deep links: [`../FILM-READY.md`](../FILM-READY.md)
 
 ## Submit checklist
 
-1. [ ] `./film/build.sh` — watch `demo/demo-final.mp4` end to end (≤2:30)
-2. [ ] Upload **unlisted** YouTube · incognito-check URL plays
+**Oscar-only gates:** O2 YouTube · O4 Devpost submit. Full 15-min path:
+[`SUBMIT-READY.md`](./SUBMIT-READY.md).
+
+| Gate | Status |
+|------|--------|
+| **O1** Film on disk | ✅ `demo/demo-final.mp4` (v1; v2 may land from RC-FILM) |
+| **O2** YouTube upload | ⬜ Oscar — unlisted · incognito must play |
+| **O3** `vercel --prod` | ✅ 2026-09-01 · rankings **78/148** live |
+| **O4** Devpost submit | ⬜ Oscar — before Sep 3 1pm PDT |
+
+1. [ ] Watch `demo/demo-final.mp4` end-to-end (≤2:30) — or v2 after `film/build.sh`
+2. [ ] Upload **unlisted** YouTube · incognito-check URL plays (**O2**)
 3. [ ] Paste [`DEVPOST-PASTE.md`](./DEVPOST-PASTE.md) into Devpost
 4. [ ] Attach video URL · live URL · repo URL
-5. [ ] Submit before **Sep 3, 1pm PDT**
+5. [ ] Submit before **Sep 3, 1pm PDT** (**O4**)
 
 ---
 
