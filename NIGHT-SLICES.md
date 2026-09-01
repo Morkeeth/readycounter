@@ -129,7 +129,7 @@
 |----|-------|-------|-----------|
 | **O1** | Record film | Oscar | `demo/demo-final.mp4` ≤2:30 |
 | **O2** | Upload YouTube | Oscar | Incognito plays |
-| **O3** | `vercel --prod` | Oscar | Rankings 78/148 + branch UI live |
+| **O3** | `vercel --prod` | Oscar | ✅ 2026-09-01 · rankings 78/148 live |
 | **O4** | Devpost submit | Oscar | Before Sep 3 1pm PDT |
 | **O5** | Connect Shopify OAuth | Oscar | Enables E1 |
 

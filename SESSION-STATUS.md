@@ -1,7 +1,7 @@
 # Session status — night wave complete
 
 **Branch:** `night/gates-that-lie-2026-08-31`  
-**Live (may lag branch):** https://tooltruth-webmcp.vercel.app  
+**Live:** https://tooltruth-webmcp.vercel.app · **Deployed:** 2026-09-01 (`vercel --prod`)  
 **Pitch:** `demo/PITCH-TOMORROW.md`  
 **Deadline:** Devpost Wed Sep 3, 2026 · 1pm PDT
 

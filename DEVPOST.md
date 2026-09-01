@@ -7,8 +7,8 @@ sentence in [`research.md`](./research.md). `npm run verify` fails the build if 
 cited figure loses its source. Scores and catalog counts are *measured* off the
 shipped fixtures and cite nothing.
 
-**Oscar: film + Devpost submit remain.** Deploy is live with rankings×UCP and
-re-audit delta. Use `demo/FILM-AND-SUBMIT.md` + `demo/voiceover.mp3`. Deadline
+**Oscar: film + Devpost submit remain.** Prod deployed 2026-09-01 with lighthouse UI,
+share link, Offer/ACP on audit API. Use `demo/FILM-AND-SUBMIT.md` + `demo/voiceover.mp3`. Deadline
 Wed Sep 3, 2026 1pm PDT.
 
 ---
