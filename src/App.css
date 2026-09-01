@@ -2142,6 +2142,50 @@ a {
 
 /* ---------- judge harness ---------- */
 
+.judge-banner {
+  margin: 0 0 1rem;
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--stamp);
+  background: color-mix(in srgb, var(--stamp) 8%, var(--paper));
+}
+
+.judge-banner__kicker {
+  margin: 0 0 0.35rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stamp);
+}
+
+.judge-banner__lead {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  max-width: 72ch;
+}
+
+.judge-banner__meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #5a534c;
+}
+
+.judge-banner__live {
+  color: var(--stamp);
+  font-weight: 600;
+}
+
+.judge-banner__link {
+  font: inherit;
+  color: var(--ink);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
 .dev-panel {
   margin-top: 2.5rem;
   border: 1px solid var(--ink);

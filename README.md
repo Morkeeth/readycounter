@@ -2,17 +2,19 @@
 
 **Lighthouse for agentic commerce** — compare your shop to **148** parsed DTC brands, paste a URL for an agent-readiness receipt, re-audit after a fix for a delta. Not Shopify's rails. Agent-side truth.
 
-**Live:** https://tooltruth-webmcp.vercel.app · Connect tab: `?view=integrations` · film mode: `?film=1&view=integrations&demo=1`
+**Live:** https://tooltruth-webmcp.vercel.app · **Judges start here:** `?judge=1` · Connect: `?view=integrations`
 
 **Tagline:** Agent commerce. Now reviewable. Proof.
 
 ## Stranger path (60 seconds, no signup)
 
-1. **Open the live URL** → Connect tab — field batch shows **78/148 crawled · 0% scrape GTIN · 11 UCP gaps** (live from `GET /api/v1/rankings`)
-2. **Paste a storefront URL** → Audit — catalog bill, YOU·FIELD·DELTA strip, ≤3 handbook steps
-3. **Rankings + delta** — scroll the **148**-store table (filter *UCP GTIN · scrape empty*); re-run the same URL → delta receipt
+**Judges:** open https://tooltruth-webmcp.vercel.app/?judge=1 — lands on Co-shop with WebMCP proof banner.
 
-Co-shop proof: **Prove** tab or **18** WebMCP tools under Connect. `prepare_checkout` never charges a card.
+1. **Add to order** → **Connect → Agent tool console** → `add_to_order` + `prepare_checkout`
+2. **Readiness** → CAPTCHA off → **70→94**
+3. **Connect** → paste colourpop → rankings UCP filter (**11** gaps) → re-audit delta
+
+Full map: [`submission/JUDGES.md`](./submission/JUDGES.md) · [`JUDGE-60s.md`](./JUDGE-60s.md)
 
 **Deep dives:** [`LIGHTHOUSE-VISION.md`](./LIGHTHOUSE-VISION.md) · [`demo/FILM-AND-SUBMIT.md`](./demo/FILM-AND-SUBMIT.md) · [`DEVPOST.md`](./DEVPOST.md) · [`SHOPIFY-PARTNER-BRIEF.md`](./SHOPIFY-PARTNER-BRIEF.md)
 
@@ -34,7 +36,7 @@ Co-shop proof: **Prove** tab or **18** WebMCP tools under Connect. `prepare_chec
    traced to a named check, its arithmetic, its one-line fix, and the page the
    weight came from. Open a line to read the source with its dates. Apply fixes
    and the bill reprints.
-4. **Share** — copy a cart link or start a live session so someone else joins the same order
+4. **Share** — copy a cart link (`?co=`) so someone else joins the same order
 
 `prepare_checkout` validates the order and returns totals. **It never charges a card** — a human confirms payment in the browser.
 

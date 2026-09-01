@@ -10,6 +10,7 @@ import { ShopView } from './components/ShopView';
 import { StoreSwitcher } from './components/StoreSwitcher';
 import { ToolActivityToast } from './components/ToolActivityToast';
 import { FilmGuide } from './components/FilmGuide';
+import { JudgeBanner } from './components/JudgeBanner';
 import { useRoomSync } from './hooks/useRoomSync';
 import { registerCustomStore } from './data/stores';
 import { apiFetchServerStore } from './api/client';
@@ -26,8 +27,14 @@ const TABS: { id: Tab; label: string; journey: JourneyStep }[] = [
   { id: 'shop', label: 'Co-shop', journey: 'prove' },
 ];
 
+function isJudgeMode(): boolean {
+  return new URLSearchParams(window.location.search).get('judge') === '1';
+}
+
 function initialTab(): Tab {
-  const v = new URLSearchParams(window.location.search).get('view');
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('judge') === '1') return 'shop';
+  const v = params.get('view');
   return TABS.some((t) => t.id === v) ? (v as Tab) : 'integrations';
 }
 
@@ -44,7 +51,11 @@ function journeyForTab(tab: Tab): JourneyStep {
 function App() {
   const [tab, setTab] = useState<Tab>(initialTab);
   const [showHero, setShowHero] = useState(
-    () => !hasSeenHero() && !hasViewParam() && new URLSearchParams(window.location.search).get('film') !== '1',
+    () =>
+      !isJudgeMode() &&
+      !hasSeenHero() &&
+      !hasViewParam() &&
+      new URLSearchParams(window.location.search).get('film') !== '1',
   );
   const [webmcpStatus, setWebmcpStatus] = useState<{
     available: boolean;
@@ -53,6 +64,10 @@ function App() {
   }>({ available: false, registered: [], error: null });
 
   useRoomSync();
+
+  useEffect(() => {
+    if (isJudgeMode()) markHeroSeen();
+  }, []);
 
   useEffect(() => {
     const onPop = () => {
@@ -151,6 +166,14 @@ function App() {
       </header>
 
       <MerchantJourney active={journeyStep} onStep={goJourney} />
+
+      {isJudgeMode() ? (
+        <JudgeBanner
+          webmcpLive={webmcpStatus.available}
+          toolCount={toolCount}
+          onOpenConnect={() => openTab('integrations')}
+        />
+      ) : null}
 
       <nav className="tabs" aria-label="Main navigation">
         {TABS.map((t) => (

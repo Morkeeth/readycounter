@@ -46,10 +46,11 @@ URL: https://webmcp.devpost.com/
 | Elevator + description | `submission/DEVPOST-PASTE.md` |
 | **Demo video** | YouTube URL from Step 1 |
 | **Live URL** | `https://tooltruth-webmcp.vercel.app` |
+| **Judge URL** | `https://tooltruth-webmcp.vercel.app/?judge=1` |
 | **Repo** | `https://github.com/Morkeeth/tooltruth-webmcp` |
 | Built with | React, TypeScript, Vite, WebMCP, Zustand, Render KV |
 
-**Testing instructions** (short): point judges to `JUDGE-60s.md` or `CHATGPT-JUDGE.md`
+**Testing instructions** (short): `?judge=1` → Co-shop + tool console → `JUDGE-60s.md` · criteria map: `submission/JUDGES.md`
 
 Click **Submit** before 1pm PDT.
 

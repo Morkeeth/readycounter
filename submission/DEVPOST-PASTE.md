@@ -17,10 +17,11 @@ Wed Sep 3, 2026 1pm PDT.
 
 ```text
 https://tooltruth-webmcp.vercel.app
+https://tooltruth-webmcp.vercel.app/?judge=1
 https://tooltruth-webmcp.vercel.app/?view=merchant&store=neon-matcha
 ```
 
-_Live. Second link opens the second merchant's readiness bill directly._
+_Judges: `?judge=1` opens Co-shop with WebMCP proof banner — humans + agents, one cart._
 
 ---
 
@@ -214,7 +215,13 @@ React 19 · TypeScript · Vite · Zustand · WebMCP `document.modelContext.regis
 
 ---
 
-## Testing instructions (judges)
+### Testing instructions (judges)
+
+**Fast path (60s):** https://tooltruth-webmcp.vercel.app/?judge=1
+
+Opens Co-shop with a WebMCP proof banner. Add an item → Connect → Agent tool console → `add_to_order` → `prepare_checkout` (never charges).
+
+Full scripts: [`JUDGE-60s.md`](./JUDGE-60s.md) · [`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md) · criteria map [`submission/JUDGES.md`](./submission/JUDGES.md)
 
 ```bash
 git clone https://github.com/Morkeeth/tooltruth-webmcp.git
