@@ -159,5 +159,7 @@ Done-when (ran 2026-08-31T21:31Z):
 - 2026-09-01 — **PROD DEPLOY** (`vercel --prod`) — `dpl_oQfTmaaDXEe9CxTWUoMpvXwf5v46` ·
   https://tooltruth-webmcp.vercel.app · rankings 78/148 · share-stranger + stranger-pass e2e green on prod.
   **Oscar:** film · Devpost (video URL required).
+
+- 2026-08-31 — **Hammer pass (autonomy):** B7 Offer% rankings column · batch publish fields ·
   compare API offer headline · ONBOARDING agent path · E2 glossier doc ·
   SESSION-STATUS + SUBMISSION-PACK sync · verify green.
