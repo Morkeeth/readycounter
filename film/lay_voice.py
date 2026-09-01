@@ -6,17 +6,17 @@ PARTS = pathlib.Path("demo/.vo-parts")
 OUT = pathlib.Path("demo/voiceover.mp3")
 SR = 24000
 
-# v2 cues — co-shop opens after 5s flipbook intro; no silence >2s.
+# v2 cues — chained ≤0.25s gaps; co-shop voice overlaps 5s intro tail.
 CUES = {
     0: 0.4,
-    1: 5.0,
-    2: 18.0,
-    3: 28.0,
-    4: 36.5,
-    5: 45.0,
-    6: 60.0,
-    7: 75.0,
-    8: 90.0,
+    1: 3.8,
+    2: 12.9,
+    3: 21.9,
+    4: 37.9,
+    5: 52.7,
+    6: 70.5,
+    7: 80.9,
+    8: 91.6,
 }
 
 

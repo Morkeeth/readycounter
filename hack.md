@@ -90,18 +90,22 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Night wave RC-C (2026-08-31):** Partner-grade narrative — `LIGHTHOUSE-VISION.md`, `SHOPIFY-PARTNER-BRIEF.md`, README stranger hero, `audits/STRANGER-PASS-2026-08-31.md`, DEVPOST sync.
+**Night wave RC-FILM-V2 (2026-09-02):** Rebuild `demo/demo-final.mp4` — co-shop opens picture (beat 7 first), not lighthouse audit.
 
-**Slice 1 (this run):** Lighthouse narrative + stranger audit on live URL.
+**Slice 1 (this run):** Film v2 beat reorder + voice + mux.
 
 ```text
-Done-when (ran 2026-08-31T21:31Z):
-  test -f LIGHTHOUSE-VISION.md && test -f SHOPIFY-PARTNER-BRIEF.md && test -f audits/STRANGER-PASS-2026-08-31.md → exit 0
+Done-when (ran 2026-09-02T20:xxZ):
+  test -f demo/demo-final.mp4 && test -f demo/demo-final.srt → exit 0
+  ffprobe demo/demo-final.mp4 duration ≤130s → 104.7s
+  ffmpeg silencedetect 0–110s → OK (no silence >2s)
+  frame-15s-coshop.png shows CO-SHOP tab
+  frame-88s.png has no cue bar
+  curl rankings → 78/148 · ucp 11
   npm run verify → exit 0
-  npm run build → exit 0
-  PLAYWRIGHT_BASE_URL=https://tooltruth-webmcp.vercel.app npx playwright test e2e/stranger-pass.spec.ts → 1 passed
-  curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,ucp}' → 148, 78, gtinWhereCrawlZero 11
 ```
+
+**Oscar:** upload `demo/demo-final.mp4` to YouTube (unlisted) · Devpost video URL.
 
 ## LOG
 
@@ -156,7 +160,7 @@ Done-when (ran 2026-08-31T21:31Z):
   `npm run verify && npm run build` exit 0. Branch `night/gates-that-lie-2026-08-31`.
   **Oscar:** `vercel --prod` · film · Devpost.
 
-- 2026-09-01 — **PROD DEPLOY** (`vercel --prod`) — `dpl_oQfTmaaDXEe9CxTWUoMpvXwf5v46` ·
+- 2026-09-02 — **RC-FILM-V2:** `film/browser.py` beats reordered (co-shop beat=7 first) · `demo/voiceover.txt` para 2 = co-shop · `film/lay_voice.py` chained cues · `demo/demo-final.mp4` 104.7s · proof frames · silencedetect OK · `npm run verify` green. Branch `cursor/film-v2-coshop-first-3f46`. **Oscar:** YouTube upload.
   https://tooltruth-webmcp.vercel.app · rankings 78/148 · share-stranger + stranger-pass e2e green on prod.
   **Oscar:** film · Devpost (video URL required).
 

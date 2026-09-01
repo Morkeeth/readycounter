@@ -28,7 +28,7 @@ BEATS = [
         f"/?{RECORD}&beat=5&view=integrations&demo=1&audit_url=https://colourpop.com",
         15000,
     ),
-    (f"/?{RECORD}&beat=8&view=integrations", 15000),
+    (f"/?{RECORD}&beat=8&view=integrations", 10000),
 ]
 
 CURSOR = """
