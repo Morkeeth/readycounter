@@ -47,8 +47,9 @@ const DOC_FILES = [
   'LAUNCH.md',
   'demo/PITCH-TOMORROW.md',
   'demo/FILM-AND-SUBMIT.md',
-  'audits/stranger-runs-2026-08-31.md',
-  'audits/STRANGER-PASS-2026-08-31.md',
+  'submission/DEVPOST-PASTE.md',
+  'submission/SUBMIT-READY.md',
+  'submission/JUDGES.md',
 ];
 
 const SKIP_LINE =

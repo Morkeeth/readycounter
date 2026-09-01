@@ -4,7 +4,8 @@
  */
 
 const memory = new Map<string, string>();
-const CONNECT_MS = 4_000;
+const CONNECT_MS = 8_000;
+const KV_OP_MS = 10_000;
 
 type RedisClient = {
   get: (key: string) => Promise<string | null>;
@@ -79,7 +80,7 @@ export async function kvPing(): Promise<boolean> {
   const client = await connectRedis();
   if (!client) return false;
   try {
-    const pong = await withTimeout(client.ping(), 2_000);
+    const pong = await withTimeout(client.ping(), 4_000);
     return pong === 'PONG';
   } catch {
     return false;
@@ -90,7 +91,7 @@ export async function kvGet(key: string): Promise<string | null> {
   const client = await connectRedis();
   if (client) {
     try {
-      return await withTimeout(client.get(key), 3_000);
+      return await withTimeout(client.get(key), KV_OP_MS);
     } catch {
       return memory.get(key) ?? null;
     }
@@ -103,7 +104,7 @@ export async function kvSet(key: string, value: string): Promise<void> {
   const client = await connectRedis();
   if (client) {
     try {
-      await withTimeout(client.set(key, value), 3_000);
+      await withTimeout(client.set(key, value), KV_OP_MS);
     } catch {
       /* memory copy remains */
     }
@@ -115,7 +116,7 @@ export async function kvDel(key: string): Promise<void> {
   const client = await connectRedis();
   if (client) {
     try {
-      await withTimeout(client.del(key), 3_000);
+      await withTimeout(client.del(key), KV_OP_MS);
     } catch {
       /* noop */
     }
