@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build && node scripts/bundle-api.mjs",
     "lint": "oxlint",
-    "verify": "node scripts/verify-score.mjs && node scripts/verify-readiness.mjs && node scripts/verify-share.mjs && node scripts/verify-stores.mjs && node scripts/verify-integrations.mjs && node scripts/verify-ambition.mjs && node scripts/verify-url-audit.mjs && node scripts/verify-field-compare.mjs && node scripts/verify-launch.mjs && node scripts/verify-goal.mjs && node scripts/verify-embarrassment.mjs",
+    "verify": "node scripts/verify-score.mjs && node scripts/verify-readiness.mjs && node scripts/verify-share.mjs && node scripts/verify-stores.mjs && node scripts/verify-integrations.mjs && node scripts/verify-ambition.mjs && node scripts/verify-url-audit.mjs && node scripts/verify-field-compare.mjs && node scripts/verify-launch.mjs && node scripts/verify-goal.mjs && node scripts/verify-embarrassment.mjs && node scripts/verify-audit-batch-kv.mjs",
     "verify:launch": "node scripts/verify-launch.mjs",
     "test:e2e": "playwright test",
     "render:setup": "node scripts/render-setup.mjs",

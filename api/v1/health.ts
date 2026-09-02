@@ -1,13 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { kvBackend, kvPing } from '../../src/server/kv';
-import { getRenderKvInfo, loadAuditBatchFromKv } from '../../src/server/render-partnership';
+import { getRenderKvInfo, loadAuditBatchMetaFromKv } from '../../src/server/render-partnership';
 import { shopifyConfigured } from '../../src/server/shopify';
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   const backend = await kvBackend();
   const redisOk = backend === 'redis' ? await kvPing() : false;
   const renderKv = await getRenderKvInfo();
-  const lastAuditBatch = await loadAuditBatchFromKv();
+  const lastAuditBatch = await loadAuditBatchMetaFromKv();
 
   res.status(200).json({
     ok: true,

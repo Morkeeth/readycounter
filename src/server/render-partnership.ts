@@ -3,11 +3,16 @@
  * Vercel runs stateless API; Render persists stores, rooms, and audit batches.
  */
 
+import { gunzipSync, gzipSync } from 'node:zlib';
 import { kvBackend, kvGet, kvPing, kvSet } from './kv';
 
 export const RENDER_KV_PREFIX = 'rc:render:';
 export const AUDIT_BATCH_KEY = `${RENDER_KV_PREFIX}audit-batch:latest`;
 export const AUDIT_BATCH_AT_KEY = `${RENDER_KV_PREFIX}audit-batch:at`;
+/** Tiny meta twin — survives when the full (gzip) blob is slow on cold start. */
+export const AUDIT_BATCH_META_KEY = `${RENDER_KV_PREFIX}audit-batch:meta`;
+
+const GZIP_PREFIX = 'gz1:';
 
 export interface RenderKvInfo {
   provider: 'render' | 'other' | 'memory';
@@ -38,6 +43,12 @@ export interface AuditBatchSummary {
   }>;
 }
 
+export type AuditBatchMeta = Omit<AuditBatchSummary, 'rows'>;
+
+/** Process-local cache — warm Vercel instances skip Redis after first hit. */
+let batchCache: { at: number; value: AuditBatchSummary } | null = null;
+const BATCH_CACHE_TTL_MS = 60_000;
+
 export function parseRenderKvFromUrl(redisUrl: string | undefined): RenderKvInfo {
   if (!redisUrl?.trim()) {
     return { provider: 'memory', hostname: null, region: null, instanceHint: null, connected: false };
@@ -67,8 +78,54 @@ export async function getRenderKvInfo(): Promise<RenderKvInfo> {
   return { ...base, provider: backend === 'redis' ? base.provider : 'memory', connected };
 }
 
+function slimRows(rows: AuditBatchSummary['rows']): AuditBatchSummary['rows'] {
+  return rows.map((r) => ({
+    url: r.url,
+    ...(r.storeId ? { storeId: r.storeId } : {}),
+    ...(r.catalogScore !== undefined ? { catalogScore: r.catalogScore } : {}),
+    ...(r.catalogBudget !== undefined ? { catalogBudget: r.catalogBudget } : {}),
+    ...(r.gtinPct !== undefined ? { gtinPct: r.gtinPct } : {}),
+    ...(r.offerPct !== undefined && r.offerPct !== null ? { offerPct: r.offerPct } : {}),
+    ...(r.captchaHint ? { captchaHint: true } : {}),
+    ...(r.method ? { method: r.method } : {}),
+    ...(r.products !== undefined ? { products: r.products } : {}),
+    ...(r.error ? { error: r.error } : {}),
+  }));
+}
+
+export function encodeAuditBatchPayload(summary: AuditBatchSummary): string {
+  const json = JSON.stringify(summary);
+  const gz = gzipSync(Buffer.from(json, 'utf8')).toString('base64');
+  return `${GZIP_PREFIX}${gz}`;
+}
+
+export function decodeAuditBatchPayload(raw: string): AuditBatchSummary | null {
+  try {
+    if (raw.startsWith(GZIP_PREFIX)) {
+      const buf = Buffer.from(raw.slice(GZIP_PREFIX.length), 'base64');
+      const json = gunzipSync(buf).toString('utf8');
+      return JSON.parse(json) as AuditBatchSummary;
+    }
+    return JSON.parse(raw) as AuditBatchSummary;
+  } catch {
+    return null;
+  }
+}
+
+function metaFromSummary(summary: AuditBatchSummary): AuditBatchMeta {
+  return {
+    at: summary.at,
+    shopCount: summary.shopCount,
+    succeeded: summary.succeeded,
+    avgCatalogScore: summary.avgCatalogScore,
+    avgGtinPct: summary.avgGtinPct,
+    avgOfferPct: summary.avgOfferPct,
+  };
+}
+
 export async function saveAuditBatchToKv(rows: AuditBatchSummary['rows']): Promise<void> {
-  const succeeded = rows.filter((r) => !r.error);
+  const slim = slimRows(rows);
+  const succeeded = slim.filter((r) => !r.error);
   const avgCatalog =
     succeeded.length === 0
       ? 0
@@ -87,25 +144,59 @@ export async function saveAuditBatchToKv(rows: AuditBatchSummary['rows']): Promi
 
   const summary: AuditBatchSummary = {
     at: new Date().toISOString(),
-    shopCount: rows.length,
+    shopCount: slim.length,
     succeeded: succeeded.length,
     avgCatalogScore: avgCatalog,
     avgGtinPct: avgGtin,
     avgOfferPct: avgOffer,
-    rows,
+    rows: slim,
   };
-  await kvSet(AUDIT_BATCH_KEY, JSON.stringify(summary));
+  const encoded = encodeAuditBatchPayload(summary);
+  await kvSet(AUDIT_BATCH_KEY, encoded, { large: true });
   await kvSet(AUDIT_BATCH_AT_KEY, summary.at);
+  await kvSet(AUDIT_BATCH_META_KEY, JSON.stringify(metaFromSummary(summary)));
+  batchCache = { at: Date.now(), value: summary };
+}
+
+async function fetchBatchFromKv(): Promise<AuditBatchSummary | null> {
+  const raw = await kvGet(AUDIT_BATCH_KEY, { large: true });
+  if (!raw) return null;
+  return decodeAuditBatchPayload(raw);
 }
 
 export async function loadAuditBatchFromKv(): Promise<AuditBatchSummary | null> {
-  const raw = await kvGet(AUDIT_BATCH_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as AuditBatchSummary;
-  } catch {
-    return null;
+  if (batchCache && Date.now() - batchCache.at < BATCH_CACHE_TTL_MS) {
+    return batchCache.value;
   }
+
+  let summary = await fetchBatchFromKv();
+  if (!summary) {
+    // Cold-start race: connect + first GET can miss. One retry after a short pause.
+    await new Promise((r) => setTimeout(r, 150));
+    summary = await fetchBatchFromKv();
+  }
+  if (summary) {
+    batchCache = { at: Date.now(), value: summary };
+    return summary;
+  }
+  return null;
+}
+
+/** Meta-only — for health/status when full rows are not needed. */
+export async function loadAuditBatchMetaFromKv(): Promise<AuditBatchMeta | null> {
+  if (batchCache && Date.now() - batchCache.at < BATCH_CACHE_TTL_MS) {
+    return metaFromSummary(batchCache.value);
+  }
+  const raw = await kvGet(AUDIT_BATCH_META_KEY);
+  if (raw) {
+    try {
+      return JSON.parse(raw) as AuditBatchMeta;
+    } catch {
+      /* fall through */
+    }
+  }
+  const full = await loadAuditBatchFromKv();
+  return full ? metaFromSummary(full) : null;
 }
 
 export interface RenderPartnershipStatus {
@@ -117,7 +208,8 @@ export interface RenderPartnershipStatus {
     rooms: 'rc:room:*';
     auditBatch: typeof AUDIT_BATCH_KEY;
   };
-  lastAuditBatch: AuditBatchSummary | null;
+  /** Meta only — full rows live at GET /api/v1/rankings. */
+  lastAuditBatch: AuditBatchMeta | null;
   cron: {
     available: boolean;
     schedule: string;
@@ -128,7 +220,7 @@ export interface RenderPartnershipStatus {
 
 export async function getRenderPartnershipStatus(): Promise<RenderPartnershipStatus> {
   const kv = await getRenderKvInfo();
-  const lastAuditBatch = await loadAuditBatchFromKv();
+  const lastAuditBatch = await loadAuditBatchMetaFromKv();
   return {
     partner: 'render',
     tagline: 'Render Key Value persists merchant audits and live co-shop rooms across Vercel cold starts.',
