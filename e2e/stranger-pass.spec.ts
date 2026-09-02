@@ -12,7 +12,7 @@ test.describe('Stranger pass — score your store', () => {
       timeout: 10_000,
     });
 
-    const domainInput = page.getByPlaceholder('your-store.com');
+    const domainInput = page.getByRole('textbox', { name: 'Your store domain' });
     await domainInput.fill('colourpop.com');
     await page.getByRole('button', { name: /score my store/i }).click();
 
