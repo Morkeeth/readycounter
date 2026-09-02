@@ -58,10 +58,10 @@ test.describe('Launch test cases', () => {
     expect(Array.isArray(body.rows)).toBe(true);
     if (body.shopCount >= 30) {
       expect(body.succeeded).toBeGreaterThanOrEqual(30);
+      expect(body.ucp?.gtinWhereCrawlZero).toBeGreaterThanOrEqual(1);
       return;
     }
-    // Rankings bundles census JSON — cold starts can miss KV before timeout fix deploys.
-    // Verify batch at render/status (same AUDIT_BATCH_KEY).
+    // Cold miss: meta twin on render/status must still show the field batch.
     const status = await request.get(`${BASE}/api/v1/render/status`);
     expect(status.ok()).toBeTruthy();
     const statusBody = await status.json();

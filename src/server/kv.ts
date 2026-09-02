@@ -6,6 +6,8 @@
 const memory = new Map<string, string>();
 const CONNECT_MS = 8_000;
 const KV_OP_MS = 10_000;
+/** Large payloads (audit batch) — cold-start GET must finish before Vercel times out. */
+const KV_LARGE_OP_MS = 20_000;
 
 type RedisClient = {
   get: (key: string) => Promise<string | null>;
@@ -19,7 +21,7 @@ let redisReady: Promise<RedisClient | null> | null = null;
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('redis connect timeout')), ms);
+    const timer = setTimeout(() => reject(new Error('redis op timeout')), ms);
     promise
       .then((v) => {
         clearTimeout(timer);
@@ -87,11 +89,12 @@ export async function kvPing(): Promise<boolean> {
   }
 }
 
-export async function kvGet(key: string): Promise<string | null> {
+export async function kvGet(key: string, opts?: { large?: boolean }): Promise<string | null> {
+  const timeout = opts?.large ? KV_LARGE_OP_MS : KV_OP_MS;
   const client = await connectRedis();
   if (client) {
     try {
-      return await withTimeout(client.get(key), KV_OP_MS);
+      return await withTimeout(client.get(key), timeout);
     } catch {
       return memory.get(key) ?? null;
     }
@@ -99,12 +102,13 @@ export async function kvGet(key: string): Promise<string | null> {
   return memory.get(key) ?? null;
 }
 
-export async function kvSet(key: string, value: string): Promise<void> {
+export async function kvSet(key: string, value: string, opts?: { large?: boolean }): Promise<void> {
   memory.set(key, value);
+  const timeout = opts?.large ? KV_LARGE_OP_MS : KV_OP_MS;
   const client = await connectRedis();
   if (client) {
     try {
-      await withTimeout(client.set(key, value), KV_OP_MS);
+      await withTimeout(client.set(key, value), timeout);
     } catch {
       /* memory copy remains */
     }
