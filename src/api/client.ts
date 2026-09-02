@@ -159,6 +159,7 @@ export interface UrlAuditResponse {
   meta?: {
     url: string;
     method: string;
+    source?: string;
     gtinPct?: number;
     captchaHint?: boolean;
     offerPct?: number | null;

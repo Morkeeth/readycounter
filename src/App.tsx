@@ -35,11 +35,8 @@ function initialTab(): Tab {
   const params = new URLSearchParams(window.location.search);
   if (params.get('judge') === '1') return 'shop';
   const v = params.get('view');
-  return TABS.some((t) => t.id === v) ? (v as Tab) : 'integrations';
-}
-
-function hasViewParam(): boolean {
-  return new URLSearchParams(window.location.search).has('view');
+  if (v && TABS.some((t) => t.id === v)) return v as Tab;
+  return 'integrations';
 }
 
 function journeyForTab(tab: Tab): JourneyStep {
@@ -50,13 +47,12 @@ function journeyForTab(tab: Tab): JourneyStep {
 
 function App() {
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [showHero, setShowHero] = useState(
-    () =>
-      !isJudgeMode() &&
-      !hasSeenHero() &&
-      !hasViewParam() &&
-      new URLSearchParams(window.location.search).get('film') !== '1',
-  );
+  const [showHero, setShowHero] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('judge') === '1' || params.get('film') === '1') return false;
+    if (params.get('welcome') === '1') return !hasSeenHero();
+    return false;
+  });
   const [webmcpStatus, setWebmcpStatus] = useState<{
     available: boolean;
     registered: string[];

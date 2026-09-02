@@ -9,7 +9,6 @@
 ## Pre-flight (5 min)
 
 ```bash
-cd /Users/morkeeth/CODE/tooltruth-webmcp
 npm run verify
 curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
 # expect: 78 / 148 / 0 / gtinWhereCrawlZero 11

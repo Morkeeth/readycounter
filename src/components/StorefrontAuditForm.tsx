@@ -25,6 +25,8 @@ interface StorefrontAuditFormProps {
     ucpFilter: 'all' | 'ucp-gtin-gap';
     host: string;
   }) => void;
+  /** Hide co-shop / prove CTAs — stranger path does not need them. */
+  strangerMode?: boolean;
 }
 
 export function StorefrontAuditForm({
@@ -32,11 +34,12 @@ export function StorefrontAuditForm({
   navigateToBill,
   onOpenBill,
   onOpenRankings,
+  strangerMode = false,
 }: StorefrontAuditFormProps) {
   const switchStore = useShopStore((s) => s.switchStore);
   const [url, setUrl] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get('audit_url') ?? (params.get('demo') === '1' ? 'https://colourpop.com' : '');
+    return params.get('audit_url') ?? '';
   });
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -223,7 +226,7 @@ export function StorefrontAuditForm({
             Open bill
           </button>
         ) : null}
-        {lastStoreId ? (
+        {lastStoreId && !strangerMode ? (
           <>
             <button type="button" className="btn btn--secondary" onClick={proveInCoShop}>
               Prove in co-shop

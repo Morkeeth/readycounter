@@ -15,6 +15,8 @@ const PATTERNS = [
   { re: /\b16 connected\b/i, label: '16 connected (current: 18)' },
   { re: /Start shopping/i, label: 'Start shopping (removed — use Co-shop tab)' },
   { re: /Start live session/i, label: 'Start live session (removed — Copy cart link)' },
+  { re: /\b57\/100\b/, label: '57/100 (current neon-matcha: 65/100 per verify-stores)' },
+  { re: /\b71\/100\b/, label: '71/100 (current neon-matcha: 65/100 per verify-stores)' },
 ];
 
 const FILES = [
@@ -35,7 +37,7 @@ const FILES = [
 ];
 
 const SKIP_LINE =
-  /do not claim|don't claim|not claim|❌|stale|removed|it's \*\*18\*\*|16 tools \(it's|wrong|NIGHTRUN|hack\.md|LOG|historical/i;
+  /do not claim|don't claim|not claim|❌|stale|removed|it's \*\*18\*\*|16 tools \(it's|wrong|NIGHTRUN|hack\.md|LOG|historical|57–|57 →|→ 71|wave 2|WAVE 2|sandboxScore|57–100|57–83/i;
 
 function listFiles(rel) {
   const abs = path.join(root, rel);

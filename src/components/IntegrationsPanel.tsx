@@ -17,6 +17,7 @@ import { registerCustomStore } from '../data/stores';
 import { useShopStore } from '../store/shopStore';
 import { DevToolPanel } from './DevToolPanel';
 import { ConnectLighthouseHero } from './ConnectLighthouseHero';
+import { StrangerPath } from './StrangerPath';
 import { FieldCompanion } from './FieldCompanion';
 import { LaunchBrief } from './LaunchBrief';
 import { RankingsPanel } from './RankingsPanel';
@@ -122,7 +123,11 @@ export function IntegrationsPanel({
 
   return (
     <section className="integrations" aria-label="Connect your store">
-      <ConnectLighthouseHero />
+      <StrangerPath />
+
+      <details className="integrations__advanced-stranger">
+        <summary>Field batch · rankings · advanced audit</summary>
+        <ConnectLighthouseHero />
 
       <div className="integrations__grid">
         {/* 1 · Measure */}
@@ -138,6 +143,7 @@ export function IntegrationsPanel({
             navigateToBill={navigateToBill}
             onOpenBill={onOpenBill}
             onOpenRankings={openRankingsFromAudit}
+            strangerMode
           />
         </article>
 
@@ -149,8 +155,10 @@ export function IntegrationsPanel({
           initialUcpFilter={rankingsUcpFilter}
           highlightHost={rankingsHost}
         />
+      </div>
+      </details>
 
-        {/* 3 · Prove with WebMCP */}
+      <div className="integrations__grid">
         <WhyWebMCP webmcpLive={webmcpLive} toolCount={toolCount} />
 
         <article className="integrations__card integrations__card--wide integrations__card--prove">
