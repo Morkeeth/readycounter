@@ -10,7 +10,9 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-api/**/*.js
+# api/**/*.js are committed on purpose: Vercel git deploys apply .vercelignore at clone time,
+# which removes api/**/*.ts before the build, so bundle-api.mjs finds nothing and the deploy ships no functions.
+# Rebuild with `npm run build` and commit the .js whenever a server .ts changes.
 api/**/*.js.map
 audits/*
 !audits/STRANGER-PASS-*.md
