@@ -3280,3 +3280,19 @@ a {
   text-transform: uppercase;
   color: var(--soft);
 }
+
+
+/* The blocker call-out states a real, cited finding — but a full red frame made
+   it the loudest object on the page, louder than the merchant's own score.
+   Red now MARKS the line instead of boxing it. */
+.order-panel__blocked,
+.tape__void {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--stamp);
+  background: var(--sheet);
+}
+
+.order-panel__blocked > *:first-child,
+.tape__void > *:first-child {
+  color: var(--stamp);
+}

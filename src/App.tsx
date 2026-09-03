@@ -33,9 +33,11 @@ function isJudgeMode(): boolean {
 
 function initialTab(): Tab {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('judge') === '1') return 'shop';
+  // An explicit view wins, even in judge mode — ?judge=1&view=integrations used to
+  // land on Co-shop, so a deep link showed a tab it did not name.
   const v = params.get('view');
   if (v && TABS.some((t) => t.id === v)) return v as Tab;
+  if (params.get('judge') === '1') return 'shop';
   return 'integrations';
 }
 
