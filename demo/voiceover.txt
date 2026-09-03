@@ -8,7 +8,7 @@ Zero out of twenty four. Fifty products, and not one barcode an agent can match 
 
 So we sent a real agent in. Not a script — a model, handed the store's own tools, deciding every move for itself. Watch it work. It searches the catalogue. It opens two products and compares them on price and stock. Every call here is real, made live against this store, and you will see where it ends up in a moment.
 
-This is not one bad store. We asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Seventy sent nothing back at all. Sixty seven sent a feed with no barcode in it. Coverage across the whole field: zero percent.
+This is not one bad store. We asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Forty eight answered and sent no catalogue at all. Twenty two refused the request outright — a real browser could not get in either, so we cannot see them, and we will not score a store we could not read. Of everything we could read: sixty seven sent a feed with no barcode in it. Coverage across the field, zero percent.
 
 And the money already turned. Last March, agent traffic converted thirty eight percent worse than everything else. This March, forty two percent better. Sessions to Shopify stores are up eight times, orders nearly thirteen, and Shopify's own earnings call says a catalogue an agent can read converts twice as well as a page it has to scrape.
 

@@ -43,30 +43,30 @@ Zero out of twenty four. Fifty products, and not one barcode an agent can match 
 So we sent a real agent in. Not a script — a model, handed the store's own tools, deciding every move for itself. Watch it work. It searches the catalogue. It opens two products and compares them on price and stock. Every call here is real, made live against this store, and you will see where it ends up in a moment.
 
 12
-00:00:53,405 --> 00:01:07,730
-This is not one bad store. We asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Seventy sent nothing back at all. Sixty seven sent a feed with no barcode in it. Coverage across the whole field: zero percent.
+00:00:53,405 --> 00:01:15,380
+This is not one bad store. We asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Forty eight answered and sent no catalogue at all. Twenty two refused the request outright — a real browser could not get in either, so we cannot see them, and we will not score a store we could not read. Of everything we could read: sixty seven sent a feed with no barcode in it. Coverage across the field, zero percent.
 
 13
-00:01:08,280 --> 00:01:26,880
+00:01:15,930 --> 00:01:34,530
 And the money already turned. Last March, agent traffic converted thirty eight percent worse than everything else. This March, forty two percent better. Sessions to Shopify stores are up eight times, orders nearly thirteen, and Shopify's own earnings call says a catalogue an agent can read converts twice as well as a page it has to scrape.
 
 14
-00:01:27,430 --> 00:01:39,980
+00:01:35,080 --> 00:01:47,630
 Eleven of the stores we asked do have barcodes. Glossier, Tatcha, Brooklinen, Alo Yoga, Away. They publish them to Shopify's catalogue protocol, and their own storefront hides them. Your shopper's agent reads the storefront.
 
 15
-00:01:40,530 --> 00:01:50,655
+00:01:48,180 --> 00:01:58,305
 So we price the damage. Every point on the bill is one row of a published abandonment table, at the share that table states, and every line names its publisher and the date we read it.
 
 16
-00:01:51,205 --> 00:02:06,580
+00:01:58,855 --> 00:02:14,230
 We did not build a catalogue. We read the ones that exist. Shopify OAuth for the merchant's own admin, Shopify's catalogue protocol for the barcodes a scrape cannot see, and Render Key Value holding every audit and every shared cart. Three integrations, all live.
 
 17
-00:02:07,130 --> 00:02:31,055
+00:02:14,780 --> 00:02:38,705
 And the proof underneath it is WebMCP. Eighteen tools registered on document dot modelContext, the browser's own API, in Chrome with the flag on. Here is that agent finishing the job: it adds the espresso to the same cart a human is using, tagged agent beside them. Then it asks to check out, and the store refuses. A captcha. One wall, a quarter of every abandoned agent cart, and the tool hands back the published share that says so. It never touches a card.
 
 18
-00:02:31,605 --> 00:02:35,405
+00:02:39,255 --> 00:02:43,055
 ReadyCounter. Paste your store, and see what agents cannot read.
 

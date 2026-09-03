@@ -89,6 +89,12 @@
       .wall { display: grid; grid-template-columns: repeat(28, 1fr); gap: 6px; max-width: 1500px; }
       .wall i { display: block; aspect-ratio: 1; background: #d8d8d2; opacity: 0; }
       .wall i.feed { background: transparent; box-shadow: inset 0 0 0 2px #b4b4ad; }
+      .wall i.blocked {
+        background: transparent;
+        box-shadow: inset 0 0 0 2px #b4b4ad;
+        background-image: linear-gradient(to top right, transparent calc(50% - 1.5px),
+          #b4b4ad calc(50% - 1.5px), #b4b4ad calc(50% + 1.5px), transparent calc(50% + 1.5px));
+      }
       .wall i.ucp { background: var(--has); box-shadow: none; }
       .wall i.show { opacity: 1; }
     </style>
@@ -104,7 +110,8 @@
       <div>
         <div class="figs">
           <div class="fig"><div class="n" data-count="148">0</div><div class="t">Storefronts asked</div></div>
-          <div class="fig"><div class="n" data-count="70">0</div><div class="t">Sent nothing back</div></div>
+          <div class="fig"><div class="n" data-count="48">0</div><div class="t">Answered, no catalogue</div></div>
+          <div class="fig"><div class="n" data-count="22">0</div><div class="t">Refused us — unmeasured</div></div>
           <div class="fig"><div class="n" data-count="67">0</div><div class="t">A feed, no barcode</div></div>
           <div class="fig"><div class="n bad">0%</div><div class="t">Barcode coverage</div></div>
         </div>
@@ -154,7 +161,10 @@
     <script>
       // 148 tiles, the real split: 70 silent, 67 feed-no-barcode, 11 UCP-only.
       const wall = document.getElementById('wall');
-      const cls = [...Array(70).fill(''), ...Array(67).fill('feed'), ...Array(11).fill('ucp')];
+      // Four classes, matching the live census: 48 answered-with-nothing,
+      // 22 that refused us outright, 67 with a feed and no barcode, 11 UCP-only.
+      const cls = [...Array(48).fill(''), ...Array(22).fill('blocked'),
+                   ...Array(67).fill('feed'), ...Array(11).fill('ucp')];
       let sd = 20260902;
       const rnd = () => ((sd = (sd * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
       for (let i = cls.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [cls[i], cls[j]] = [cls[j], cls[i]]; }
