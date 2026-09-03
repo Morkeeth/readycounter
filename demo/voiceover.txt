@@ -2,20 +2,20 @@
 @lang b
 @pause 260
 
-Agent commerce. Now reviewable. Proof.
+Your store is not ready for agents. They are already shopping.
 
-Eighteen WebMCP tools. Human and agent, one cart. Prepare checkout never charges. Not Shopify's rails. Agent-side truth.
+Agent traffic to Shopify storefronts is up eight times year over year, and seventy eight point six percent of agent carts are abandoned. That is a customer who never reaches you, and no dashboard shows you which door was locked.
 
-One click walks the agent journey. Blocked at captcha. Autopilot in the sandbox: seventy becomes ninety four. Live Shopify untouched.
+So we asked one hundred and forty eight real storefronts for their catalogue, the way a shopping agent asks. Seventy sent nothing back at all. Sixty seven sent a feed with no barcode in it. Every tile on this wall is one real shop, and empty means empty.
 
-Your store is not ready for agents. They are already shopping. Traffic up eight times year over year. Seventy eight point six percent of agent carts abandon. That is customers you never see. Merchants hear agentic commerce. They cannot see which door is locked.
+Eleven of them do have barcodes. Glossier, Tatcha, Brooklinen, Alo Yoga, Away. They publish to Shopify's Catalog protocol, and their own storefront hides it. Your shopper's agent reads the storefront.
 
-ReadyCounter is the lighthouse. Super sleek WebMCP that gets your shop ready. Paste a URL. Before and after. We already parsed one hundred forty eight popular stores so you see the width, not a vanity score in a vacuum.
+This is what that agent reads on your product page. Not one bar is scannable. There is nothing to scan, and nothing to match to a product an agent can actually buy.
 
-Compare yourself to the field. Seventy eight crawled. Zero percent barcodes in what agents scrape. Eleven brands still return GTIN on UCP while the scrape is empty. Insights you cannot get from a theme check. Ease: one paste, one receipt, one delta when you fix it.
+Six sandbox storefronts, each broken a different way. A CAPTCHA on checkout. A forced account login. A price that disagrees with the feed. Out of stock only at the till. Paste your own domain and your tile joins the wall in under a minute.
 
-This store scores seventy. Every point is a published abandonment share. Re-audit the same URL and we print the delta. Measure. Act. Re-measure. Proof.
+This store scores seventy out of one hundred. Every point on the bill is priced from a published abandonment share, and every line names its source. Fix one thing, re-audit the same URL, and we print the delta.
 
-The ambition: every merchant runs this when they ship anything new. Shopify adopts the receipt. Stores go public with their score. Lighthouse for agentic commerce.
+The proof is WebMCP. Eighteen tools registered on document dot model context, in this open tab. Your assistant adds to the same order you are looking at, human and agent in one cart, and prepare checkout validates the total and never charges a card.
 
-ReadyCounter is live. Open source. Shopify catalog. Render audit. WebMCP proof. Agent commerce. Now reviewable. ReadyCounter. Proof.
+ReadyCounter. Agent commerce, now reviewable.

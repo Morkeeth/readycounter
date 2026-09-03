@@ -22,29 +22,38 @@ if [ ! -x "$VO_DIR/kvenv/bin/python" ]; then
   exit 1
 fi
 
-render_voice() {
-  echo "· voiceover (Kokoro, per-paragraph cues)"
+render_parts() {
+  echo "· voiceover parts (Kokoro, one per paragraph)"
   python3 film/split_voice.py
   for f in demo/.vo-parts/p*.txt; do
     "$VO_DIR/kvenv/bin/python" "$VO_DIR/vo.py" "$f" -o "${f%.txt}.mp3" --preset demo --speed 1.2
   done
-  python3 film/lay_voice.py
-  python3 film/make_srt.py
+  echo "· measure the voice — every picture duration derives from this"
+  (cd film && python3 cues.py)
+}
+
+render_voice() {
+  (cd film && python3 lay_voice.py)
+  (cd film && python3 make_srt.py)
 }
 
 if [ "$VOICE_ONLY" = "1" ]; then
+  render_parts
   render_voice
   echo "WROTE demo/voiceover.mp3 + demo/demo-final.srt"
   exit 0
 fi
 
-echo "1/4 · flipbook title cards"
+echo "1/5 · voice parts + timing plan"
+render_parts
+
+echo "2/5 · flipbook title cards (outro held to the closing paragraph)"
 python3 film/slides.py
 
-echo "2/4 · browser segment (live prod)"
+echo "3/5 · browser segment (live prod, one beat per paragraph)"
 python3 film/browser.py
 
-echo "3/4 · join picture"
+echo "4/5 · join picture"
 for seg in intro browser outro; do
   ffmpeg -y -loglevel error -i "demo/seg-${seg}.mp4" \
     -vf "fps=30,scale=1920:1080:flags=lanczos,format=yuv420p" \
@@ -60,7 +69,7 @@ if [ "$SILENT" = "1" ]; then
   exit 0
 fi
 
-echo "4/4 · voice + mux"
+echo "5/5 · mux (fails if voice and picture disagree)"
 render_voice
 ffmpeg -y -loglevel error -i demo/.picture.mp4 -i demo/voiceover.mp3 \
   -map 0:v -map 1:a -c:v copy -c:a aac -b:a 160k demo/demo-final.mp4

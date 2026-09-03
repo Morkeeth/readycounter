@@ -1,71 +1,36 @@
 1
-00:00:00,400 --> 00:00:02,900
-Agent commerce. Now reviewable. Proof.
+00:00:00,000 --> 00:00:04,110
+Your store is not ready for agents. They are already shopping.
 
 2
-00:00:04,150 --> 00:00:10,786
-Eighteen WebMCP tools. Human and agent, one cart. Prepare checkout never charges. Not Shopify's rails.
+00:00:04,660 --> 00:00:18,070
+Agent traffic to Shopify storefronts is up eight times year over year, and seventy eight point six percent of agent carts are abandoned. That is a customer who never reaches you, and no dashboard shows you which door was locked.
 
 3
-00:00:10,836 --> 00:00:11,950
-Agent-side truth.
+00:00:18,620 --> 00:00:34,555
+So we asked one hundred and forty eight real storefronts for their catalogue, the way a shopping agent asks. Seventy sent nothing back at all. Sixty seven sent a feed with no barcode in it. Every tile on this wall is one real shop, and empty means empty.
 
 4
-00:00:13,350 --> 00:00:19,658
-One click walks the agent journey. Blocked at captcha. Autopilot in the sandbox: seventy becomes ninety four.
+00:00:35,105 --> 00:00:47,715
+Eleven of them do have barcodes. Glossier, Tatcha, Brooklinen, Alo Yoga, Away. They publish to Shopify's Catalog protocol, and their own storefront hides it. Your shopper's agent reads the storefront.
 
 5
-00:00:19,708 --> 00:00:21,050
-Live Shopify untouched.
+00:00:48,265 --> 00:00:58,775
+This is what that agent reads on your product page. Not one bar is scannable. There is nothing to scan, and nothing to match to a product an agent can actually buy.
 
 6
-00:00:22,900 --> 00:00:28,543
-Your store is not ready for agents. They are already shopping. Traffic up eight times year over year.
+00:00:59,325 --> 00:01:14,285
+Six sandbox storefronts, each broken a different way. A CAPTCHA on checkout. A forced account login. A price that disagrees with the feed. Out of stock only at the till. Paste your own domain and your tile joins the wall in under a minute.
 
 7
-00:00:28,593 --> 00:00:33,504
-Seventy eight point six percent of agent carts abandon. That is customers you never see.
+00:01:14,835 --> 00:01:28,020
+This store scores seventy out of one hundred. Every point on the bill is priced from a published abandonment share, and every line names its source. Fix one thing, re-audit the same URL, and we print the delta.
 
 8
-00:00:33,554 --> 00:00:37,500
-Merchants hear agentic commerce. They cannot see which door is locked.
+00:01:28,570 --> 00:01:45,130
+The proof is WebMCP. Eighteen tools registered on document dot model context, in this open tab. Your assistant adds to the same order you are looking at, human and agent in one cart, and prepare checkout validates the total and never charges a card.
 
 9
-00:00:38,880 --> 00:00:45,429
-ReadyCounter is the lighthouse. Super sleek WebMCP that gets your shop ready. Paste a URL. Before and after.
+00:01:45,680 --> 00:01:49,140
+ReadyCounter. Agent commerce, now reviewable.
 
-10
-00:00:45,479 --> 00:00:52,200
-We already parsed one hundred forty eight popular stores so you see the width, not a vanity score in a vacuum.
-
-11
-00:00:53,820 --> 00:00:59,900
-Compare yourself to the field. Seventy eight crawled. Zero percent barcodes in what agents scrape.
-
-12
-00:00:59,950 --> 00:01:06,717
-Eleven brands still return GTIN on UCP while the scrape is empty. Insights you cannot get from a theme check.
-
-13
-00:01:06,767 --> 00:01:10,270
-Ease: one paste, one receipt, one delta when you fix it.
-
-14
-00:01:11,360 --> 00:01:15,673
-This store scores seventy. Every point is a published abandonment share.
-
-15
-00:01:15,723 --> 00:01:20,450
-Re-audit the same URL and we print the delta. Measure. Act. Re-measure. Proof.
-
-16
-00:01:21,850 --> 00:01:27,224
-The ambition: every merchant runs this when they ship anything new. Shopify adopts the receipt.
-
-17
-00:01:27,274 --> 00:01:31,100
-Stores go public with their score. Lighthouse for agentic commerce.
-
-18
-00:01:31,150 --> 00:01:33,800
-Agent commerce. Now reviewable. ReadyCounter. Proof.

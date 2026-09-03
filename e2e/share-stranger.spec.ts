@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE = process.env.PLAYWRIGHT_BASE_URL ?? 'https://tooltruth-webmcp.vercel.app';
+const BASE = process.env.PLAYWRIGHT_BASE_URL ?? 'https://readycounter.vercel.app';
 
 const IMPORT_JSON = JSON.stringify({
   exported_at: '2026-09-01T00:00:00.000Z',
@@ -38,6 +38,11 @@ test.describe('Share stranger — production incognito', () => {
     await page.goto(`${BASE}/?view=integrations`);
     await expect(page.getByRole('heading', { name: 'ReadyCounter' })).toBeVisible();
 
+    // Manual JSON import is a developer affordance and now lives inside the
+    // "For developers and judges" disclosure, so its parent must be opened first.
+    const builders = page.locator('details.integrations__builders');
+    await builders.scrollIntoViewIfNeeded();
+    await builders.locator('> summary').click();
     const importDetails = page.locator('details.integrations__advanced');
     await importDetails.scrollIntoViewIfNeeded();
     await importDetails.locator('summary').click();

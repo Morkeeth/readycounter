@@ -8,29 +8,38 @@ import shutil
 import subprocess
 import sys
 
+from cues import load
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-BASE = "https://tooltruth-webmcp.vercel.app"
+BASE = "https://readycounter.vercel.app"
 OUT = ROOT / "demo" / "seg-browser.mp4"
 TMP = ROOT / "demo" / ".browser-raw"
 
 RECORD = "film=1&record=1&cues=0"
 
-# Co-shop first → CAPTCHA → lighthouse → audit → rankings → delta → ambition
+# One beat per narration paragraph, p00..p07. The closing paragraph p08 plays
+# over the outro card, so the browser records eight beats, not nine.
+#
+# Beat DURATIONS are not written here — they come from film/cues.py, which
+# measures the rendered voice. A beat is exactly as long as the sentence that
+# describes it.
 BEATS = [
-    (f"/?{RECORD}&beat=7&view=shop", 13000),
-    (f"/?{RECORD}&view=integrations", 8000),
-    (f"/?{RECORD}&beat=6&store=ember-oak&view=merchant", 10000),
-    (f"/?{RECORD}&beat=0&store=ember-oak&view=merchant", 6000),
-    (
-        f"/?{RECORD}&beat=3&view=integrations&demo=1&audit_url=https://colourpop.com",
-        12000,
-    ),
-    (f"/?{RECORD}&beat=4&view=integrations", 12000),
-    (
-        f"/?{RECORD}&beat=5&view=integrations&demo=1&audit_url=https://colourpop.com",
-        10000,
-    ),
-    (f"/?{RECORD}&beat=8&view=integrations", 5000),
+    # p00 · the hook, on the front door with the wall already on screen
+    (f"/?{RECORD}&view=integrations", "hook"),
+    # p01 · the problem: 8x traffic, 78.6% abandoned
+    (f"/?{RECORD}&view=integrations", "problem"),
+    # p02 · the census wall — 148 asked, 70 silent, 67 hollow
+    (f"/?{RECORD}&view=integrations", "wall"),
+    # p03 · the eleven who have it and hide it
+    (f"/?{RECORD}&view=integrations", "brands"),
+    # p04 · the blank barcode
+    (f"/?{RECORD}&view=integrations", "barcode"),
+    # p05 · the stores, each broken a different way
+    (f"/?{RECORD}&view=integrations&judge=1", "stores"),
+    # p06 · the bill, priced from a published share
+    (f"/?{RECORD}&beat=0&store=ember-oak&view=merchant", "bill"),
+    # p07 · WebMCP proof: one cart, 18 tools
+    (f"/?{RECORD}&beat=7&view=shop", "webmcp"),
 ]
 
 CURSOR = """
@@ -45,6 +54,17 @@ CURSOR = """
   window.__vo_to = (x, y) => { d.style.left = x + 'px'; d.style.top = y + 'px'; };
 })()
 """
+
+
+def settle(pg, selector: str):
+    """Bring the thing the narration is talking about into frame, gently."""
+    try:
+        el = pg.locator(selector).first
+        if el.count():
+            el.scroll_into_view_if_needed(timeout=4000)
+            pg.wait_for_timeout(700)
+    except Exception:
+        pass
 
 
 def scroll(pg, dy: int, ms: int = 0):
@@ -82,33 +102,36 @@ def main():
         pg = ctx.new_page()
         pg.add_init_script(CURSOR)
 
-        for path, wait_ms in BEATS:
+        plan = load()
+        beats = plan["beats"]
+
+        for i, (path, name) in enumerate(BEATS):
+            hold_ms = int(beats[i] * 1000)
             pg.goto(BASE + path, wait_until="domcontentloaded", timeout=60000)
             pg.evaluate(CURSOR)
-            pg.wait_for_timeout(1200)
+            pg.wait_for_timeout(1600)  # let the live rankings land before we film
 
-            if "view=shop" in path:
+            if name in ("hook", "problem"):
+                settle(pg, ".census__tiles")
+            elif name == "wall":
+                settle(pg, ".census__key")
+            elif name == "brands":
+                settle(pg, ".census__brands")
+            elif name == "barcode":
+                settle(pg, ".barcode__strip")
+            elif name == "stores":
+                settle(pg, ".sandbox-showcase, [class*='sandbox']")
+                scroll(pg, 220, 600)
+            elif name == "bill":
+                settle(pg, ".tape, .readiness-tape, [class*='tape']")
+                scroll(pg, 260, 700)
+            elif name == "webmcp":
                 maybe_click(pg, "button:has-text('Add to order')")
-                scroll(pg, 300, 1500)
-            elif "view=integrations" in path and "beat=" not in path:
-                scroll(pg, 400, 1000)
-                maybe_click(pg, "text=Agent tool")
-            elif "beat=6" in path:
-                maybe_click(pg, "text=Autopilot")
-                maybe_click(pg, "text=Journey")
-                scroll(pg, 350, 1500)
-            elif "beat=4" in path:
-                maybe_click(pg, "text=UCP GTIN")
-                maybe_click(pg, "text=scrape empty")
-                scroll(pg, 500, 2000)
-            elif "beat=3" in path or "beat=5" in path:
-                maybe_click(pg, "button:has-text('Audit')")
-                scroll(pg, 400, 1500)
-            elif "beat=0" in path:
-                scroll(pg, 350, 1500)
+                maybe_click(pg, "button:has-text('ADD TO ORDER')")
+                scroll(pg, 260, 700)
 
-            remaining = max(0, wait_ms - 2500)
-            pg.wait_for_timeout(remaining)
+            spent = 1600 + 700
+            pg.wait_for_timeout(max(600, hold_ms - spent))
 
         video = pg.video
         ctx.close()

@@ -51,3 +51,4 @@ demo/.picture.mp4
 demo/seg-*.mp4
 film/__pycache__/
 
+demo/.cues.json

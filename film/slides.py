@@ -86,9 +86,14 @@ def main():
         ctx.close()
         b.close()
 
-    png_to_mp4(SHOTS / "f0.png", 5.0, OUT_INTRO)
-    png_to_mp4(SHOTS / "f3.png", 2.0, OUT_OUTRO)
-    print("WROTE", OUT_INTRO, OUT_OUTRO)
+    # The closing card must outlast the closing paragraph, or the film ends on a
+    # dead frame with the voice still talking. Measured, never guessed.
+    from cues import load
+
+    plan = load()
+    png_to_mp4(SHOTS / "f0.png", 1.2, OUT_INTRO)
+    png_to_mp4(SHOTS / "f3.png", plan["beats"][-1], OUT_OUTRO)
+    print("WROTE", OUT_INTRO, OUT_OUTRO, f"(outro {plan['beats'][-1]}s)")
 
 
 if __name__ == "__main__":

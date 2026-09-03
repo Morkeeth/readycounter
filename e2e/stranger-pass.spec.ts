@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE = process.env.PLAYWRIGHT_BASE_URL ?? 'https://tooltruth-webmcp.vercel.app';
+const BASE = process.env.PLAYWRIGHT_BASE_URL ?? 'https://readycounter.vercel.app';
 
 test.describe('Stranger pass — score your store', () => {
   test('live URL → domain input → score → fix list → 8 tool checks', async ({ page }) => {

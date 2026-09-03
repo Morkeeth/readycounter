@@ -2,10 +2,11 @@
 import pathlib
 import subprocess
 
-from lay_voice import CUES
+from cues import load
 
-PARTS = pathlib.Path("demo/.vo-parts")
-OUT = pathlib.Path("demo/demo-final.srt")
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+PARTS = ROOT / "demo" / ".vo-parts"
+OUT = ROOT / "demo" / "demo-final.srt"
 
 
 def dur(p):
@@ -38,6 +39,7 @@ def ts(sec):
 
 def main():
     parts = sorted(PARTS.glob("p*.txt"))
+    CUES = load()["cues"]
     lines = []
     for i, txt in enumerate(parts):
         body = [

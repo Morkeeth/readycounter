@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE = process.env.PLAYWRIGHT_BASE_URL ?? 'https://tooltruth-webmcp.vercel.app';
+const BASE = process.env.PLAYWRIGHT_BASE_URL ?? 'https://readycounter.vercel.app';
 
 test.describe('ReadyCounter smoke', () => {
   test('landing loads and health API is up', async ({ page, request }) => {
