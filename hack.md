@@ -102,6 +102,18 @@ Done-when:
 
 ## LOG
 
+- 2026-09-04 , **SUBMITTED.** https://devpost.com/software/readycounter
+  Renamed to `readycounter`. The front door became the census wall plus the
+  blank barcode; the builder console moved behind one disclosure. One typeface,
+  three weights. A real GPT-5.4 agent shops the store through the 18 WebMCP
+  tools and is refused at checkout, on camera. Native WebMCP verified on Chrome
+  152: all 18 tools execute.
+  **The last promise line finally landed:** "exportable checklist" is now a
+  Shopify-importable CSV pre-filled with the merchant's real product handles,
+  plus engineering tickets. Retro: `RETRO-2026-09-04.md`. Article:
+  `docs/ARTICLE-the-tests-were-green.md`. Access research:
+  `research/AGENT-ACCESS-AND-THE-FIX-PATH.md`.
+
 - 2026-08-30 — ReadyCounter ruled. Duet/Tooltruth killed.
 - 2026-08-30 — Slices 1–2 shipped: co-shop core, merchant readiness.
 - 2026-08-30 — Slice 3: research, DEVPOST, brand.
