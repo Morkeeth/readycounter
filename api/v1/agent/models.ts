@@ -9,7 +9,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
   res.setHeader('cache-control', 'public, s-maxage=300');
   return res.status(200).json({
-    configured: Boolean(process.env.OPENROUTER_API_KEY),
+    configured: Boolean(process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY),
     models: MODELS,
   });
 }

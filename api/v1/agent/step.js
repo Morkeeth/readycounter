@@ -214,8 +214,29 @@ var TOOL_MANIFEST_WITH_SCHEMAS = TOOL_MANIFEST.map((t) => ({
 }));
 
 // api/v1/agent/step.ts
-var MODELS = [{ id: "openai/gpt-5.6-terra-pro", label: "GPT-5.6 Terra Pro" }];
+var MODELS = [{ id: "gpt-5.4", label: "GPT-5.4" }];
 var DEFAULT_MODEL = MODELS[0].id;
+function provider() {
+  if (process.env.OPENAI_API_KEY) {
+    return {
+      name: "openai",
+      url: "https://api.openai.com/v1/chat/completions",
+      key: process.env.OPENAI_API_KEY,
+      model: DEFAULT_MODEL,
+      headers: {}
+    };
+  }
+  if (process.env.OPENROUTER_API_KEY) {
+    return {
+      name: "openrouter",
+      url: "https://openrouter.ai/api/v1/chat/completions",
+      key: process.env.OPENROUTER_API_KEY,
+      model: `openai/${DEFAULT_MODEL}`,
+      headers: { "HTTP-Referer": "https://readycounter.vercel.app", "X-Title": "ReadyCounter" }
+    };
+  }
+  return null;
+}
 var MAX_GOAL = 200;
 var MAX_STEPS = 8;
 var MAX_HISTORY = 24;
@@ -259,18 +280,16 @@ async function handler(req, res) {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
-  const key = process.env.OPENROUTER_API_KEY;
-  if (!key) {
+  const api = provider();
+  if (!api) {
     return res.status(503).json({
       error: "agent_unconfigured",
-      hint: "Set OPENROUTER_API_KEY. Every other path in ReadyCounter works without it."
+      hint: "Set OPENAI_API_KEY (or OPENROUTER_API_KEY). Every other path in ReadyCounter works without it."
     });
   }
   const body = req.body ?? {};
   const goal = typeof body.goal === "string" ? body.goal.slice(0, MAX_GOAL).trim() : "";
   if (!goal) return res.status(400).json({ error: "goal_required" });
-  const asked = typeof body.model === "string" ? body.model : "";
-  const model = MODELS.some((m) => m.id === asked) ? asked : DEFAULT_MODEL;
   const raw = Array.isArray(body.history) ? body.history : [];
   if (raw.length > MAX_HISTORY) return res.status(400).json({ error: "history_too_long" });
   const history = raw.filter((m) => m && (m.role === "assistant" || m.role === "tool")).map(
@@ -286,20 +305,19 @@ async function handler(req, res) {
       done: true,
       message: "Stopping \u2014 this demo caps the agent at eight steps.",
       steps,
-      model
+      model: DEFAULT_MODEL
     });
   }
   try {
-    const upstream = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const upstream = await fetch(api.url, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${key}`,
+        Authorization: `Bearer ${api.key}`,
         "content-type": "application/json",
-        "HTTP-Referer": "https://readycounter.vercel.app",
-        "X-Title": "ReadyCounter"
+        ...api.headers
       },
       body: JSON.stringify({
-        model,
+        model: api.model,
         max_tokens: 500,
         temperature: 0,
         messages: [
@@ -320,7 +338,8 @@ async function handler(req, res) {
     const calls = (message.tool_calls ?? []).filter((c) => ALLOWED.has(c.function?.name));
     res.setHeader("cache-control", "no-store");
     return res.status(200).json({
-      model,
+      model: DEFAULT_MODEL,
+      provider: api.name,
       steps: steps + 1,
       message: message.content ?? null,
       toolCalls: calls.map((c) => ({ id: c.id, name: c.function.name, arguments: c.function.arguments })),

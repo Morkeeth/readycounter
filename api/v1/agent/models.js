@@ -214,7 +214,7 @@ var TOOL_MANIFEST_WITH_SCHEMAS = TOOL_MANIFEST.map((t) => ({
 }));
 
 // api/v1/agent/step.ts
-var MODELS = [{ id: "openai/gpt-5.6-terra-pro", label: "GPT-5.6 Terra Pro" }];
+var MODELS = [{ id: "gpt-5.4", label: "GPT-5.4" }];
 var DEFAULT_MODEL = MODELS[0].id;
 
 // api/v1/agent/models.ts
@@ -225,7 +225,7 @@ function handler(req, res) {
   }
   res.setHeader("cache-control", "public, s-maxage=300");
   return res.status(200).json({
-    configured: Boolean(process.env.OPENROUTER_API_KEY),
+    configured: Boolean(process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY),
     models: MODELS
   });
 }

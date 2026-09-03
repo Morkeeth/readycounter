@@ -9,9 +9,9 @@ import { TOOL_MANIFEST_WITH_SCHEMAS } from '../../../src/webmcp/toolManifest';
  * posts the result back here for the next step. Model on the outside, the
  * deterministic instrument on the inside.
  *
- * The API key stays on the server. The client picks a model only from a fixed
- * whitelist and cannot touch the system prompt or the tool list, so this
- * endpoint cannot be turned into a general-purpose LLM proxy.
+ * The API key stays on the server. The model is pinned and the client cannot
+ * touch it, the system prompt or the tool list, so this endpoint cannot be
+ * turned into a general-purpose LLM proxy.
  */
 
 /**
@@ -24,9 +24,35 @@ import { TOOL_MANIFEST_WITH_SCHEMAS } from '../../../src/webmcp/toolManifest';
  * Pinned rather than configurable by the client — an arbitrary model string would
  * make this a general-purpose LLM proxy on someone else's key.
  */
-export const MODELS = [{ id: 'openai/gpt-5.6-terra-pro', label: 'GPT-5.6 Terra Pro' }] as const;
+export const MODELS = [{ id: 'gpt-5.4', label: 'GPT-5.4' }] as const;
 
 const DEFAULT_MODEL = MODELS[0].id;
+
+/**
+ * OpenAI direct when a key is present; OpenRouter as the fallback so a fork
+ * without an OpenAI key still has a working demo.
+ */
+function provider() {
+  if (process.env.OPENAI_API_KEY) {
+    return {
+      name: 'openai' as const,
+      url: 'https://api.openai.com/v1/chat/completions',
+      key: process.env.OPENAI_API_KEY,
+      model: DEFAULT_MODEL,
+      headers: {} as Record<string, string>,
+    };
+  }
+  if (process.env.OPENROUTER_API_KEY) {
+    return {
+      name: 'openrouter' as const,
+      url: 'https://openrouter.ai/api/v1/chat/completions',
+      key: process.env.OPENROUTER_API_KEY,
+      model: `openai/${DEFAULT_MODEL}`,
+      headers: { 'HTTP-Referer': 'https://readycounter.vercel.app', 'X-Title': 'ReadyCounter' },
+    };
+  }
+  return null;
+}
 const MAX_GOAL = 200;
 const MAX_STEPS = 8;
 const MAX_HISTORY = 24;
@@ -84,20 +110,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const key = process.env.OPENROUTER_API_KEY;
-  if (!key) {
+  const api = provider();
+  if (!api) {
     return res.status(503).json({
       error: 'agent_unconfigured',
-      hint: 'Set OPENROUTER_API_KEY. Every other path in ReadyCounter works without it.',
+      hint: 'Set OPENAI_API_KEY (or OPENROUTER_API_KEY). Every other path in ReadyCounter works without it.',
     });
   }
 
-  const body = (req.body ?? {}) as { goal?: unknown; history?: unknown; model?: unknown };
+  const body = (req.body ?? {}) as { goal?: unknown; history?: unknown };
   const goal = typeof body.goal === 'string' ? body.goal.slice(0, MAX_GOAL).trim() : '';
   if (!goal) return res.status(400).json({ error: 'goal_required' });
 
-  const asked = typeof body.model === 'string' ? body.model : '';
-  const model = MODELS.some((m) => m.id === asked) ? asked : DEFAULT_MODEL;
 
   const raw = Array.isArray(body.history) ? (body.history as Msg[]) : [];
   if (raw.length > MAX_HISTORY) return res.status(400).json({ error: 'history_too_long' });
@@ -122,21 +146,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       done: true,
       message: 'Stopping — this demo caps the agent at eight steps.',
       steps,
-      model,
+      model: DEFAULT_MODEL,
     });
   }
 
   try {
-    const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const upstream = await fetch(api.url, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${key}`,
+        Authorization: `Bearer ${api.key}`,
         'content-type': 'application/json',
-        'HTTP-Referer': 'https://readycounter.vercel.app',
-        'X-Title': 'ReadyCounter',
+        ...api.headers,
       },
       body: JSON.stringify({
-        model,
+        model: api.model,
         max_tokens: 500,
         temperature: 0,
         messages: [
@@ -162,7 +185,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     res.setHeader('cache-control', 'no-store');
     return res.status(200).json({
-      model,
+      model: DEFAULT_MODEL,
+      provider: api.name,
       steps: steps + 1,
       message: message.content ?? null,
       toolCalls: calls.map((c) => ({ id: c.id, name: c.function.name, arguments: c.function.arguments })),
