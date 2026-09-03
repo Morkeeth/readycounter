@@ -69,5 +69,5 @@ Six sandbox stores with distinct failure modes — see `FUN-STORES.md`:
 npm run audit:batch -- --publish    # crawl 102 URLs → KV
 npm run audit:analyze               # vertical breakdown
 npm run render:publish-audit        # republish local JSON if KV empty
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '.stores | length'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '.stores | length'
 ```

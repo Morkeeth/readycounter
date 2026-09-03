@@ -6,7 +6,7 @@
 ## Repro
 
 ```bash
-curl -sS -X POST https://tooltruth-webmcp.vercel.app/api/v1/audit/compare \
+curl -sS -X POST https://readycounter.vercel.app/api/v1/audit/compare \
   -H 'Content-Type: application/json' \
   -d '{"url":"https://www.glossier.com"}' | jq '{headline,crawl:{gtinPct,catalogScore,offerPct},ucp}'
 ```

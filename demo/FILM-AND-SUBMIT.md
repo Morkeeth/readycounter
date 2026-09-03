@@ -3,7 +3,7 @@
 **Line:** Agent commerce. Now reviewable. Proof.  
 **Say the product name twice.** ReadyCounter.  
 **Length:** ≤2:30 preferred · hard cap <3:00 (Devpost).  
-**Live:** https://tooltruth-webmcp.vercel.app  
+**Live:** https://readycounter.vercel.app  
 **Film mode:** `/?film=1&view=integrations&demo=1`  
 **Capture (no cue bar):** add `&record=1` or `&cues=0`  
 **Deadline:** Wed Sep 3, 2026 · 1pm PDT
@@ -20,7 +20,7 @@
 
 ```bash
 cd ~/CODE/tooltruth-webmcp
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
 # expect: succeeded 78, shopCount 148, avgGtinPct 0, ucp.gtinWhereCrawlZero 11
 ```
 

@@ -428,7 +428,7 @@ function importShopifyFeed(feed, opts) {
 function getShopifyConfig() {
   const clientId = process.env.SHOPIFY_CLIENT_ID?.trim();
   const clientSecret = process.env.SHOPIFY_CLIENT_SECRET?.trim();
-  const appUrl = (process.env.SHOPIFY_APP_URL ?? "https://tooltruth-webmcp.vercel.app").replace(
+  const appUrl = (process.env.SHOPIFY_APP_URL ?? "https://readycounter.vercel.app").replace(
     /\/$/,
     ""
   );

@@ -3,8 +3,8 @@
 **Audience:** Shopify partnerships, Agentic Storefronts, Catalog / UCP teams  
 **Tone:** Partner, not competitor. Open source. Evidence-first.
 
-**Live demo:** https://tooltruth-webmcp.vercel.app/?view=integrations  
-**Repo:** https://github.com/Morkeeth/tooltruth-webmcp
+**Live demo:** https://readycounter.vercel.app/?view=integrations  
+**Repo:** https://github.com/Morkeeth/readycounter
 
 ---
 
@@ -16,7 +16,7 @@ ReadyCounter answers that gap with a **field receipt** merchants and partners ca
 
 | Signal | ReadyCounter measurement | Source |
 |--------|--------------------------|--------|
-| Public feed reach | **78/148** crawled curated DTC | Live [`GET /api/v1/rankings`](https://tooltruth-webmcp.vercel.app/api/v1/rankings) |
+| Public feed reach | **78/148** crawled curated DTC | Live [`GET /api/v1/rankings`](https://readycounter.vercel.app/api/v1/rankings) |
 | Scrape GTIN | **0%** on every crawled store | Same API · [`FIELD_RECEIPT`](./src/data/field-companion.ts) |
 | UCP Catalog MCP | **81/148** expose UCP | E3 census · rankings join |
 | UCP GTIN where scrape empty | **11** brands (glossier, tatcha, brooklinen, aloyoga, mejuri, …) | [`research/experiments/E3b-ucp-vs-crawl.md`](./research/experiments/E3b-ucp-vs-crawl.md) |

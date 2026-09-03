@@ -13,7 +13,7 @@ npm install
 npm run build && npm run verify     # both must exit 0
 ```
 
-Film the live URL — **https://tooltruth-webmcp.vercel.app** — or `npm run preview`.
+Film the live URL — **https://readycounter.vercel.app** — or `npm run preview`.
 
 Then, in the browser you will film:
 

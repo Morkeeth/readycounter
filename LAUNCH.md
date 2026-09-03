@@ -1,6 +1,6 @@
 # ReadyCounter — research-based launch kit
 
-**Live:** https://tooltruth-webmcp.vercel.app  
+**Live:** https://readycounter.vercel.app  
 **Promise:** Every recommendation, test case, and impact line traces to `research.md` and `src/data/sources.ts`.
 
 ---
@@ -90,9 +90,9 @@ See `DEMO.md` for beat-by-beat narration. Short version:
 
 **Deep links for judges:**
 
-- Sandbox CAPTCHA: https://tooltruth-webmcp.vercel.app/?store=ember-oak&view=merchant
-- Sandbox account: https://tooltruth-webmcp.vercel.app/?store=neon-matcha&view=merchant
-- API status: https://tooltruth-webmcp.vercel.app/api/v1/render/status
+- Sandbox CAPTCHA: https://readycounter.vercel.app/?store=ember-oak&view=merchant
+- Sandbox account: https://readycounter.vercel.app/?store=neon-matcha&view=merchant
+- API status: https://readycounter.vercel.app/api/v1/render/status
 
 ---
 

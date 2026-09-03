@@ -1,7 +1,7 @@
 # ReadyCounter — pitch pack (Tue Sep 1 morning)
 
 **Branch:** `night/gates-that-lie-2026-08-31`  
-**Live (may lag branch):** https://tooltruth-webmcp.vercel.app  
+**Live (may lag branch):** https://readycounter.vercel.app  
 **Deadline:** Devpost Wed Sep 3, 2026 · 1pm PDT  
 **Tagline:** Agent commerce. Now reviewable. Proof.
 
@@ -60,11 +60,11 @@
 
 | Link | Purpose |
 |------|---------|
-| https://tooltruth-webmcp.vercel.app/?view=integrations&demo=1 | Connect cold start |
-| https://tooltruth-webmcp.vercel.app/?store=ember-oak&view=merchant | CAPTCHA sandbox 70→94 |
-| https://tooltruth-webmcp.vercel.app/?store=neon-matcha&view=merchant | Account wall sandbox |
-| https://tooltruth-webmcp.vercel.app/api/v1/rankings | Field receipt JSON |
-| https://tooltruth-webmcp.vercel.app/api/v1/render/status | KV + batch stats |
+| https://readycounter.vercel.app/?view=integrations&demo=1 | Connect cold start |
+| https://readycounter.vercel.app/?store=ember-oak&view=merchant | CAPTCHA sandbox 70→94 |
+| https://readycounter.vercel.app/?store=neon-matcha&view=merchant | Account wall sandbox |
+| https://readycounter.vercel.app/api/v1/rankings | Field receipt JSON |
+| https://readycounter.vercel.app/api/v1/render/status | KV + batch stats |
 
 ---
 

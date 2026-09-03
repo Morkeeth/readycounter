@@ -1,8 +1,8 @@
 # D3: Agent commerce readiness — field findings
 
 **ReadyCounter · August 2026**  
-**Live rankings:** https://tooltruth-webmcp.vercel.app/api/v1/rankings  
-**Repo:** https://github.com/Morkeeth/tooltruth-webmcp
+**Live rankings:** https://readycounter.vercel.app/api/v1/rankings  
+**Repo:** https://github.com/Morkeeth/readycounter
 
 ---
 
@@ -27,7 +27,7 @@ Reproduce:
 
 ```bash
 npm run audit:batch -- --publish
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,avgGtinPct}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,avgGtinPct}'
 ```
 
 ---

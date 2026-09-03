@@ -1,7 +1,7 @@
 # ReadyCounter — demo script (~110s)
 
 **Line:** Agent commerce. Now reviewable. Proof.  
-**URL:** https://tooltruth-webmcp.vercel.app  
+**URL:** https://readycounter.vercel.app  
 **Film mode:** `/?film=1` — script overlay with prev/next beats  
 **Submit pack:** [`demo/FILM-AND-SUBMIT.md`](./demo/FILM-AND-SUBMIT.md)  
 **Checklist:** [`FILM-READY.md`](./FILM-READY.md) · Roadmap: [`demo/ROADMAP-FILM.md`](./demo/ROADMAP-FILM.md)

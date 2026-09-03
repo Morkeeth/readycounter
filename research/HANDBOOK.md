@@ -168,7 +168,7 @@ From ReadyCounter batch v3 (filter live on Connect → DTC rankings):
 7. [ ] Privacy + ToS URLs live and linked in feeds  
 8. [ ] Run ReadyCounter URL audit or CatalogScan for a receipt  
 
-Film / demo: `https://tooltruth-webmcp.vercel.app/?film=1&view=integrations`
+Film / demo: `https://readycounter.vercel.app/?film=1&view=integrations`
 
 ---
 

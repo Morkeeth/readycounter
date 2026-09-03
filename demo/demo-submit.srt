@@ -1,0 +1,72 @@
+1
+00:00:00,000 --> 00:00:03,340
+My name is Oscar, and I built ReadyCounter.
+
+2
+00:00:04,180 --> 00:00:06,500
+Shopping agents are already in your stores,
+
+3
+00:00:06,500 --> 00:00:08,840
+and most of them leave empty-handed.
+
+4
+00:00:08,840 --> 00:00:12,540
+ReadyCounter scores what the agent actually can read.
+
+5
+00:00:12,540 --> 00:00:15,440
+I redirected it to already 148 stores
+
+6
+00:00:15,440 --> 00:00:17,780
+using 18 WebMCP tools.
+
+7
+00:00:17,780 --> 00:00:19,620
+So let's get your stores ready,
+
+8
+00:00:19,620 --> 00:00:22,060
+and I'll let my agent do the demo.
+
+9
+00:00:22,705 --> 00:00:30,130
+AI shoppers arrived this year. Sessions to Shopify storefronts are up eight times year over year. Orders, nearly thirteen.
+
+10
+00:00:30,680 --> 00:00:41,755
+And the money turned. Last March, agent traffic converted thirty eight percent worse than everything else. This March, forty two percent better. Your worst channel became your best one in twelve months.
+
+11
+00:00:42,305 --> 00:00:56,180
+Here is the catch. Four in five agent carts never reach checkout. And Shopify's own earnings call says a catalogue an agent can read converts twice as well as a page it has to scrape. That is the whole prize, and it is sitting behind a data problem.
+
+12
+00:00:56,730 --> 00:01:09,155
+So we asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Seventy sent nothing back. Sixty seven sent a feed with no barcode in it. Coverage across the field: zero percent.
+
+13
+00:01:09,705 --> 00:01:17,005
+This is ReadyCounter. A merchant types their domain, and that is the whole setup. No install, no account, no code on the storefront.
+
+14
+00:01:17,555 --> 00:01:26,080
+The score lands, their tile joins the field, and the barcode prints exactly as far as their data goes. For this store, and for most, that is nowhere.
+
+15
+00:01:26,630 --> 00:01:36,030
+Every point on the bill is priced from a published abandonment share, and every line names its source. Six sandbox storefronts, six different ways to lose the sale.
+
+16
+00:01:36,580 --> 00:01:53,530
+We did not build a catalogue. We read the ones that exist. Shopify OAuth for the merchant's own admin, Shopify's Catalog protocol for the barcodes a scrape cannot see, and Render Key Value holding every audit and every shared cart across cold starts. Three integrations, all live in this build.
+
+17
+00:01:54,080 --> 00:02:15,905
+Now the proof, in Chrome with WebMCP switched on. This is not a console we wrote. Eighteen tools are registered on document dot model context, the browser's own API. The agent searches the catalogue, adds to the order, and the line is tagged agent next to the one a human added. Then prepare checkout refuses, because a captcha stands in the way, and it cites the published share that says so. It never touches a card.
+
+18
+00:02:16,455 --> 00:02:19,555
+ReadyCounter. Agent commerce, now reviewable.
+

@@ -12,9 +12,9 @@ shipped fixtures and cite nothing.
 ## Live demo
 
 ```text
-https://tooltruth-webmcp.vercel.app
-https://tooltruth-webmcp.vercel.app/?judge=1
-https://tooltruth-webmcp.vercel.app/?view=merchant&store=neon-matcha
+https://readycounter.vercel.app
+https://readycounter.vercel.app/?judge=1
+https://readycounter.vercel.app/?view=merchant&store=neon-matcha
 ```
 
 _Judges: `?judge=1` opens Co-shop with WebMCP proof banner — humans + agents, one cart._
@@ -68,7 +68,7 @@ Paste one subsection per Devpost criterion. Full map: [`submission/JUDGES.md`](.
 
 **18** `document.modelContext.registerTool` handlers share one co-shop order store — human and agent edits land on the same lines with `HUMAN`/`AGENT` chips. `prepare_checkout` validates totals and **never charges a card** (constitution in [`src/webmcp/registerTools.ts`](./src/webmcp/registerTools.ts)). Path B works without the Chrome flag via Connect → Agent tool console; Path A is native WebMCP ([`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md)).
 
-**One click:** https://tooltruth-webmcp.vercel.app/?judge=1 → Co-shop tab + judge banner → `add_to_order` → `prepare_checkout`.
+**One click:** https://readycounter.vercel.app/?judge=1 → Co-shop tab + judge banner → `add_to_order` → `prepare_checkout`.
 
 #### Execution
 
@@ -80,7 +80,7 @@ Shipped product, not a POC: live Vercel URL · **`npm run verify`** (13 scripts,
 
 **78.6%** agent cart abandonment ([Presenc AI](./src/data/sources.ts)) · we crawled **148** curated DTC brands — **78** opened a public feed at **0% scrape GTIN** · **11** still return GTIN via Shopify UCP Catalog MCP where scrape is empty. Merchants paste a URL, compare to the field, re-audit for a delta receipt.
 
-**One click:** `curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,ucp:.ucp.gtinWhereCrawlZero}'` → **78, 148, 11** · Connect → audit **colourpop.com**.
+**One click:** `curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,ucp:.ucp.gtinWhereCrawlZero}'` → **78, 148, 11** · Connect → audit **colourpop.com**.
 
 #### Creativity & Ambition
 
@@ -245,14 +245,14 @@ React 19 · TypeScript · Vite · Zustand · WebMCP `document.modelContext.regis
 
 ### Testing instructions (judges)
 
-**Fast path (60s):** https://tooltruth-webmcp.vercel.app/?judge=1
+**Fast path (60s):** https://readycounter.vercel.app/?judge=1
 
 Opens Co-shop with a WebMCP proof banner. Add an item → Connect → Agent tool console → `add_to_order` → `prepare_checkout` (never charges).
 
 Full scripts: [`JUDGE-60s.md`](./JUDGE-60s.md) · [`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md) · criteria map [`submission/JUDGES.md`](./submission/JUDGES.md)
 
 ```bash
-git clone https://github.com/Morkeeth/tooltruth-webmcp.git
+git clone https://github.com/Morkeeth/readycounter.git
 cd tooltruth-webmcp
 npm install
 npm run build && npm run verify   # both exit 0
@@ -300,7 +300,7 @@ Full one-take script with the exact numbers: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md
 
 ## Links
 
-- Repo: https://github.com/Morkeeth/tooltruth-webmcp
+- Repo: https://github.com/Morkeeth/readycounter
 - Score derivation + every weight: [`research.md`](./research.md)
 - Fork guide: [`FORK.md`](./FORK.md)
 - Screenshots (1440px + 390px): [`docs/shots/`](./docs/shots/)

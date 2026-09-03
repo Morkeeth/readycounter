@@ -1,149 +1,170 @@
+![ReadyCounter](docs/shots/00-cover.png)
+
 # ReadyCounter
 
-**Lighthouse for agentic commerce** — compare your shop to **148** parsed DTC brands, paste a URL for an agent-readiness receipt, re-audit after a fix for a delta. Not Shopify's rails. Agent-side truth.
+**Agent commerce. Now reviewable.**
 
-**Live:** https://tooltruth-webmcp.vercel.app · **Judges start here:** `?judge=1` · Connect: `?view=integrations`
+Score your storefront the way a shopping agent reads it — then shop it alongside
+the agent, in one cart, through 18 browser-native WebMCP tools.
 
-**Tagline:** Agent commerce. Now reviewable. Proof.
+**[readycounter.vercel.app](https://readycounter.vercel.app)** · no signup, no
+install, no key · [60-second judge path](https://readycounter.vercel.app/?judge=1)
 
-## Stranger path (60 seconds, no signup)
+Built for the [WebMCP Challenge](https://webmcp.devpost.com/). MIT licensed.
 
-**Judges:** open https://tooltruth-webmcp.vercel.app/?judge=1 — lands on Co-shop with WebMCP proof banner.
+---
 
-1. **Add to order** → **Connect → Agent tool console** → `add_to_order` + `prepare_checkout`
-2. **Readiness** → CAPTCHA off → **70→94**
-3. **Connect** → paste colourpop → rankings UCP filter (**11** gaps) → re-audit delta
+## The finding
 
-Full map: [`submission/JUDGES.md`](./submission/JUDGES.md) · [`JUDGE-60s.md`](./JUDGE-60s.md)
+We asked **148 real DTC storefronts** for their catalogue the way an agent asks.
 
-**Deep dives:** [`LIGHTHOUSE-VISION.md`](./LIGHTHOUSE-VISION.md) · [`demo/FILM-AND-SUBMIT.md`](./demo/FILM-AND-SUBMIT.md) · [`DEVPOST.md`](./DEVPOST.md) · [`SHOPIFY-PARTNER-BRIEF.md`](./SHOPIFY-PARTNER-BRIEF.md)
+| | |
+|---|---|
+| **70** | sent nothing back at all |
+| **67** | sent a feed with **no barcode in it** |
+| **0%** | average GTIN coverage across every store that answered |
+| **11** | publish barcodes to Shopify's Catalog MCP **and hide them on their own storefront** |
 
-![The readiness tape — Ember & Oak Coffee, 70/100, checkout void](./docs/shots/03-merchant-1440.png)
+Those eleven are Glossier, Tatcha, Brooklinen, Alo Yoga, Buffy, Mejuri, Gorjana,
+Dagne Dover, United By Blue, Stio and Away. The protocol has the data. The
+scrape — which is what a shopper's agent reads — does not.
 
-## Who it's for
-
-| You are | You get |
-|---------|---------|
-| **Merchant / operator** | Readiness score /100, checkout blocker audit, catalog feed validation, autopilot fixes |
-| **Shopper** | Browse, co-shop with your assistant, share a cart link — no account required |
-| **Developer** | REST API, Shopify catalog import/export, **18** structured agent tools, OpenAPI spec |
-
-## How it works
-
-1. **Open the URL** — pick a store or import your catalog under Connect
-2. **Shop** — add items yourself or let your assistant use structured tools (search, add to cart, prepare checkout)
-3. **Readiness** — the store's score prints as an **itemised bill**: every point
-   traced to a named check, its arithmetic, its one-line fix, and the page the
-   weight came from. Open a line to read the source with its dates. Apply fixes
-   and the bill reprints.
-4. **Share** — copy a cart link (`?co=`) so someone else joins the same order
-
-`prepare_checkout` validates the order and returns totals. **It never charges a card** — a human confirms payment in the browser.
-
-## The score is an itemised bill, not a gauge
-
-100 points across six charged checks, and **the six checks are the six rows of
-one published table.** Presenc AI publishes the causes of agent cart abandonment
-with a share against each; ReadyCounter charges each cause exactly the share that
-table states. The six sum to 100 on their page and to 100 here.
-
-| Check | Points | Row it is charged from |
-|---|---|---|
-| What the agent was shown survives to checkout | 26 | Stale price or stock data at checkout — 26% |
-| No CAPTCHA on the checkout path | 24 | Captcha or verification wall — 24% |
-| Price feed agrees with the shelf | 18 | Price mismatch vs listed feed — 18% |
-| No forced account on the checkout path | 15 | Required account or login — 15% |
-| A payment method an agent can complete | 11 | Unsupported payment method — 11% |
-| Product records an agent can read | 6 | Ambiguous page structure — 6% |
-| *Structured tools the score is measured through* | *0* | *no published row — reported, never charged* |
-
-**Not one of the hundred points is a weight we picked.** What *is* ours is the
-test behind each line: that table names six causes and defines none of them, so
-every line prints its own test next to the published weight, and the tape marks
-each one `published weight · our stated test`. A check with no published price —
-the tool surface — is reported at zero rather than given an invented weight.
-
-All six rows are reproduced in [`research.md`](./research.md). Reproducing only
-two of them is how this product shipped a wrong weight for a day; charging the
-26% row for a defect the 18% row names is how it shipped a second one.
-
-Nothing is a constant typed into a component: a figure the product *cites* — a
-share, a multiple, a survey result — cannot be printed without a row in
-[`src/data/sources.ts`](./src/data/sources.ts). (Numbers it *measures* off your
-catalog — SKU counts, GTIN coverage, points earned — are computed live and cite
-nothing; they are not claims about the world.) `npm run verify` fails the build
-if a measured weight stops
-equalling the figure its source publishes, if a source loses its URL or its read
-date, or if a source URL is not quoted in [`research.md`](./research.md).
-
-**Observable consequence:** clearing the CAPTCHA on Ember & Oak moves the score
-**70 → 94** — a delta of exactly **24**, the published figure. Asserted in
-`scripts/verify-readiness.mjs`, not eyeballed. Full derivation:
-[`research.md` § How the readiness score is weighted](./research.md).
-
-## Sample stores
-
-| Store | URL | Notes |
-|-------|-----|-------|
-| Ember & Oak Coffee | _(default)_ | Specialty coffee — **70/100**, blocked by a CAPTCHA |
-| Neon Matcha Lab | `?store=neon-matcha` | Ceremonial matcha — **65/100**: account wall (0/15), no agent-completable payment method (0/11), 2/6 machine-readable records |
-
-Import your own catalog: **Connect → Import your catalog** (Shopify JSON).
-
-## API & integrations
-
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /api/v1/catalog?storeId=` | Products + Shopify-shaped export |
-| `GET /api/v1/readiness?storeId=` | Score, checks, feed validation |
-| `GET /api/v1/tools` | Agent tool manifest |
-| `POST /api/v1/rooms` | Live co-shop sessions |
-| `POST /api/v1/stores/custom` | Register catalog server-side |
-
-Full reference: [`INTEGRATIONS.md`](./INTEGRATIONS.md) · OpenAPI at `/openapi.yaml`
-
-## Agent tools (18)
-
-Structured tools registered via WebMCP — search, cart, checkout validation, readiness, catalog import, live rooms, field companion. See [`src/webmcp/toolManifest.ts`](./src/webmcp/toolManifest.ts).
-
-Test without the browser flag: **Connect → Agent tool console**.
-
-## Run locally
+Re-run our exact query:
 
 ```bash
-npm install
-npm run dev          # UI + co-shop
-vercel dev           # UI + REST API + live sessions
-npm run verify       # score sources, readiness, stores, integrations, ambition
-npm run build        # tsc + vite, must exit 0
+curl -s https://readycounter.vercel.app/api/v1/rankings \
+  | jq '{succeeded,shopCount,avgGtinPct,ucp}'
+# {"succeeded":78,"shopCount":148,"avgGtinPct":0,
+#  "ucp":{"available":81,"withGtin":13,"gtinWhereCrawlZero":11}}
 ```
 
-Every verify script asserts and exits non-zero. To see one go red, change a
-weight in `src/lib/readiness.ts` and re-run `npm run verify`.
+---
 
-Screenshots of every surface at 1440px and 390px: [`docs/shots/`](./docs/shots/).
+## The front door
 
-## Why readiness matters
+Every tile is one real storefront. Empty means empty — the emptiness is the
+measurement, not a placeholder.
 
-Primary sources: [`research.md`](./research.md)
+![The census wall](docs/shots/01-front-door.png)
 
-| Stat | Source |
-|------|--------|
-| Shopify: AI traffic **8×** YoY, AI orders **~13×** (Q1 2026) | [Shopify Enterprise](https://www.shopify.com/enterprise/blog/ai-search-insights) |
-| Catalog-powered AI searches convert **2×** vs scraped data | [Shopify Q1 2026](https://stockanalysis.com/stocks/shop/transcripts/555081-q1-2026/) |
-| Agent cart abandonment **~78.6%** — stale price **26%**, CAPTCHA **24%**, required account **15%** | [Presenc AI 2026](https://presenc.ai/research/agent-cart-abandonment-statistics-2026) |
-| **65%** trust AI to compare · **14%** to buy autonomously | [YouGov / Checkout.com](https://yougov.com/en-us/articles/53808-american-trust-in-ai-for-retail-consumer-sentiment-in-2025) |
+## What an agent reads on your product page
 
-## Fork your own store
+A bar is inked only where a product exposes a GTIN. At 0% the code is grey and
+unscannable.
 
-Add an entry to [`src/data/stores.ts`](./src/data/stores.ts) or import a feed. See [`FORK.md`](./FORK.md).
+![The blank barcode](docs/shots/02-blank-barcode.png)
 
-## Filming and submitting
+## Paste a domain, get a receipt
 
-One-take script with every number pre-verified: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
-Devpost paste: [`DEVPOST.md`](./DEVPOST.md). Design rulings and open decisions:
-[`DECISIONS.md`](./DECISIONS.md).
+A live audit of `colourpop.com` — 50 SKUs, 0% scrape GTIN, scored 0 out of 24
+catalogue points, with a fix list that names its source on every line.
 
-## License
+![A real store scored](docs/shots/03-store-scored.png)
 
-MIT
+## The bill
+
+Every point is one row of a published abandonment table, at the share that table
+states, with the publisher and the date we read it printed on the line.
+
+![The readiness tape](docs/shots/04-readiness-tape.png)
+
+## Human and agent, one cart
+
+A person's click and an agent's `add_to_order` land on the same order, tagged
+`HUMAN` or `AGENT`. `prepare_checkout` validates the total and **never charges a
+card** — the agent proposes, the person pays.
+
+![Co-shop](docs/shots/05-coshop-one-cart.png)
+
+## 18 WebMCP tools
+
+![The tool console](docs/shots/06-webmcp-tools.png)
+
+---
+
+## WebMCP, two paths
+
+All 18 tools are declared in [`src/webmcp/registerTools.ts`](src/webmcp/registerTools.ts)
+with `document.modelContext.registerTool(name, {description, inputSchema, execute})`.
+The same handlers serve both paths, so nobody needs a Chrome flag to see it work.
+
+**Path A — native.** Chrome 149+, `chrome://flags/#enable-webmcp-testing` →
+Enabled → relaunch. The header reads **WebMCP live · 18 tools**. Verified on
+Chrome 152:
+
+```js
+const tools = await document.modelContext.getTools();          // 18
+const t = tools.find(x => x.name === 'search_catalog');
+await document.modelContext.executeTool(t, '{"query":"espresso"}');
+```
+
+> Arguments go in as a **JSON string**. Passing an object fails with
+> `Failed to parse input arguments` — that cost us an hour, so it is written down.
+
+**Path B — no flag.** Connect → *For developers and judges* → Agent tool
+console. Identical handlers.
+
+**Why the browser API and not a hosted MCP server:** the thing being measured is
+what an agent retrieves *in the shopper's own session*. A server-side MCP would
+read the catalogue with our credentials, not theirs, and would miss exactly the
+walls that matter — CAPTCHA, forced login, session-gated pricing.
+
+## Integrations
+
+| | |
+|---|---|
+| **Shopify OAuth** | Read-only Admin API for the merchant's own catalogue, barcodes and prices. No payment scopes, ever. |
+| **Shopify Catalog MCP (UCP)** | The protocol side of the scrape-vs-protocol comparison — where the eleven-brand finding came from. |
+| **Render Key Value** | Persists every audit and every live co-shop room across Vercel cold starts, plus a weekly cron re-running the field batch. `GET /api/v1/render/status`. |
+
+---
+
+## Run it yourself
+
+```bash
+git clone https://github.com/Morkeeth/readycounter
+cd readycounter
+npm ci
+npm run dev            # http://localhost:5173
+```
+
+Verify the claims rather than taking them:
+
+```bash
+npm run verify         # 13 scripts: score arithmetic, citations, honest limits
+npx playwright test    # 15 e2e tests, run against production
+```
+
+## API
+
+```
+GET  /api/v1/health          service + integration status
+GET  /api/v1/rankings        the 148-store field batch
+GET  /api/v1/tools           the 18 WebMCP tool definitions
+GET  /api/v1/render/status   Render KV + cron status
+POST /api/v1/audit/url       score any storefront
+POST /api/v1/audit/compare   one store against the field
+```
+
+## Honest limits
+
+- Field crawls score the **catalogue budget only** (0–24). Checkout lines stay
+  `NOT MEASURED` until Shopify OAuth — the full `/100` appears on sandbox stores
+  where checkout is declared.
+- The field batch is 148 curated DTC brands, not a census of Shopify.
+- Presenc AI's shares are a modelled panel, quoted as an industry benchmark.
+  Every line that uses one says so.
+- We charged the forced-account-wall 24 points until 2026-08-31, when a re-read
+  of the cited table found it has its own row at 15%. The weight changed and the
+  note is still on the line.
+
+## The film
+
+`demo/demo-final.mp4` is built end to end by `./film/build.sh` — the intro cards,
+the live browser beats, the native-WebMCP segment in real Chrome, the Kokoro
+voiceover and the captions. Every duration derives from the rendered audio, and
+`film/verify_film.py` checks the file that actually ships.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).

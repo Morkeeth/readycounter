@@ -40,7 +40,7 @@ ReadyCounter’s **agent-readiness score** and Shopify ecosystem **catalog scann
 
 ```bash
 # ReadyCounter
-curl -s -X POST https://tooltruth-webmcp.vercel.app/api/v1/audit/compare \
+curl -s -X POST https://readycounter.vercel.app/api/v1/audit/compare \
   -H 'Content-Type: application/json' \
   -d '{"url":"https://colourpop.com"}'
 

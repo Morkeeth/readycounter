@@ -31,7 +31,7 @@ export function JudgeBanner({
         </button>
         {' · '}
         <a
-          href="https://github.com/Morkeeth/tooltruth-webmcp/blob/main/CHATGPT-JUDGE.md"
+          href="https://github.com/Morkeeth/readycounter/blob/main/CHATGPT-JUDGE.md"
           target="_blank"
           rel="noreferrer"
         >

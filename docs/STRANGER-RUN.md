@@ -45,7 +45,7 @@ Click: Score my store
 ### 3. API (what the button triggers)
 
 ```bash
-curl -s -X POST https://tooltruth-webmcp.vercel.app/api/v1/audit/url \
+curl -s -X POST https://readycounter.vercel.app/api/v1/audit/url \
   -H 'Content-Type: application/json' \
   -d '{"url":"https://colourpop.com"}'
 ```
@@ -101,7 +101,7 @@ curl -s -X POST https://tooltruth-webmcp.vercel.app/api/v1/audit/url \
 ## Live API batch numbers
 
 ```bash
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp:.ucp.gtinWhereCrawlZero}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp:.ucp.gtinWhereCrawlZero}'
 ```
 
 **At run time (2026-09-02 ~06:50 UTC):** `succeeded: 0, shopCount: 0` — Render KV batch missing on prod (`note: "No batch on Render KV yet"`). UCP census still shows `gtinWhereCrawlZero: 0` with stale `at` timestamp.

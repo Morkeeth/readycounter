@@ -154,7 +154,7 @@ Done-when:
   **Oscar:** `vercel --prod` · film · Devpost.
 
 - 2026-09-01 — **RC-WIN judge UX:** per-criterion Devpost sections · embarrassment verify · stale copy fixes (16→18, Start shopping→Co-shop) · SUBMIT-READY WebMCP paragraph · `verify-embarrassment.mjs` in verify pipeline · rankings KV timeout 3s→10s (cold bundle was returning empty batch while render/status had 148 rows).
-  https://tooltruth-webmcp.vercel.app · rankings 78/148 · share-stranger + stranger-pass e2e green on prod.
+  https://readycounter.vercel.app · rankings 78/148 · share-stranger + stranger-pass e2e green on prod.
   **Oscar:** film · Devpost (video URL required).
 
 - 2026-08-31 — **Hammer pass (autonomy):** B7 Offer% rankings column · batch publish fields ·

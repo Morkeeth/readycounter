@@ -1,7 +1,7 @@
 # Stranger pass — live URL
 
 **Run:** 2026-08-31T21:35:00Z (UTC)  
-**URL:** https://tooltruth-webmcp.vercel.app/?view=integrations&demo=1  
+**URL:** https://readycounter.vercel.app/?view=integrations&demo=1  
 **Runner:** Playwright `e2e/stranger-pass.spec.ts` + manual API checks  
 **Branch:** `night/gates-that-lie-2026-08-31`
 
@@ -30,14 +30,14 @@
 **Command:**
 
 ```bash
-PLAYWRIGHT_BASE_URL=https://tooltruth-webmcp.vercel.app npx playwright test e2e/stranger-pass.spec.ts
+PLAYWRIGHT_BASE_URL=https://readycounter.vercel.app npx playwright test e2e/stranger-pass.spec.ts
 # exit 0 · 1 passed (2026-08-31T21:35Z)
 ```
 
 **API re-derive (not carried from docs):**
 
 ```bash
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,avgGtinPct,ucp}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,avgGtinPct,ucp}'
 # shopCount: 148, succeeded: 78, avgGtinPct: 0, ucp.gtinWhereCrawlZero: 11
 ```
 

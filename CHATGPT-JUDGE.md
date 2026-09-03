@@ -2,7 +2,7 @@
 
 Hackathon requires judges to test in **ChatGPT in-app browser** or **Chrome with WebMCP enabled**.
 
-**Live:** https://tooltruth-webmcp.vercel.app
+**Live:** https://readycounter.vercel.app
 
 ---
 
@@ -19,7 +19,7 @@ Hackathon requires judges to test in **ChatGPT in-app browser** or **Chrome with
 ### Chrome 149+ with flag
 
 1. `chrome://flags/#enable-webmcp-testing` → **Enabled** → relaunch
-2. Open https://tooltruth-webmcp.vercel.app
+2. Open https://readycounter.vercel.app
 3. Header badge: **Assistant tools active · 18 connected**
 4. Co-shop tab → human + agent edit same order
 
@@ -29,7 +29,7 @@ Hackathon requires judges to test in **ChatGPT in-app browser** or **Chrome with
 
 Works in any browser. Proves the same 18 tools without native WebMCP.
 
-1. Open https://tooltruth-webmcp.vercel.app/?view=integrations
+1. Open https://readycounter.vercel.app/?view=integrations
 2. Scroll to **Agent tool console**
 3. Run `add_to_order` → `get_order` → `prepare_checkout`
 4. **Pass:** one order, HUMAN/AGENT chips, checkout refuses with wall citation
@@ -52,8 +52,8 @@ Full timing: [`JUDGE-60s.md`](../JUDGE-60s.md)
 ## API receipts (no UI)
 
 ```bash
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/tools | jq '.toolCount'    # 18
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,ucp:.ucp.gtinWhereCrawlZero}'
+curl -s https://readycounter.vercel.app/api/v1/tools | jq '.toolCount'    # 18
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,ucp:.ucp.gtinWhereCrawlZero}'
 ```
 
 ---

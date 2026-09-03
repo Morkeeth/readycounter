@@ -3,7 +3,7 @@
 Timestamped beats. Not a script rewrite — glance at these while recording.  
 Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
-**Live URL:** https://tooltruth-webmcp.vercel.app  
+**Live URL:** https://readycounter.vercel.app  
 **Store B URL:** `?store=neon-matcha`
 
 ---

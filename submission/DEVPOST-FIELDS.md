@@ -31,7 +31,7 @@ Agent commerce. Now reviewable. Proof.
 | Live app | `https://readycounter.vercel.app` |
 | Judge path (60s) | `https://readycounter.vercel.app/?judge=1` |
 | Front door, direct | `https://readycounter.vercel.app/?judge=1&view=integrations` |
-| GitHub repo | `https://github.com/Morkeeth/tooltruth-webmcp` |
+| GitHub repo | `https://github.com/Morkeeth/readycounter` |
 
 Both hosts serve the same production build; `tooltruth-webmcp.vercel.app` is the
 old codename and still resolves.
@@ -70,10 +70,10 @@ The 16:9 aspect fails its bottom-margin check — the source line overflows by
 
 | Field | Value |
 |---|---|
-| File to upload to YouTube | `demo/demo-submit.mp4` (after prepending your intro) |
-| Without your intro | `demo/demo-final.mp4` — 1:29, clean picture |
+| **File to upload to YouTube** | **`demo/demo-submit.mp4` — 2:20, your intro + the film** |
+| Without your intro | `demo/demo-final.mp4` — 1:58 |
 | Captions burned in | `demo/demo-final-sub.mp4` — same film, subtitles on screen |
-| Caption file | `demo/demo-submit.srt` (or `demo-final.srt`) — upload to YouTube |
+| Caption file | `demo/demo-submit.srt` — 18 cues, covers your intro too |
 | Title | `ReadyCounter — WebMCP Challenge` |
 | Description | paste `submission/YOUTUBE-DESCRIPTION.txt` |
 | Visibility | Unlisted or Public — **not Private** |

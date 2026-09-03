@@ -10,13 +10,13 @@
 ## Live URL
 
 ```
-https://tooltruth-webmcp.vercel.app
-https://tooltruth-webmcp.vercel.app/?view=integrations&demo=1
+https://readycounter.vercel.app
+https://readycounter.vercel.app/?view=integrations&demo=1
 ```
 
 ## Repo
 
-https://github.com/Morkeeth/tooltruth-webmcp
+https://github.com/Morkeeth/readycounter
 
 ## Copy-paste fields
 

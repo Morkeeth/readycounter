@@ -1,8 +1,8 @@
 # Onboarding — ReadyCounter (for builders & agents)
 
-**Repo:** `Morkeeth/tooltruth-webmcp`  
+**Repo:** `Morkeeth/readycounter`  
 **Branch:** `night/gates-that-lie-2026-08-31`  
-**Live:** https://tooltruth-webmcp.vercel.app  
+**Live:** https://readycounter.vercel.app  
 **Pitch:** `demo/PITCH-TOMORROW.md` · **Ambition:** `demo/AMBITION.md`  
 **Hackathon:** WebMCP Challenge — Devpost **Wed Sep 3, 2026 1pm PDT**
 
@@ -28,20 +28,20 @@
 
 ```bash
 # Field batch
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,avgGtinPct,avgOfferPct,ucp}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,avgGtinPct,avgOfferPct,ucp}'
 
 # Audit a storefront
-curl -sS -X POST https://tooltruth-webmcp.vercel.app/api/v1/audit/url \
+curl -sS -X POST https://readycounter.vercel.app/api/v1/audit/url \
   -H 'Content-Type: application/json' \
   -d '{"url":"https://colourpop.com"}' | jq '{score,meta:{offerPct,policySmoke,gtinPct}}'
 
 # Crawl vs UCP vs OAuth headline
-curl -sS -X POST https://tooltruth-webmcp.vercel.app/api/v1/audit/compare \
+curl -sS -X POST https://readycounter.vercel.app/api/v1/audit/compare \
   -H 'Content-Type: application/json' \
   -d '{"url":"https://www.glossier.com"}' | jq '{headline,crawl,ucp}'
 
 # Handbook desk
-curl -s 'https://tooltruth-webmcp.vercel.app/api/v1/companion?topic=issues' | jq '.issues[:3]'
+curl -s 'https://readycounter.vercel.app/api/v1/companion?topic=issues' | jq '.issues[:3]'
 ```
 
 ### WebMCP (in-tab)

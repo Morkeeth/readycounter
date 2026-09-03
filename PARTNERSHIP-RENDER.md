@@ -6,7 +6,7 @@ ReadyCounter uses **Render as the durable data plane** while **Vercel** serves t
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Vercel (tooltruth-webmcp.vercel.app)                        │
+│  Vercel (readycounter.vercel.app)                        │
 │  · React UI · serverless API · Shopify OAuth · URL audit     │
 └───────────────────────────┬─────────────────────────────────┘
                             │ REDIS_URL (TLS)
@@ -46,7 +46,7 @@ npm run render:create-kv
 node scripts/render-setup.mjs --allow-external
 
 # 3. Verify production
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/render/status | jq .
+curl -s https://readycounter.vercel.app/api/v1/render/status | jq .
 
 # 4. Run batch audit → KV
 npm run audit:shops

@@ -3,8 +3,8 @@
 **Cursor goal armed:** 2026-08-31  
 **North star:** Own the **measurement layer** for agent commerce — cited abandonment economics, field rankings, co-shop proof — not another discoverability checklist.
 
-**Live:** https://tooltruth-webmcp.vercel.app  
-**Repo:** `Morkeeth/tooltruth-webmcp`  
+**Live:** https://readycounter.vercel.app  
+**Repo:** `Morkeeth/readycounter`  
 **Session log:** `SESSION-STATUS.md` (autonomous runs)
 
 ---

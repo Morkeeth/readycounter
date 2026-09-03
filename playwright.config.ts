@@ -5,6 +5,6 @@ export default defineConfig({
   timeout: 30_000,
   retries: 0,
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'https://tooltruth-webmcp.vercel.app',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'https://readycounter.vercel.app',
   },
 });

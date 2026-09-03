@@ -8,9 +8,9 @@
   },
   "sources": {
     "field": {
-      "read_from": "GET https://tooltruth-webmcp.vercel.app/api/v1/rankings",
+      "read_from": "GET https://readycounter.vercel.app/api/v1/rankings",
       "read_at": "2026-09-01",
-      "cmd": "curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'",
+      "cmd": "curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'",
       "note": "Field batch receipt — crawled count, scrape GTIN %, UCP gap filter size."
     }
   },

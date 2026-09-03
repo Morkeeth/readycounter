@@ -8,7 +8,7 @@
 ## Pre-flight (2 min)
 
 ```bash
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp:.ucp.gtinWhereCrawlZero}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp:.ucp.gtinWhereCrawlZero}'
 # MUST show: 78, 148, 0, 11 — if rankings are empty run: npm run render:publish-audit
 
 cd ~/CODE/tooltruth-webmcp && git pull && npm run verify
@@ -45,16 +45,16 @@ URL: https://webmcp.devpost.com/
 | Tagline | `Agent commerce. Now reviewable. Proof.` |
 | Elevator + description | `submission/DEVPOST-PASTE.md` |
 | **Demo video** | YouTube URL from Step 1 |
-| **Live URL** | `https://tooltruth-webmcp.vercel.app` |
-| **Judge URL** | `https://tooltruth-webmcp.vercel.app/?judge=1` |
-| **Repo** | `https://github.com/Morkeeth/tooltruth-webmcp` |
+| **Live URL** | `https://readycounter.vercel.app` |
+| **Judge URL** | `https://readycounter.vercel.app/?judge=1` |
+| **Repo** | `https://github.com/Morkeeth/readycounter` |
 | Built with | React, TypeScript, Vite, WebMCP, Zustand, Render KV |
 
 ### Built with WebMCP (paste into Devpost)
 
-ReadyCounter registers **18** shopping tools via the browser-native WebMCP API. Each tool is declared in [`src/webmcp/registerTools.ts`](https://github.com/Morkeeth/tooltruth-webmcp/blob/main/src/webmcp/registerTools.ts) with `document.modelContext.registerTool(name, { description, inputSchema, execute })` — the same handlers power the Connect → Agent tool console (no Chrome flag) and native assistant sessions (Chrome 149+ flag). Shared Zustand state means human clicks and agent `add_to_order` land on one order; `prepare_checkout` validates and **never charges a card**.
+ReadyCounter registers **18** shopping tools via the browser-native WebMCP API. Each tool is declared in [`src/webmcp/registerTools.ts`](https://github.com/Morkeeth/readycounter/blob/main/src/webmcp/registerTools.ts) with `document.modelContext.registerTool(name, { description, inputSchema, execute })` — the same handlers power the Connect → Agent tool console (no Chrome flag) and native assistant sessions (Chrome 149+ flag). Shared Zustand state means human clicks and agent `add_to_order` land on one order; `prepare_checkout` validates and **never charges a card**.
 
-**Judge path:** https://tooltruth-webmcp.vercel.app/?judge=1 · **Skeptic path:** `npm run verify`
+**Judge path:** https://readycounter.vercel.app/?judge=1 · **Skeptic path:** `npm run verify`
 
 **Testing instructions** (short): `?judge=1` → Co-shop + tool console → `JUDGE-60s.md` · criteria map: `submission/JUDGES.md`
 

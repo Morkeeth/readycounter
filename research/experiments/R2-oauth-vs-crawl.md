@@ -11,7 +11,7 @@ For the same Shopify store, **Shopify Admin API** exposes higher GTIN/barcode co
 
 ```bash
 # API (production or local)
-curl -s -X POST https://tooltruth-webmcp.vercel.app/api/v1/audit/compare \
+curl -s -X POST https://readycounter.vercel.app/api/v1/audit/compare \
   -H 'Content-Type: application/json' \
   -d '{"url":"https://colourpop.com","shop":"your-dev-store.myshopify.com"}'
 

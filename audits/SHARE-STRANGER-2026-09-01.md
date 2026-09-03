@@ -1,7 +1,7 @@
 # Share stranger pass — production incognito
 
 **Run:** 2026-09-01T06:25:00Z (UTC)  
-**URL:** https://tooltruth-webmcp.vercel.app  
+**URL:** https://readycounter.vercel.app  
 **Method:** Playwright fresh browser context (incognito-equivalent) · `e2e/share-stranger.spec.ts`  
 **Runner:** automated + manual path verification
 
@@ -31,7 +31,7 @@
 **Command:**
 
 ```bash
-PLAYWRIGHT_BASE_URL=https://tooltruth-webmcp.vercel.app npx playwright test e2e/share-stranger.spec.ts
+PLAYWRIGHT_BASE_URL=https://readycounter.vercel.app npx playwright test e2e/share-stranger.spec.ts
 # exit 0 · 1 passed (2026-09-01)
 ```
 

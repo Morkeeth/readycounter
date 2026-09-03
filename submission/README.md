@@ -14,18 +14,18 @@
 
 - **Deadline:** Wed Sep 3, 2026 · **1pm PDT**
 - **Devpost:** https://webmcp.devpost.com/
-- **Live:** https://tooltruth-webmcp.vercel.app
-- **Repo:** https://github.com/Morkeeth/tooltruth-webmcp
+- **Live:** https://readycounter.vercel.app
+- **Repo:** https://github.com/Morkeeth/readycounter
 
 ---
 
 ## Live probe (re-check before film / submit)
 
 ```bash
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
 # expect: succeeded 78, shopCount 148, avgGtinPct 0, ucp.gtinWhereCrawlZero 11
 
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/tools | jq 'length'
+curl -s https://readycounter.vercel.app/api/v1/tools | jq 'length'
 # expect: 18
 ```
 
@@ -60,7 +60,7 @@ Produces:
 | `demo/demo-final.srt` | YouTube captions |
 | `demo/demo-final.mp4` | **Upload this** |
 
-Film mode URL: `https://tooltruth-webmcp.vercel.app/?film=1&view=integrations&demo=1`
+Film mode URL: `https://readycounter.vercel.app/?film=1&view=integrations&demo=1`
 
 Beat deep links: [`../FILM-READY.md`](../FILM-READY.md)
 

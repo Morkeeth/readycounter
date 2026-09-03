@@ -2,7 +2,7 @@
 
 No API keys. **Path B** works without WebMCP flag. **Path A:** [`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md)
 
-**Live:** https://tooltruth-webmcp.vercel.app
+**Live:** https://readycounter.vercel.app
 
 ---
 

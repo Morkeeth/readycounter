@@ -2,7 +2,7 @@
 
 ## Vercel (recommended)
 
-1. Import https://github.com/Morkeeth/tooltruth-webmcp
+1. Import https://github.com/Morkeeth/readycounter
 2. Framework: **Vite**
 3. Build: `npm run build` · Output: `dist`
 4. Deploy
@@ -12,7 +12,7 @@ No env vars required for core product (localStorage + share links).
 ## Verify after deploy
 
 ```bash
-curl -sI https://tooltruth-webmcp.vercel.app | head -5
+curl -sI https://readycounter.vercel.app | head -5
 ```
 
 Manual stranger test:
@@ -28,12 +28,12 @@ Manual stranger test:
 |----------|---------|
 | `SHOPIFY_CLIENT_ID` | Dev Dashboard app credentials |
 | `SHOPIFY_CLIENT_SECRET` | **Never commit** — Vercel only |
-| `SHOPIFY_APP_URL` | `https://tooltruth-webmcp.vercel.app` |
+| `SHOPIFY_APP_URL` | `https://readycounter.vercel.app` |
 | `SHOPIFY_DEV_SHOP` | `your-dev-store.myshopify.com` (same Partner org) |
 | `SHOPIFY_SCOPES` | `read_products,read_product_listings` |
 
 **Shopify app redirect URL (required):**
-`https://tooltruth-webmcp.vercel.app/api/v1/shopify/callback`
+`https://readycounter.vercel.app/api/v1/shopify/callback`
 
 Local: copy `.env.example` → `.env.local` (gitignored).
 
@@ -48,7 +48,7 @@ npm run render:setup          # list / print REDIS_URL
 npm run render:create-kv      # create readycounter-kv if missing
 ```
 
-After deploy: `curl -s https://tooltruth-webmcp.vercel.app/api/v1/health | jq .kv`
+After deploy: `curl -s https://readycounter.vercel.app/api/v1/health | jq .kv`
 
 ## Optional later
 

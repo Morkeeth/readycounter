@@ -19,7 +19,7 @@ Agents are already shopping Shopify storefronts. AI-referred sessions grew **8×
 | Layer | What it does |
 |-------|----------------|
 | **Compare** | You vs **148** curated DTC brands — not a score alone |
-| **Width** | Field batch: **78/148** crawled, scrape GTIN **0%**, **81** with UCP MCP, **11** with UCP GTIN where scrape is empty ([`FIELD_RECEIPT`](./src/data/field-companion.ts), live [`GET /api/v1/rankings`](https://tooltruth-webmcp.vercel.app/api/v1/rankings)) |
+| **Width** | Field batch: **78/148** crawled, scrape GTIN **0%**, **81** with UCP MCP, **11** with UCP GTIN where scrape is empty ([`FIELD_RECEIPT`](./src/data/field-companion.ts), live [`GET /api/v1/rankings`](https://readycounter.vercel.app/api/v1/rankings)) |
 | **Delta** | Same URL twice → catalog / GTIN / SKU delta receipt (local prior + server persist) |
 | **Bill** | Six Presenc abandonment rows priced at published shares — 26/24/18/15/11/6 — sandbox checkout proof via **18** WebMCP tools; `prepare_checkout` never charges |
 | **WebMCP** | Proof plane: human and assistant share one cart in one tab ([`WHY-WEBMCP.md`](./WHY-WEBMCP.md)) |
@@ -45,7 +45,7 @@ Every merchant runs ReadyCounter when they ship anything new:
 ## Field receipt (re-derived at object — 2026-08-31)
 
 ```bash
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,avgGtinPct,ucp}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,avgGtinPct,ucp}'
 ```
 
 Expected: `shopCount` **148**, `succeeded` **78**, `avgGtinPct` **0**, `ucp.gtinWhereCrawlZero` **11**.
@@ -67,7 +67,7 @@ Earlier batch sizes (34/58, 52/102) are stale — always read the live API.
 
 ## Stranger path (60 seconds)
 
-**Live:** https://tooltruth-webmcp.vercel.app/?view=integrations
+**Live:** https://readycounter.vercel.app/?view=integrations
 
 1. **Open Connect** — field receipt shows **78/148 · 0% GTIN scrape · 11 UCP gaps**
 2. **Paste URL** → Audit → catalog bill + YOU·FIELD·DELTA strip

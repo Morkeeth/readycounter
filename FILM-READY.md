@@ -10,7 +10,7 @@
 
 ```bash
 npm run verify
-curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
 # expect: 78 / 148 / 0 / gtinWhereCrawlZero 11
 ```
 
@@ -23,7 +23,7 @@ curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,sho
 ## Film mode URL
 
 ```text
-https://tooltruth-webmcp.vercel.app/?film=1&view=integrations&demo=1
+https://readycounter.vercel.app/?film=1&view=integrations&demo=1
 ```
 
 **Automated capture** (`film/browser.py`) appends `&record=1&cues=0` so the director cue bar is not baked in.
