@@ -30,9 +30,12 @@ on the line. Nothing on the tape is a number we invented.
 
 Three things a merchant can do with it:
 
-- **See the field.** We asked 148 curated DTC storefronts. 70 sent nothing back
-  at all. 67 sent a feed with no barcode in it. Average barcode coverage across
-  every store that answered: **0%**. Your store joins that wall as tile 149.
+- **See the field.** We asked 148 curated DTC storefronts. 48 answered and sent
+  no catalogue. **22 refused the request outright** — and we say so rather than
+  scoring them, because we re-probed every one with a real browser and recovered
+  none, so the block is IP reputation and we genuinely cannot see them. Of the
+  ones we could read, 67 sent a feed with no barcode in it and average barcode
+  coverage is **0%**. Your store joins that wall as tile 149.
 - **Read the blank barcode.** The front page draws what an agent actually reads
   off your product page. A bar is inked only where a product exposes a GTIN, so
   at 0% the code is grey and unscannable. The emptiness *is* the measurement.
@@ -40,6 +43,14 @@ Three things a merchant can do with it:
   tab. A human click and an agent's `add_to_order` land on the same order,
   tagged HUMAN or AGENT. `prepare_checkout` validates the total and **never
   charges a card** — the agent proposes, the person pays.
+
+- **Take the fix with you.** The audit ends in a download, not advice: a CSV in
+  Shopify's own import shape, pre-filled with the merchant's real product
+  handles, with `Variant Barcode` blank where it is missing. Fill it, Products →
+  Import, re-audit, and the delta receipt proves it landed. We never ask for
+  write access. And because Shopify maps Barcode to GTIN in the Google Merchant
+  Center feed, the same afternoon of work repairs Google Shopping — which
+  already has a budget line.
 
 **And you can watch a real model do it.** On the Co-shop tab, a language model
 is handed the 18 tool definitions and a shopping goal. It picks the calls, the
@@ -120,6 +131,23 @@ have shipped a tool surface that confuses agents. Every product-taking tool now
 reads `product_id`, `id` or `sku`, the schemas say so, and an empty id returns
 an error that tells the agent what to pass instead.
 
+**Our own wall was lying by omission.** "Asked, no feed" was one grey tile
+covering two different facts: 48 storefronts that answered and sent nothing, and
+22 that refused the request outright. We proved the difference matters by trying
+to get in — six declared identities including GPTBot, ClaudeBot and a full
+Chrome string got 0 of 14; a real Chrome browser fetching from inside the page's
+own origin recovered 0 of 22. The block is IP reputation, so those stores are
+**unmeasured, not failing**, and painting "we could not look" as "you have no
+data" is exactly the error this product exists to catch in other people's
+dashboards. They now have their own struck-through tile.
+
+**The fix file would not have worked.** Shopify matches a CSV import by
+**Handle**. We were storing the SKU as the product id
+("Accessory-HairClipsGWP") and never capturing the handle ("hair-clips-gwp") at
+all — the type did not even declare it. The export would have matched nothing
+and looked like it worked. Caught by diffing our stored product against the
+store's live products.json before shipping the button.
+
 **A permanently empty third of the page.** The layout reserved 21rem for a
 sidebar that only exists on one tab, so two of three tabs rendered a blank
 column and nobody noticed until we looked at a screenshot instead of the code.
@@ -165,6 +193,13 @@ fixable problem, and a much less flattering one to discover.
 
 ## What's next for ReadyCounter
 
+- **Become a signed agent.** The 22 storefronts we cannot read are a roadmap
+  item, not a permanent hole. Web Bot Auth — an Ed25519 key, a JWKS at
+  `/.well-known/http-message-signatures-directory`, `Signature-Agent` headers,
+  and Cloudflare's signed-agent list, which covers an estimated 84% of
+  identified AI browser traffic — is how an honest agent proves who it is. A
+  product that argues stores should be able to tell an honest agent from a
+  scraper should be one.
 - **Finish the OAuth path** so checkout lines stop reading `NOT MEASURED`. The
   catalogue budget is scored today; the checkout half needs the merchant's own
   admin, and that plumbing is half built.
