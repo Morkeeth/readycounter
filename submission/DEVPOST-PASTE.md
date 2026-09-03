@@ -7,10 +7,6 @@ sentence in [`research.md`](./research.md). `npm run verify` fails the build if 
 cited figure loses its source. Scores and catalog counts are *measured* off the
 shipped fixtures and cite nothing.
 
-**Oscar: film + Devpost submit remain.** Prod deployed 2026-09-01 with lighthouse UI,
-share link, Offer/ACP on audit API. Use `demo/FILM-AND-SUBMIT.md` + `demo/voiceover.mp3`. Deadline
-Wed Sep 3, 2026 1pm PDT.
-
 ---
 
 ## Live demo
@@ -45,7 +41,7 @@ Agent commerce. Now reviewable. Proof.
 
 The sandbox prints an **itemised bill**: six Presenc abandonment rows at published shares (26/24/18/15/11/6 — [`sources.ts`](./src/data/sources.ts)), every point traced to a check, fix, and source row. **18 WebMCP tools** let a human and agent co-edit one order; `prepare_checkout` never charges a card. Field crawls score **catalog budget only** — checkout walls stay NOT MEASURED until OAuth.
 
-**Honest gaps:** E1 OAuth Admin↔crawl pairs not done · ACP feed certification deferred · prod may lag branch until deploy ([`research/RANK-AND-HELP-GAP.md`](./research/RANK-AND-HELP-GAP.md)). **On branch:** Offer JSON-LD % + ACP policy smoke on URL audit. **2027 ambition:** every merchant runs ReadyCounter on ship · public receipt · Shopify adopts the format ([`demo/AMBITION.md`](./demo/AMBITION.md)).
+**Honest limit:** a URL audit scores the public catalog only; checkout walls behind a login need the OAuth path, which is not finished. ACP feed certification is deferred.. **On branch:** Offer JSON-LD % + ACP policy smoke on URL audit. **2027 ambition:** every merchant runs ReadyCounter on ship · public receipt · Shopify adopts the format ([`demo/AMBITION.md`](./demo/AMBITION.md)).
 
 ---
 
@@ -76,7 +72,7 @@ Paste one subsection per Devpost criterion. Full map: [`submission/JUDGES.md`](.
 
 #### Execution
 
-Shipped product, not a POC: live Vercel URL · **`npm run verify`** (10 scripts, exits non-zero on drift) · Playwright e2e (`e2e/judge-mode.spec.ts`, `e2e/stranger-pass.spec.ts`) · automated film pipeline · itemised bill UI where every point names its Presenc row.
+Shipped product, not a POC: live Vercel URL · **`npm run verify`** (13 scripts, exits non-zero on drift) · Playwright e2e (`e2e/judge-mode.spec.ts`, `e2e/stranger-pass.spec.ts`) · automated film pipeline · itemised bill UI where every point names its Presenc row.
 
 **One click:** `npm run verify && npm run test:e2e` · 60s judge path [`JUDGE-60s.md`](./JUDGE-60s.md).
 
@@ -113,7 +109,7 @@ Novel insight: **UCP ≠ scrape** — GTIN can exist on UCP while public crawl i
    defines none of them, so every line prints its own test beside the published
    weight, and the tape says `published weight · our stated test` on each one.
    A check with no published price is **reported and charged nothing** rather
-   than given a weight we made up: the 16-tool surface is printed as the
+   than given a weight we made up: the 18-tool surface is printed as the
    instrument the six lines are measured through, worth zero.
 3. **Co-shop.** 18 WebMCP tools; a human and an agent edit the same order in the
    same tab. `prepare_checkout` validates and returns totals — it never charges.
@@ -224,6 +220,8 @@ We built the three checks instead, and now there is no remainder to explain.
 | `apply_readiness_fix` | Apply a sandbox fix and reprint the bill |
 | `simulate_agent_journey` | Walk the whole path and report where it breaks |
 | `import_shopify_catalog` | Bring your own catalog and score it |
+| `get_field_companion` | Agent commerce handbook: pressing issues, checklist, research briefs, protocols. topic=issues|checklist|research|protocols|gtin-gap|… |
+| `review_against_field` | Map a store’s crawl signals (gtinPct, captchaHint, catalogScore, error) to handbook issues + next steps. |
 
 ### Fork path
 
