@@ -70,8 +70,8 @@ The 16:9 aspect fails its bottom-margin check — the source line overflows by
 
 | Field | Value |
 |---|---|
-| **File to upload to YouTube** | **`demo/demo-submit.mp4` — 2:20, your intro + the film** |
-| Without your intro | `demo/demo-final.mp4` — 1:58 |
+| **File to upload to YouTube** | **`demo/demo-submit.mp4` — 2:44, your intro + the film** |
+| Without your intro | `demo/demo-final.mp4` — 2:21 |
 | Captions burned in | `demo/demo-final-sub.mp4` — same film, subtitles on screen |
 | Caption file | `demo/demo-submit.srt` — 18 cues, covers your intro too |
 | Title | `ReadyCounter — WebMCP Challenge` |
@@ -187,15 +187,14 @@ it is the honest limit and it is on the page.
 
 ### Their tips, against this film
 
-- *Show the project working in the first 15 seconds* — **the film now opens with
-  four data cards, not the product.** The product first appears at 0:47. That is
-  a deliberate trade: the cards sell the problem and the money before the demo,
-  which is what you asked for. With your 20s intro in front, the product lands
-  around 1:07. If a judge stops at 15 seconds they will have seen the market
-  case and no product. Worth knowing before you submit — shortening cards 2 and
-  3 is the lever if you want it earlier.
-- *Judges are not required to watch past 3 minutes* — film is 1:29. With a 20s
-  intro, 1:49. Comfortable.
+- *Show the project working in the first 15 seconds* — the film was recut to
+  lead with the product. Your intro runs to 0:23, a real store is being audited
+  by 0:30, and a real agent is shopping it by 0:36. The market cards moved to
+  the middle. (This is the organisers' tip, not a rule — the requirements page
+  only asks for "a clear demo with audio that covers what you built and how you
+  used WebMCP".)
+- *Judges are not required to watch past 3 minutes* — 2:44 with your intro.
+  Comfortable.
 - *Start already logged in, skip setup* — there is no login to skip.
 - *Don't let AI name your project* — ReadyCounter is yours, unchanged.
 - *Don't submit an AI-generated description unedited* — §7 lists the three places

@@ -1,13 +1,44 @@
-ReadyCounter — WebMCP Challenge demo
+ReadyCounter — WebMCP Challenge
 
-Agent commerce. Now reviewable. Proof.
+Paste your store. See what shopping agents can't read.
 
-Lighthouse for agentic commerce: field rankings (78/148 crawled, 0% scrape GTIN, 11 UCP gaps), URL audit with delta receipt, sandbox readiness bill traced to Presenc AI abandonment shares, 18 WebMCP tools for human+agent co-shop. prepare_checkout never charges.
+We asked 148 real DTC storefronts for their catalogue the way a shopping agent
+asks. 48 answered and sent no catalogue. 22 refused the request outright — a
+real browser couldn't get in either, so we don't score them. Of everything we
+could read, not one store exposed a barcode an agent can match to a product.
+Average coverage: 0%.
 
-🔗 Live: https://readycounter.vercel.app
-📦 Repo: https://github.com/Morkeeth/readycounter
-🎬 Film mode: https://readycounter.vercel.app/?film=1&view=integrations&demo=1
+Eleven brands do publish barcodes — to Shopify's Catalog protocol — while their
+own storefront hides them. Your shopper's agent reads the storefront.
 
-Built with React, TypeScript, Vite, WebMCP, Zustand, Vercel.
+In this video:
+00:00  Intro
+00:23  A real store audited live — 50 products, 0 of 24 catalogue points
+00:36  A real GPT-5.4 agent shops the store through 18 WebMCP tools, and is
+       stopped at checkout by a CAPTCHA it explains in its own words
+00:53  The field: 148 storefronts measured
+01:08  Why it matters now: agent traffic went from -38% to +42% on conversion
+       in twelve months
+01:27  Eleven brands that have barcodes and hide them
+01:40  The bill — every point priced from a published abandonment share, every
+       line naming its publisher and the date we read it
+01:51  The integrations: Shopify OAuth, Shopify Catalog MCP, Render Key Value
+02:07  Native WebMCP in Chrome — 18 tools on document.modelContext
+02:31  Close
 
-#WebMCP #AgenticCommerce #Shopify #Hackathon #OpenSource
+The audit ends in a download, not advice: a CSV in Shopify's own import shape,
+pre-filled with your product handles, with the barcode column blank where it's
+missing. Fill it, re-import, re-audit, and we print the delta. We never ask for
+write access to your catalogue.
+
+The readiness score makes no model calls. It's arithmetic over a crawl, checked
+against published research, so it's reproducible and can't be talked into a
+better number. The model is the shopper, never the judge.
+
+Sources: Presenc AI (agent cart abandonment), Adobe Digital Insights (AI traffic
+conversion), Shopify Enterprise and Shopify's Q1 2026 earnings call, YouGov.
+
+Built with React, TypeScript, Vite, WebMCP, OpenAI, Shopify, Render, Vercel.
+Open source, MIT.
+
+#WebMCP #AgenticCommerce #Shopify #OpenSource
