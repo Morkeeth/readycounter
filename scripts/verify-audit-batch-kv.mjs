@@ -14,6 +14,7 @@ import {
   encodeAuditBatchPayload,
   decodeAuditBatchPayload,
 } from './src/server/render-partnership.ts';
+import { buildRankingsResponse, rankingsCacheControl } from './src/lib/rankings.ts';
 
 const sample = {
   at: '2026-09-02T00:00:00.000Z',
@@ -60,6 +61,24 @@ if (!legacy || legacy.succeeded !== 1) {
   process.exit(1);
 }
 console.log('ok   audit batch gzip round-trip', encoded.length, 'vs plain', plain.length);
+
+// The empty fallback must never be CDN-cacheable: one failed KV read would poison every reader.
+const emptyCc = rankingsCacheControl(null);
+if (emptyCc !== 'no-store') {
+  console.error('FAIL empty rankings fallback must be no-store, got', emptyCc);
+  process.exit(1);
+}
+const fullCc = rankingsCacheControl(decoded);
+if (!/s-maxage=[0-9]+/.test(fullCc) || /no-store/.test(fullCc)) {
+  console.error('FAIL real batch should be CDN-cacheable, got', fullCc);
+  process.exit(1);
+}
+const emptyBody = buildRankingsResponse(null);
+if (emptyBody.shopCount !== 0 || emptyBody.succeeded !== 0 || !/KV/.test(emptyBody.note)) {
+  console.error('FAIL empty rankings body shape', emptyBody.note);
+  process.exit(1);
+}
+console.log('ok   rankings cache-control: empty=no-store, batch=' + fullCc);
 console.log('verify-audit-batch-kv: all checks pass');
 `;
 

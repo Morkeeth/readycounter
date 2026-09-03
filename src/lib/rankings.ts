@@ -57,6 +57,14 @@ export function enrichRowsWithVerticalsAndUcp(rows: AuditBatchSummary['rows']): 
   });
 }
 
+/**
+ * CDN policy: a real batch may be cached (rows change only on republish);
+ * the empty fallback must never be cached or one failed KV read poisons every reader for up to 360s.
+ */
+export function rankingsCacheControl(batch: AuditBatchSummary | null): string {
+  return batch ? 's-maxage=60, stale-while-revalidate=300' : 'no-store';
+}
+
 export function buildRankingsResponse(batch: AuditBatchSummary | null): RankingsResponse {
   const meta = ucpCensusMeta();
   if (!batch) {
@@ -67,7 +75,7 @@ export function buildRankingsResponse(batch: AuditBatchSummary | null): Rankings
       succeeded: 0,
       avgCatalogScore: 0,
       avgGtinPct: 0,
-      note: 'No batch on Render KV yet. Run npm run audit:batch -- --publish.',
+      note: 'No batch read from Render KV (not published yet, or the KV read failed). Run npm run audit:batch -- --publish.',
       verticals: listCuratedVerticals(),
       ucp: { at: meta.at, available: meta.ucpAvailable, withGtin: meta.ucpWithGtin, gtinWhereCrawlZero: 0 },
       rows: [],

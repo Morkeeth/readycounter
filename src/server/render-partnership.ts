@@ -179,6 +179,8 @@ export async function loadAuditBatchFromKv(): Promise<AuditBatchSummary | null> 
     batchCache = { at: Date.now(), value: summary };
     return summary;
   }
+  // Stale-if-error: a warm instance that had rows a minute ago must not regress to "no batch".
+  if (batchCache) return batchCache.value;
   return null;
 }
 

@@ -14,6 +14,8 @@ type RedisClient = {
   set: (key: string, value: string) => Promise<unknown>;
   del: (key: string) => Promise<unknown>;
   ping: () => Promise<string>;
+  /** false once the socket dropped (Vercel freeze/thaw, server-side kill). */
+  readonly isOpen: boolean;
 };
 
 let redisClient: RedisClient | null = null;
@@ -34,10 +36,21 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   });
 }
 
+/** Forget a client whose socket died so the next call reconnects instead of throwing ClientClosedError forever. */
+function dropRedisClient(client: RedisClient | null): void {
+  if (client && redisClient !== client) return;
+  redisClient = null;
+  redisReady = null;
+}
+
 async function connectRedis(): Promise<RedisClient | null> {
   const url = process.env.REDIS_URL?.trim();
   if (!url) return null;
-  if (redisClient) return redisClient;
+  if (redisClient) {
+    if (redisClient.isOpen) return redisClient;
+    // reconnectStrategy is off: a closed client never reopens on its own.
+    dropRedisClient(redisClient);
+  }
   if (!redisReady) {
     redisReady = withTimeout(
       (async () => {
@@ -84,47 +97,59 @@ export async function kvPing(): Promise<boolean> {
   try {
     const pong = await withTimeout(client.ping(), 4_000);
     return pong === 'PONG';
-  } catch {
+  } catch (err) {
+    if (isClosedClientError(client, err)) dropRedisClient(client);
     return false;
+  }
+}
+
+/** True when the op failed because the socket is gone, not because Redis said no. */
+function isClosedClientError(client: RedisClient, err: unknown): boolean {
+  if (!client.isOpen) return true;
+  const name = (err as { name?: string } | null)?.name;
+  const message = (err as { message?: string } | null)?.message ?? '';
+  return name === 'ClientClosedError' || /client is closed/i.test(message);
+}
+
+/**
+ * Run one Redis op; if the cached client turned out to be closed, reconnect once and retry.
+ * Exactly one retry — the caller is inside a Vercel invocation budget.
+ */
+async function withRedis<T>(op: (client: RedisClient) => Promise<T>, ms: number): Promise<T | undefined> {
+  let client = await connectRedis();
+  if (!client) return undefined;
+  try {
+    return await withTimeout(op(client), ms);
+  } catch (err) {
+    if (!isClosedClientError(client, err)) return undefined;
+    dropRedisClient(client);
+    client = await connectRedis();
+    if (!client) return undefined;
+    try {
+      return await withTimeout(op(client), ms);
+    } catch {
+      return undefined;
+    }
   }
 }
 
 export async function kvGet(key: string, opts?: { large?: boolean }): Promise<string | null> {
   const timeout = opts?.large ? KV_LARGE_OP_MS : KV_OP_MS;
-  const client = await connectRedis();
-  if (client) {
-    try {
-      return await withTimeout(client.get(key), timeout);
-    } catch {
-      return memory.get(key) ?? null;
-    }
-  }
+  const value = await withRedis((client) => client.get(key), timeout);
+  if (value !== undefined) return value;
   return memory.get(key) ?? null;
 }
 
 export async function kvSet(key: string, value: string, opts?: { large?: boolean }): Promise<void> {
   memory.set(key, value);
   const timeout = opts?.large ? KV_LARGE_OP_MS : KV_OP_MS;
-  const client = await connectRedis();
-  if (client) {
-    try {
-      await withTimeout(client.set(key, value), timeout);
-    } catch {
-      /* memory copy remains */
-    }
-  }
+  await withRedis((client) => client.set(key, value), timeout);
+  /* on failure the memory copy remains */
 }
 
 export async function kvDel(key: string): Promise<void> {
   memory.delete(key);
-  const client = await connectRedis();
-  if (client) {
-    try {
-      await withTimeout(client.del(key), KV_OP_MS);
-    } catch {
-      /* noop */
-    }
-  }
+  await withRedis((client) => client.del(key), KV_OP_MS);
 }
 
 export function kvClearMemory(): void {
