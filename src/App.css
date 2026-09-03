@@ -3456,3 +3456,89 @@ samp {
 .census__key {
   margin-top: var(--s2);
 }
+
+/* =============================================================================
+   THE AGENT SHOPPER — a real model driving the real tools.
+   The transcript is the evidence, so it reads like a log and not like chat.
+   ============================================================================= */
+
+.shop-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  min-width: 0;
+}
+
+.agent-shopper {
+  border-top: 1px solid var(--ink);
+  padding-top: var(--s3);
+}
+
+.agent-shopper h3 {
+  margin: 0.2rem 0 0.5rem;
+}
+
+.agent-shopper__controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s2);
+  align-items: end;
+  margin: var(--s3) 0 0;
+}
+
+@media (max-width: 700px) {
+  .agent-shopper__controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+.agent-shopper__log {
+  list-style: none;
+  margin: var(--s3) 0 0;
+  padding: var(--s2) 0 0;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.agent-shopper__row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: var(--t-small);
+  overflow-wrap: anywhere;
+}
+
+.agent-shopper__arrow {
+  color: var(--soft);
+  font-weight: var(--w-bold);
+}
+
+.agent-shopper__row--call code {
+  font-weight: var(--w-bold);
+}
+
+.agent-shopper__row--result code {
+  color: var(--soft);
+  font-weight: var(--w-normal);
+}
+
+.agent-shopper__blocked {
+  color: var(--stamp) !important;
+  font-weight: var(--w-bold) !important;
+}
+
+.agent-shopper__say {
+  margin: 0.35rem 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--ink);
+  font-weight: var(--w-bold);
+}
+
+.agent-shopper__model {
+  margin-top: var(--s2);
+  font-size: var(--t-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

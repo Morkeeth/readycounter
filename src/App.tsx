@@ -5,6 +5,7 @@ import { IntegrationsPanel } from './components/IntegrationsPanel';
 import { hasSeenHero, LandingHero, markHeroSeen } from './components/LandingHero';
 import { MerchantJourney } from './components/MerchantJourney';
 import { OrderPanel } from './components/OrderPanel';
+import { AgentShopper } from './components/AgentShopper';
 import { ReadinessDashboard } from './components/ReadinessDashboard';
 import { ShopView } from './components/ShopView';
 import { StoreSwitcher } from './components/StoreSwitcher';
@@ -190,7 +191,10 @@ function App() {
       <main className={`main-layout${tab === 'shop' ? ' main-layout--split' : ''}`}>
         {tab === 'shop' ? (
           <>
-            <ShopView />
+            <div className="shop-column">
+              <ShopView />
+              <AgentShopper />
+            </div>
             <OrderPanel />
           </>
         ) : tab === 'merchant' ? (
