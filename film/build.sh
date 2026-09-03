@@ -9,10 +9,12 @@ cd "$(dirname "$0")/.."
 
 SILENT=0
 VOICE_ONLY=0
+SUBS=0
 for arg in "$@"; do
   case "$arg" in
     --silent) SILENT=1 ;;
     --voice-only) VOICE_ONLY=1 ;;
+    --subs) SUBS=1; export RC_SUBS=1 ;;
   esac
 done
 
@@ -77,20 +79,22 @@ render_voice
 # Each recorded segment carries a few frames of encoder padding, so the joined
 # picture always runs a little past the voice. Cut it to the voice plus the
 # planned tail — the film then ends when the sentence does, every time.
+OUTNAME=demo/demo-final.mp4
+[ "$SUBS" = "1" ] && OUTNAME=demo/demo-final-sub.mp4
+
 PIC_END=$(python3 -c "import json;d=json.load(open('demo/.cues.json'));print(round(d['voice_end']+d['tail'],3))")
 ffmpeg -y -loglevel error -i demo/.picture.mp4 -i demo/voiceover.mp3 \
   -map 0:v -map 1:a -t "$PIC_END" \
   -c:v libx264 -preset medium -crf 21 -pix_fmt yuv420p \
-  -c:a aac -b:a 160k -movflags +faststart demo/demo-final.mp4
+  -c:a aac -b:a 160k -movflags +faststart "$OUTNAME"
 rm -f demo/.picture.mp4 demo/.intro30.mp4 demo/.browser30.mp4 demo/.outro30.mp4 demo/.seg30.txt
 
-(cd film && python3 verify_film.py)
+if [ "$SUBS" = "0" ]; then
+  (cd film && python3 verify_film.py)
+fi
 
-echo "· burning captions in"
-./film/burn-subs.sh demo/demo-final.mp4 demo/demo-final.srt
-
-DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 demo/demo-final.mp4)
+DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$OUTNAME")
 echo
-echo "WROTE demo/demo-final.mp4 (${DUR}s)"
+echo "WROTE $OUTNAME (${DUR}s)"
 echo "     demo/voiceover.mp3 · demo/demo-final.srt"
 echo "Watch end to end before YouTube upload."

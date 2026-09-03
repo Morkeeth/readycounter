@@ -9,6 +9,7 @@ import subprocess
 import sys
 import time
 
+import captions
 from cues import load
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -106,6 +107,7 @@ def main():
                 pg.evaluate(CURSOR)
                 pg.wait_for_timeout(1500)
             last_path = path
+            captions.show(pg, FIRST_PARAGRAPH + i)
 
             if name == "paste":
                 # type it like a person and submit; the score lands in the next beat,

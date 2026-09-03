@@ -14,6 +14,7 @@ import sys
 
 from playwright.sync_api import sync_playwright
 
+import captions
 from cues import load
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -46,6 +47,7 @@ def main() -> int:
 
         for i in range(CARDS):
             pg.evaluate(f"() => window.__show({i})")
+            captions.show(pg, i)
             pg.wait_for_timeout(int(beats[i] * 1000))
 
         video = pg.video
