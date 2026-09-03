@@ -130,9 +130,9 @@ export function IntegrationsPanel({
         <ConnectLighthouseHero />
 
       <div className="integrations__grid">
-        {/* 1 · Measure */}
+        {/* Measure */}
         <article className="integrations__card integrations__card--wide integrations__card--hero">
-          <p className="integrations__section-label">1 · Measure</p>
+          <p className="integrations__section-label">Measure</p>
           <h3>Audit a storefront URL</h3>
           <p>
             Read public <code>products.json</code> or JSON-LD. Checkout walls stay NOT MEASURED
@@ -147,7 +147,7 @@ export function IntegrationsPanel({
           />
         </article>
 
-        {/* 2 · Compare */}
+        {/* Compare */}
         <FieldCompanion />
 
         <RankingsPanel

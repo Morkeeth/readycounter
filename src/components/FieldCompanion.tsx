@@ -41,7 +41,7 @@ export function FieldCompanion() {
   return (
     <article className="companion integrations__card integrations__card--wide" id="against-the-field">
       <header className="companion__header">
-        <p className="companion__kicker">2 · Compare</p>
+        <p className="companion__kicker">Compare</p>
         <h3>Pressing issues · guidelines · research</h3>
         <p className="companion__thesis">{COMPANION_THESIS}</p>
         <p className="companion__receipt">

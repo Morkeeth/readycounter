@@ -10,7 +10,7 @@ interface WhyWebMCPProps {
 export function WhyWebMCP({ webmcpLive, toolCount }: WhyWebMCPProps) {
   return (
     <article className="why-webmcp integrations__card integrations__card--wide" id="run-webmcp">
-      <p className="integrations__section-label">3 · Prove with WebMCP</p>
+      <p className="integrations__section-label">Prove with WebMCP</p>
       <h3>How to run WebMCP</h3>
       <p className="why-webmcp__lead">
         ReadyCounter does not host a remote MCP server. This open tab registers{' '}
