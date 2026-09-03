@@ -34,6 +34,35 @@ interface AuditSnapshot {
   isFieldCrawl: boolean;
 }
 
+function useCountUp(target: number, active: boolean): number {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!active) {
+      setN(0);
+      return;
+    }
+    const reduce =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      setN(target);
+      return;
+    }
+    const start = performance.now();
+    const dur = 420;
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / dur);
+      const eased = 1 - (1 - p) ** 3;
+      setN(Math.round(target * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, active]);
+  return n;
+}
+
 export function StrangerPath() {
   const switchStore = useShopStore((s) => s.switchStore);
   const [domain, setDomain] = useState(() => {
@@ -154,6 +183,7 @@ export function StrangerPath() {
   }, [runAudit, snapshot, busy, err]);
 
   const topFixes = fieldReview?.flags.slice(0, 3) ?? [];
+  const scored = useCountUp(snapshot?.catalogScore ?? 0, Boolean(snapshot));
 
   return (
     <section className="stranger-path" aria-label="Score your store">
@@ -209,7 +239,11 @@ export function StrangerPath() {
       {snapshot ? (
         <div className="stranger-path__result">
           <div className="stranger-path__score" aria-live="polite">
-            <span className="stranger-path__score-num">{snapshot.catalogScore}</span>
+            <span
+              className={`stranger-path__score-num${snapshot ? ' stranger-path__score-num--tick' : ''}`}
+            >
+              {scored}
+            </span>
             <span className="stranger-path__score-denom">/ {snapshot.catalogBudget} catalog pts</span>
             <p className="stranger-path__score-store">
               <strong>{snapshot.storeName}</strong> · {snapshot.productCount} SKUs · scrape GTIN{' '}

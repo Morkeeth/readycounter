@@ -17,14 +17,19 @@ import {
 
 const sample = {
   at: '2026-09-02T00:00:00.000Z',
-  shopCount: 2,
-  succeeded: 1,
+  shopCount: 20,
+  succeeded: 12,
   avgCatalogScore: 0,
   avgGtinPct: 0,
-  rows: [
-    { url: 'https://colourpop.com', storeId: 'a', catalogScore: 0, gtinPct: 0 },
-    { url: 'https://example.com', error: 'blocked' },
-  ],
+  rows: Array.from({ length: 20 }, (_, i) => ({
+    url: \`https://store-\${i}.example.com\`,
+    storeId: \`audit-\${i}\`,
+    catalogScore: i % 3,
+    gtinPct: 0,
+    method: 'shopify-products-json',
+    products: 40 + i,
+    ...(i % 4 === 0 ? { error: 'blocked' } : {}),
+  })),
 };
 
 const encoded = encodeAuditBatchPayload(sample);
@@ -32,21 +37,29 @@ if (!encoded.startsWith('gz1:')) {
   console.error('FAIL encode must use gz1: prefix');
   process.exit(1);
 }
-if (encoded.length >= JSON.stringify(sample).length) {
-  console.error('FAIL gzip should shrink payload', encoded.length, JSON.stringify(sample).length);
+const plain = JSON.stringify(sample);
+if (encoded.length >= plain.length) {
+  console.error('FAIL gzip should shrink payload', encoded.length, plain.length);
   process.exit(1);
 }
 const decoded = decodeAuditBatchPayload(encoded);
-if (!decoded || decoded.shopCount !== 2 || decoded.rows.length !== 2) {
+if (!decoded || decoded.shopCount !== 20 || decoded.rows.length !== 20) {
   console.error('FAIL decode mismatch', decoded);
   process.exit(1);
 }
-const legacy = decodeAuditBatchPayload(JSON.stringify(sample));
+const legacy = decodeAuditBatchPayload(JSON.stringify({
+  at: sample.at,
+  shopCount: 2,
+  succeeded: 1,
+  avgCatalogScore: 0,
+  avgGtinPct: 0,
+  rows: sample.rows.slice(0, 2),
+}));
 if (!legacy || legacy.succeeded !== 1) {
   console.error('FAIL legacy plain JSON decode');
   process.exit(1);
 }
-console.log('ok   audit batch gzip round-trip', encoded.length, 'bytes encoded');
+console.log('ok   audit batch gzip round-trip', encoded.length, 'vs plain', plain.length);
 console.log('verify-audit-batch-kv: all checks pass');
 `;
 
