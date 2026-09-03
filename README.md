@@ -8,7 +8,8 @@ Score your storefront the way a shopping agent reads it — then shop it alongsi
 the agent, in one cart, through 18 browser-native WebMCP tools.
 
 **[readycounter.vercel.app](https://readycounter.vercel.app)** · no signup, no
-install, no key · [60-second judge path](https://readycounter.vercel.app/?judge=1)
+install, no key · **[60-second judge path](https://readycounter.vercel.app/?judge=1)**
+· **[TESTING.md](TESTING.md)**
 
 Built for the [WebMCP Challenge](https://webmcp.devpost.com/). MIT licensed.
 

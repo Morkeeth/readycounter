@@ -124,6 +124,9 @@ proposes, the person pays.
 
 ## 9 · Testing instructions for judges
 
+Full guide lives in [`TESTING.md`](../TESTING.md) and is linked from the README.
+Short version for the form:
+
 ```
 Fast path (60 seconds), no install, no signup:
 1. https://readycounter.vercel.app/?judge=1
@@ -211,3 +214,40 @@ it is the honest limit and it is on the page.
 7. **Do not push after you submit** — a push redeploys the site judges are on
 
 Repo state at time of writing: `main`, pushed, clean.
+
+
+---
+
+## 13 · Two more form fields
+
+### "Which agent(s) or client(s) did you test your WebMCP tools with?"
+
+```
+Google Chrome 152 with WebMCP enabled (chrome://flags/#enable-webmcp-testing),
+using the browser's native document.modelContext. All 18 registered tools were
+executed against the live production site and all 18 returned.
+
+Also tested through the in-page Agent tool console (Path B), which calls the
+same handlers with no Chrome flag, and over REST at /api/v1/tools. 15 Playwright
+end-to-end tests run against production rather than a mock.
+
+Note for reviewers: Chrome's executeTool takes its arguments as a JSON string.
+Passing an object fails with "Failed to parse input arguments".
+```
+
+### "Which AI tools have you leveraged while working on this project?"
+
+Counts below are from this repo's own commit trailers, so a reviewer can check them.
+
+```
+Claude Code (Opus 5, Opus 4.8, Fable 5.1) — 30 commits: the app, the WebMCP tool
+layer, the field-crawl pipeline and the demo film build.
+Cursor — 41 commits: iterative UI and refactor passes.
+Kokoro-82M (open weights, run locally) — the demo voiceover.
+whisper.cpp large-v3-turbo (local) — captions, and verifying the film's audio
+against its script.
+
+Human: the idea and the name, the research selection and every sourced figure,
+the design direction, the on-camera intro, and the decisions about what the
+product refuses to claim.
+```
