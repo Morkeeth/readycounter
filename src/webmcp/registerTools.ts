@@ -23,6 +23,26 @@ export interface RegisterToolsResult {
   webmcpAvailable: boolean;
 }
 
+/**
+ * Read a product identifier under any of the names an agent might reasonably use.
+ *
+ * Found by pointing a real model at these tools: get_product takes `id`, but
+ * add_to_order took `product_id`. The model called get_product({id}), got a
+ * product back, carried `id` forward to add_to_order, and looped six times on
+ * "Product not found:". Our own tool surface was inconsistent enough to trap an
+ * agent — on a product whose whole thesis is making stores legible to agents.
+ *
+ * Rather than rename and break anyone already integrated, every product-taking
+ * tool now reads all three spellings, and the error names what it expected.
+ */
+function readProductId(input: Record<string, unknown>): string {
+  for (const key of ['product_id', 'id', 'sku', 'productId']) {
+    const v = input[key];
+    if (typeof v === 'string' && v.trim()) return v.trim();
+  }
+  return '';
+}
+
 export async function registerWebMCPTools(
   signal?: AbortSignal,
 ): Promise<RegisterToolsResult> {
@@ -92,17 +112,19 @@ export async function registerWebMCPTools(
       description: 'Return full structured product details by SKU id.',
       inputSchema: {
         type: 'object',
-        properties: { id: { type: 'string' } },
+        properties: {
+          id: { type: 'string', description: 'Product SKU id. `product_id` and `sku` are accepted too.' },
+        },
         required: ['id'],
         additionalProperties: false,
       },
       execute: (input: Record<string, unknown>) => {
         const store = getShopStoreState();
-        const id = String(input.id ?? '');
+        const id = readProductId(input);
         const product = store.getProduct(id);
         store.recordToolActivity({ toolName: 'get_product', productId: id });
         store.recordFunnel('product_view', 'agent', id);
-        if (!product) return jsonResult({ error: `Not found: ${id}` });
+        if (!product) return jsonResult({ ok: false, error: id ? `Not found: ${id}` : 'Missing product id — pass product_id (or id / sku) from search_catalog.' });
         return jsonResult({ product });
       },
       annotations: { readOnlyHint: true },
@@ -114,7 +136,10 @@ export async function registerWebMCPTools(
       inputSchema: {
         type: 'object',
         properties: {
-          product_id: { type: 'string' },
+          product_id: {
+            type: 'string',
+            description: 'Product SKU id, as returned by search_catalog. `id` and `sku` are accepted too.',
+          },
           quantity: { type: 'integer', minimum: 1, maximum: 99, default: 1 },
         },
         required: ['product_id'],
@@ -122,7 +147,7 @@ export async function registerWebMCPTools(
       },
       execute: (input: Record<string, unknown>) => {
         const store = getShopStoreState();
-        const productId = String(input.product_id ?? '');
+        const productId = readProductId(input);
         const quantity =
           typeof input.quantity === 'number' ? Math.floor(input.quantity) : 1;
         const result = store.addToOrder(productId, quantity, 'agent');
@@ -516,13 +541,13 @@ export async function invokeToolLocally(
       return jsonResult({ count: results.length, products: results });
     }
     case 'get_product': {
-      const id = String(args.id ?? '');
+      const id = readProductId(args);
       const product = store.getProduct(id);
       store.recordToolActivity({ toolName: name, productId: id });
-      return jsonResult(product ? { product } : { error: `Not found: ${id}` });
+      return jsonResult(product ? { product } : { ok: false, error: id ? `Not found: ${id}` : 'Missing product id — pass product_id (or id / sku) from search_catalog.' });
     }
     case 'add_to_order': {
-      const productId = String(args.product_id ?? '');
+      const productId = readProductId(args);
       const quantity = typeof args.quantity === 'number' ? args.quantity : 1;
       const result = store.addToOrder(productId, quantity, 'agent');
       store.recordToolActivity({ toolName: name, productId });

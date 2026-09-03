@@ -31,7 +31,10 @@ export function orderSubtotal(
  * accepts it. `addToOrder` calls this; so does the readiness probe.
  */
 export function addRefusal(product: Product | undefined, quantity: number, productId: string): string | null {
-  if (!product) return `Product not found: ${productId}`;
+  if (!product)
+    return productId
+      ? `Product not found: ${productId}`
+      : 'Missing product id — pass product_id (or id / sku) from search_catalog.';
   if (!product.inStock) return `Out of stock: ${productId}`;
   if (quantity < 1 || quantity > 99) return 'Quantity must be 1–99';
   return null;

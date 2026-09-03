@@ -373,7 +373,8 @@ function chargeForLine(line2, products) {
   return (product?.price ?? 0) * line2.quantity;
 }
 function addRefusal(product, quantity, productId) {
-  if (!product) return `Product not found: ${productId}`;
+  if (!product)
+    return productId ? `Product not found: ${productId}` : "Missing product id \u2014 pass product_id (or id / sku) from search_catalog.";
   if (!product.inStock) return `Out of stock: ${productId}`;
   if (quantity < 1 || quantity > 99) return "Quantity must be 1\u201399";
   return null;
