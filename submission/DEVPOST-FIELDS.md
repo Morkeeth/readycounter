@@ -46,16 +46,18 @@ react, typescript, vite, webmcp, zustand, shopify, render, vercel, node.js, play
 
 The **first image becomes the Devpost thumbnail.**
 
-| # | File | Why it's in the gallery |
+| # | File | What it shows |
 |---|---|---|
-| 1 | `submission/brand/thumbnail-1280x720.png` | Title card, real numbers on it — 1280×720, 64 KB |
-| 2 | `submission/shots/01-front-door.png` | The census wall: 148 tiles, 11 blue |
-| 3 | `submission/shots/03-store-scored.png` | colourpop.com audited live, 0/24, cited fix list |
-| 4 | `submission/shots/02-blank-barcode.png` | The blank barcode — nothing to scan |
-| 5 | `submission/shots/05-coshop-one-cart.png` | Human + agent, one cart |
-| 6 | `submission/shots/06-webmcp-tools.png` | The 18 WebMCP tools |
-| 7 | `submission/shots/04-readiness-tape.png` | Every point priced from a published source |
-| 8 | `submission/shots/07-mobile.png` | 390px |
+| 1 | `01-THUMBNAIL-upload-first.png` | Title card — 148 measured, 0% GTIN, 22 refused, 18 tools |
+| 2 | `02-front-door.png` | The census wall, four classes |
+| 3 | `03-store-scored.png` | colourpop.com audited live: 0/24, cited fix list |
+| 4 | `04-fix-export.png` | **The fix leaves the page** — Shopify-importable CSV + tickets |
+| 5 | `05-census-four-classes.png` | 48 answered empty · 22 refused us · 11 hide a barcode |
+| 6 | `06-coshop-one-cart.png` | Human + agent, one cart |
+| 7 | `07-webmcp-tools.png` | The 18 WebMCP tools |
+| 8 | `08-blank-barcode.png` | What an agent reads: nothing to scan |
+| 9 | `09-readiness-tape.png` | Every point priced from a published source |
+| 10 | `10-mobile.png` | 390px |
 
 Logos, if a field asks: `submission/brand/logo-mark.svg`, `logo-512.png`,
 `logo-1024.png`, `logo-wordmark.svg`, `wordmark-1440.png`.
