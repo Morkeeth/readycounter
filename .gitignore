@@ -52,3 +52,4 @@ demo/seg-*.mp4
 film/__pycache__/
 
 demo/.cues.json
+demo/.subs.ass
