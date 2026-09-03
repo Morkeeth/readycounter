@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { checkRateLimitAsync } from '../../../src/server/rate-limit';
 import { TOOL_MANIFEST_WITH_SCHEMAS } from '../../../src/webmcp/toolManifest';
 
 /**
@@ -58,6 +59,23 @@ const MAX_STEPS = 8;
 const MAX_HISTORY = 24;
 const MAX_TOOL_RESULT = 1200;
 
+/**
+ * This endpoint spends a real API key on a public URL, so it is rate limited.
+ * Without this a single visitor could run the agent in a loop on Oscar's
+ * OpenAI account. Recovered from Codex's agent-trials branch, which had the cap
+ * and this one did not.
+ */
+const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * HOUR_MS;
+const PER_IP_HOUR = Number(process.env.AGENT_STEPS_PER_IP_HOUR ?? 40);
+const GLOBAL_DAY = Number(process.env.AGENT_STEPS_GLOBAL_DAY ?? 600);
+
+function clientIp(req: VercelRequest): string {
+  const fwd = req.headers['x-forwarded-for'];
+  const raw = Array.isArray(fwd) ? fwd[0] : fwd;
+  return (raw ?? '').split(',')[0].trim() || 'unknown';
+}
+
 const SYSTEM = `You are a shopping agent working inside a merchant's own web page.
 
 You can only act through the tools provided. Work toward the user's shopping
@@ -116,6 +134,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       error: 'agent_unconfigured',
       hint: 'Set OPENAI_API_KEY (or OPENROUTER_API_KEY). Every other path in ReadyCounter works without it.',
     });
+  }
+
+  const perIp = await checkRateLimitAsync(`agent-step:ip:${clientIp(req)}`, PER_IP_HOUR, HOUR_MS);
+  if (!perIp.allowed) {
+    res.setHeader('retry-after', String(perIp.retryAfterSec ?? 60));
+    return res.status(429).json({ error: 'rate_limited', scope: 'ip', retryAfterSec: perIp.retryAfterSec });
+  }
+  const global = await checkRateLimitAsync('agent-step:global', GLOBAL_DAY, DAY_MS);
+  if (!global.allowed) {
+    res.setHeader('retry-after', String(global.retryAfterSec ?? 300));
+    return res.status(429).json({ error: 'rate_limited', scope: 'global', retryAfterSec: global.retryAfterSec });
   }
 
   const body = (req.body ?? {}) as { goal?: unknown; history?: unknown };

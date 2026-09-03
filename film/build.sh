@@ -49,33 +49,34 @@ fi
 echo "1/5 · voice parts + timing plan"
 render_parts
 
-echo "2/5 · intro deck (animated cards, one per paragraph)"
+echo "2/5 · picture, in story order: product first, then the field"
+echo "   · A · the cold open — paste, score, a real agent blocked"
+(cd film && python3 browser.py a)
+
+echo "   · B · the cards — the field, the money, the eleven"
 (cd film && python3 intro.py)
 
-echo "   · outro card (held to the closing paragraph)"
-python3 film/slides.py
+echo "   · C · the bill and the integrations"
+(cd film && python3 browser.py b)
 
-echo "3/5 · browser segment (live prod, one beat per paragraph)"
-python3 film/browser.py
-
-echo "   · integrations segment (fresh context)"
-(cd film && python3 partners.py)
-
-echo "   · native WebMCP segment (real Chrome, document.modelContext)"
+echo "   · D · native WebMCP in real Chrome"
 (cd film && python3 webmcp.py)
 
+echo "   · E · the closing card"
+python3 film/slides.py
+
 echo "4/5 · join picture"
-for seg in intro browser partners webmcp outro; do
+for seg in browser-a intro browser-b webmcp outro; do
   ffmpeg -y -loglevel error -i "demo/seg-${seg}.mp4" \
     -vf "fps=30,scale=1920:1080:flags=lanczos,format=yuv420p" \
     -c:v libx264 -preset medium -crf 21 -an "demo/.${seg}30.mp4"
 done
-printf "file '.intro30.mp4'\nfile '.browser30.mp4'\nfile '.partners30.mp4'\nfile '.webmcp30.mp4'\nfile '.outro30.mp4'\n" > demo/.seg30.txt
+printf "file '.browser-a30.mp4'\nfile '.intro30.mp4'\nfile '.browser-b30.mp4'\nfile '.webmcp30.mp4'\nfile '.outro30.mp4'\n" > demo/.seg30.txt
 ffmpeg -y -loglevel error -f concat -safe 0 -i demo/.seg30.txt -c copy demo/.picture.mp4
 
 if [ "$SILENT" = "1" ]; then
   mv demo/.picture.mp4 demo/demo-silent.mp4
-  rm -f demo/.intro30.mp4 demo/.browser30.mp4 demo/.partners30.mp4 demo/.webmcp30.mp4 demo/.outro30.mp4 demo/.seg30.txt
+  rm -f demo/.browser-a30.mp4 demo/.intro30.mp4 demo/.browser-b30.mp4 demo/.webmcp30.mp4 demo/.outro30.mp4 demo/.seg30.txt
   echo "WROTE demo/demo-silent.mp4"
   exit 0
 fi
@@ -93,7 +94,7 @@ ffmpeg -y -loglevel error -i demo/.picture.mp4 -i demo/voiceover.mp3 \
   -map 0:v -map 1:a -t "$PIC_END" \
   -c:v libx264 -preset medium -crf 21 -pix_fmt yuv420p \
   -c:a aac -b:a 160k -movflags +faststart "$OUTNAME"
-rm -f demo/.picture.mp4 demo/.intro30.mp4 demo/.browser30.mp4 demo/.partners30.mp4 demo/.webmcp30.mp4 demo/.outro30.mp4 demo/.seg30.txt
+rm -f demo/.picture.mp4 demo/.browser-a30.mp4 demo/.intro30.mp4 demo/.browser-b30.mp4 demo/.webmcp30.mp4 demo/.outro30.mp4 demo/.seg30.txt
 
 if [ "$SUBS" = "0" ]; then
   (cd film && python3 verify_film.py)

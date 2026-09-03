@@ -216,6 +216,10 @@ var TOOL_MANIFEST_WITH_SCHEMAS = TOOL_MANIFEST.map((t) => ({
 // api/v1/agent/step.ts
 var MODELS = [{ id: "gpt-5.4", label: "GPT-5.4" }];
 var DEFAULT_MODEL = MODELS[0].id;
+var HOUR_MS = 60 * 60 * 1e3;
+var DAY_MS = 24 * HOUR_MS;
+var PER_IP_HOUR = Number(process.env.AGENT_STEPS_PER_IP_HOUR ?? 40);
+var GLOBAL_DAY = Number(process.env.AGENT_STEPS_GLOBAL_DAY ?? 600);
 
 // api/v1/agent/models.ts
 function handler(req, res) {

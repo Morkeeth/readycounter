@@ -22,8 +22,8 @@ DECK = ROOT / "demo" / "intro.html"
 OUT = ROOT / "demo" / "seg-intro.mp4"
 TMP = ROOT / "demo" / ".intro-raw"
 
-#: Cards map to paragraphs 0..3.
-CARDS = 4
+#: Cards map to paragraphs 3..5 — the film opens on the product now.
+PARAGRAPHS = [3, 4, 5]
 
 
 def main() -> int:
@@ -45,10 +45,10 @@ def main() -> int:
         pg.evaluate("() => document.fonts.ready")
         pg.wait_for_timeout(1200)
 
-        for i in range(CARDS):
-            pg.evaluate(f"() => window.__show({i})")
-            captions.show(pg, i)
-            pg.wait_for_timeout(int(beats[i] * 1000))
+        for card, para in enumerate(PARAGRAPHS):
+            pg.evaluate(f"() => window.__show({card})")
+            captions.show(pg, para)
+            pg.wait_for_timeout(int(beats[para] * 1000))
 
         video = pg.video
         ctx.close()
@@ -70,8 +70,8 @@ def main() -> int:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(OUT)],
         capture_output=True, text=True, check=True,
     ).stdout.strip()
-    want = sum(beats[:CARDS])
-    print(f"WROTE {OUT} ({dur}s, {CARDS} cards, wanted {want:.1f}s)")
+    want = sum(beats[i] for i in PARAGRAPHS)
+    print(f"WROTE {OUT} ({dur}s, {len(PARAGRAPHS)} cards, wanted {want:.1f}s)")
     return 0
 
 

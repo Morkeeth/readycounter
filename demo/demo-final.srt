@@ -1,40 +1,40 @@
 1
-00:00:00,000 --> 00:00:07,425
-AI shoppers arrived this year. Sessions to Shopify storefronts are up eight times year over year. Orders, nearly thirteen.
+00:00:00,000 --> 00:00:06,100
+This is ColourPop, a real store doing real money. Watch what a shopping agent can actually read on it.
 
 2
-00:00:07,975 --> 00:00:19,050
-And the money turned. Last March, agent traffic converted thirty eight percent worse than everything else. This March, forty two percent better. Your worst channel became your best one in twelve months.
+00:00:06,650 --> 00:00:12,925
+Zero out of twenty four. Fifty products, and not one barcode an agent can match to something it can buy.
 
 3
-00:00:19,600 --> 00:00:33,475
-Here is the catch. Four in five agent carts never reach checkout. And Shopify's own earnings call says a catalogue an agent can read converts twice as well as a page it has to scrape. That is the whole prize, and it is sitting behind a data problem.
+00:00:13,475 --> 00:00:25,275
+So we sent a real agent in. It finds the espresso, adds it to the cart, and the store stops it dead. A captcha. That single wall is a quarter of every abandoned agent cart, and the merchant never sees it happen.
 
 4
-00:00:34,025 --> 00:00:46,450
-So we asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Seventy sent nothing back. Sixty seven sent a feed with no barcode in it. Coverage across the field: zero percent.
+00:00:25,825 --> 00:00:40,150
+This is not one bad store. We asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Seventy sent nothing back at all. Sixty seven sent a feed with no barcode in it. Coverage across the whole field: zero percent.
 
 5
-00:00:47,000 --> 00:00:54,300
-This is ReadyCounter. A merchant types their domain, and that is the whole setup. No install, no account, no code on the storefront.
+00:00:40,700 --> 00:00:59,300
+And the money already turned. Last March, agent traffic converted thirty eight percent worse than everything else. This March, forty two percent better. Sessions to Shopify stores are up eight times, orders nearly thirteen, and Shopify's own earnings call says a catalogue an agent can read converts twice as well as a page it has to scrape.
 
 6
-00:00:54,850 --> 00:01:03,375
-The score lands, their tile joins the field, and the barcode prints exactly as far as their data goes. For this store, and for most, that is nowhere.
+00:00:59,850 --> 00:01:12,400
+Eleven of the stores we asked do have barcodes. Glossier, Tatcha, Brooklinen, Alo Yoga, Away. They publish them to Shopify's catalogue protocol, and their own storefront hides them. Your shopper's agent reads the storefront.
 
 7
-00:01:03,925 --> 00:01:13,325
-Every point on the bill is priced from a published abandonment share, and every line names its source. Six sandbox storefronts, six different ways to lose the sale.
+00:01:12,950 --> 00:01:23,075
+So we price the damage. Every point on the bill is one row of a published abandonment table, at the share that table states, and every line names its publisher and the date we read it.
 
 8
-00:01:13,875 --> 00:01:30,825
-We did not build a catalogue. We read the ones that exist. Shopify OAuth for the merchant's own admin, Shopify's Catalog protocol for the barcodes a scrape cannot see, and Render Key Value holding every audit and every shared cart across cold starts. Three integrations, all live in this build.
+00:01:23,625 --> 00:01:39,000
+We did not build a catalogue. We read the ones that exist. Shopify OAuth for the merchant's own admin, Shopify's catalogue protocol for the barcodes a scrape cannot see, and Render Key Value holding every audit and every shared cart. Three integrations, all live.
 
 9
-00:01:31,375 --> 00:02:02,650
-Now the proof, in Chrome with WebMCP switched on. Eighteen tools are registered on document dot model context, the browser's own API. And this is not us clicking. A language model gets the tools and one instruction: buy a bag of espresso under twenty dollars. It searches, it compares two products, it adds one to the cart, and the line is tagged agent beside the one a human added. Then it tries to check out, and the store stops it. A captcha. The tool hands back the published share that says a quarter of agent carts die exactly there, and the model says so in its own words. No card is ever touched.
+00:01:39,550 --> 00:01:56,700
+And the proof underneath it is WebMCP. Eighteen tools registered on document dot model context, the browser's own API, in Chrome with the flag on. A customer and their assistant build one cart together, tagged human and agent, and prepare checkout validates the total and never touches a card.
 
 10
-00:02:03,200 --> 00:02:06,300
-ReadyCounter. Agent commerce, now reviewable.
+00:01:57,250 --> 00:02:01,050
+ReadyCounter. Paste your store, and see what agents cannot read.
 

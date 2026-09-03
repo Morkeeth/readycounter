@@ -14,25 +14,31 @@ from cues import load
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BASE = "https://readycounter.vercel.app"
-OUT = ROOT / "demo" / "seg-browser.mp4"
-TMP = ROOT / "demo" / ".browser-raw"
+GROUP = (sys.argv[1] if len(sys.argv) > 1 else "a").lower()
+OUT = ROOT / "demo" / f"seg-browser-{GROUP}.mp4"
+TMP = ROOT / "demo" / f".browser-raw-{GROUP}"
 
 RECORD = "film=1&record=1&cues=0"
 
-# The demo half: paragraphs p04..p07. The intro deck carries p00..p03 and the
-# outro card carries p08, so this records four beats, not nine.
+# Browser beats, in two groups, because the film now opens on the PRODUCT.
 #
-# Every beat DOES something. The old film narrated over static pages and Oscar
-# called it: "we're not doing a lot of moves". Now the domain gets typed, the
-# score ticks up, the tile joins the wall, items land in the cart and a tool is
-# fired. The demo shows; the narration stops explaining what is on screen.
-FIRST_PARAGRAPH = 4
-
-BEATS = [
-    (f"/?{RECORD}&view=integrations", "paste"),
-    (f"/?{RECORD}&view=integrations", "joined"),
-    (f"/?{RECORD}&beat=0&store=ember-oak&view=merchant", "bill"),
-]
+# Group A (paragraphs 0-2) is the cold open: paste a real domain, watch the
+# score land, then a real agent shops the store and hits the CAPTCHA. The
+# organisers ask for the working product inside 10-15 seconds and this puts it
+# at second one.
+#
+# Group B (paragraphs 6-7) is the bill and the integrations, after the field.
+SEGMENTS = {
+    "a": [
+        (0, f"/?{RECORD}&view=integrations", "paste"),
+        (1, f"/?{RECORD}&view=integrations", "joined"),
+        (2, f"/?{RECORD}&judge=1", "agent"),
+    ],
+    "b": [
+        (6, f"/?{RECORD}&beat=0&store=ember-oak&view=merchant", "bill"),
+        (7, f"/?{RECORD}&view=integrations", "partners"),
+    ],
+}
 
 CURSOR = """
 (() => {
@@ -98,15 +104,15 @@ def main():
         beats = plan["beats"]
 
         last_path = None
-        for i, (path, name) in enumerate(BEATS):
-            hold_ms = int(beats[FIRST_PARAGRAPH + i] * 1000)
+        for para, path, name in SEGMENTS[GROUP]:
+            hold_ms = int(beats[para] * 1000)
             t0 = time.monotonic()
             if path != last_path:
                 pg.goto(BASE + path, wait_until="domcontentloaded", timeout=60000)
                 pg.evaluate(CURSOR)
                 pg.wait_for_timeout(1500)
             last_path = path
-            captions.show(pg, FIRST_PARAGRAPH + i)
+            captions.show(pg, para)
 
             if name == "paste":
                 # type it like a person and submit; the score lands in the next beat,
@@ -122,6 +128,17 @@ def main():
                     print(f"  ! paste beat: {e}")
 
             elif name == "joined":
+                # Kick the agent off here, not in its own beat. gpt-5.4 takes
+                # ~20s for the full loop and the narration for that beat is 11s,
+                # so starting it later meant the film cut away before the CAPTCHA
+                # — the exact moment the sentence describes.
+                try:
+                    pg.evaluate(
+                        "() => { const b = [...document.querySelectorAll('button')]"
+                        ".find(x => /send the agent/i.test(x.textContent||'')); if (b) b.click(); }"
+                    )
+                except Exception:
+                    pass
                 # same page, still loading: the score arrives, the tile joins, the
                 # barcode prints what it found
                 try:
@@ -131,6 +148,24 @@ def main():
                     settle(pg, ".barcode__strip")
                 except Exception as e:
                     print(f"  ! joined beat: {e}")
+
+            elif name == "agent":
+                panel = pg.locator(".agent-shopper").first
+                if panel.count():
+                    panel.scroll_into_view_if_needed(timeout=6000)
+                    pg.wait_for_timeout(500)
+                    # already started during the previous beat; just hold on it
+                    deadline = t0 + beats[para] - 1.0
+                    while time.monotonic() < deadline:
+                        pg.wait_for_timeout(800)
+                        try:
+                            panel.scroll_into_view_if_needed(timeout=1500)
+                        except Exception:
+                            pass
+                    blocked = pg.evaluate("() => !!document.querySelector('.agent-shopper__blocked')")
+                    print(f"  · agent beat blocked at checkout: {blocked}")
+                else:
+                    print("  ! agent panel missing")
 
             elif name == "bill":
                 # Deliberately NOT clicking "Run agent journey": it completes

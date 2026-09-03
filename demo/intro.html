@@ -63,6 +63,7 @@
       h1 em { font-style: normal; color: var(--soft); }
       h1 b { font-weight: 800; color: var(--stamp); }
       h1 u { text-decoration: none; color: var(--has); }
+      .brands { font-size: 26px; line-height: 1.5; color: var(--has); font-weight: 700; max-width: 44ch; }
       .sub { font-size: 30px; line-height: 1.4; color: var(--soft); max-width: 46ch; }
 
       /* the figure row — one voice, tabular */
@@ -85,7 +86,7 @@
       }
 
       /* card 4 — the wall builds itself */
-      .wall { display: grid; grid-template-columns: repeat(28, 1fr); gap: 6px; }
+      .wall { display: grid; grid-template-columns: repeat(28, 1fr); gap: 6px; max-width: 1500px; }
       .wall i { display: block; aspect-ratio: 1; background: #d8d8d2; opacity: 0; }
       .wall i.feed { background: transparent; box-shadow: inset 0 0 0 2px #b4b4ad; }
       .wall i.ucp { background: var(--has); box-shadow: none; }
@@ -93,71 +94,60 @@
     </style>
   </head>
   <body>
-    <!-- 1 · the market arrived -->
+    <!-- 1 · the field, measured -->
     <section class="card" id="c0">
-      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The shift</span></div>
-      <div class="mid">
-        <h1>AI shoppers arrived<br /><em>this year.</em></h1>
-        <p class="sub">Not a forecast. Traffic that is already in your store, buying.</p>
-      </div>
-      <div>
-        <div class="figs">
-          <div class="fig"><div class="n up" data-count="8" data-suffix="×">0×</div><div class="t">AI-referred sessions, YoY</div></div>
-          <div class="fig"><div class="n up" data-count="13" data-suffix="×">0×</div><div class="t">AI-referred orders, YoY</div></div>
-        </div>
-        <p class="src">Shopify Enterprise, published 2026-05-11 · read 2026-08-30</p>
-      </div>
-    </section>
-
-    <!-- 2 · and it turned profitable -->
-    <section class="card" id="c1">
-      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The money turned</span></div>
-      <div class="mid">
-        <h1>Last March it lost money.<br /><em>This March it makes it.</em></h1>
-        <p class="sub">Agent traffic went from your worst channel to your best in twelve months.</p>
-      </div>
-      <div>
-        <div class="figs">
-          <div class="fig"><div class="n bad">−38%</div><div class="t">Conversion, March 2025</div></div>
-          <div class="fig"><div class="n up" data-count="42" data-prefix="+" data-suffix="%">+0%</div><div class="t">Conversion, March 2026</div></div>
-        </div>
-        <p class="src">Adobe Digital Insights, published 2026-04-16 · read 2026-08-30</p>
-      </div>
-    </section>
-
-    <!-- 3 · the catch, and what the fix is worth -->
-    <section class="card" id="c2">
-      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The catch</span></div>
-      <div class="mid">
-        <h1>Four in five agent carts<br /><b>never reach checkout.</b></h1>
-        <p class="sub">
-          And a catalogue an agent can read converts twice as well as a page it has to scrape —
-          Shopify's own number, from the earnings call.
-        </p>
-      </div>
-      <div>
-        <div class="figs">
-          <div class="fig"><div class="n bad" data-count="78.6" data-suffix="%">0%</div><div class="t">Agent carts abandoned</div></div>
-          <div class="fig"><div class="n up" data-count="2" data-suffix="×">0×</div><div class="t">Conversion, catalogue vs scrape</div></div>
-        </div>
-        <p class="src">Presenc AI · Shopify Q1 2026 earnings call (Harley Finkelstein) · read 2026-08-30</p>
-      </div>
-    </section>
-
-    <!-- 4 · nobody has done it -->
-    <section class="card" id="c3">
       <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The field, measured</span></div>
       <div class="mid">
-        <h1>So we asked <u>148</u> real storefronts.</h1>
+        <h1>Not one bad store. <em>The whole field.</em></h1>
         <div class="wall" id="wall"></div>
       </div>
       <div>
         <div class="figs">
+          <div class="fig"><div class="n" data-count="148">0</div><div class="t">Storefronts asked</div></div>
           <div class="fig"><div class="n" data-count="70">0</div><div class="t">Sent nothing back</div></div>
           <div class="fig"><div class="n" data-count="67">0</div><div class="t">A feed, no barcode</div></div>
           <div class="fig"><div class="n bad">0%</div><div class="t">Barcode coverage</div></div>
         </div>
         <p class="src">ReadyCounter field batch, read 2026-09-02 · GET /api/v1/rankings</p>
+      </div>
+    </section>
+
+    <!-- 2 · and the money already turned -->
+    <section class="card" id="c1">
+      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The money already turned</span></div>
+      <div class="mid">
+        <h1>Last March it lost money.<br /><em>This March it makes it.</em></h1>
+        <p class="sub">Agent traffic went from the worst channel to the best in twelve months — and a
+          readable catalogue converts twice as well as a page an agent has to scrape.</p>
+      </div>
+      <div>
+        <div class="figs">
+          <div class="fig"><div class="n bad">−38%</div><div class="t">Conversion, Mar 2025</div></div>
+          <div class="fig"><div class="n up" data-count="42" data-prefix="+" data-suffix="%">+0%</div><div class="t">Conversion, Mar 2026</div></div>
+          <div class="fig"><div class="n up" data-count="8" data-suffix="×">0×</div><div class="t">AI sessions, YoY</div></div>
+          <div class="fig"><div class="n up" data-count="2" data-suffix="×">0×</div><div class="t">Catalogue vs scrape</div></div>
+        </div>
+        <p class="src">Adobe Digital Insights 2026-04-16 · Shopify Enterprise 2026-05-11 · Shopify Q1 2026 earnings call</p>
+      </div>
+    </section>
+
+    <!-- 3 · the eleven who have it and hide it -->
+    <section class="card" id="c2">
+      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">Have it, hide it</span></div>
+      <div class="mid">
+        <h1><u>Eleven</u> already have barcodes.<br /><em>Their storefront hides them.</em></h1>
+        <p class="sub">They publish to Shopify's Catalog protocol. Scrape the same storefront — which is
+          what your shopper's agent does — and it is empty.</p>
+        <p class="brands">Glossier · Tatcha · Brooklinen · Alo Yoga · Buffy · Mejuri · Gorjana ·
+          Dagne Dover · United By Blue · Stio · Away</p>
+      </div>
+      <div>
+        <div class="figs">
+          <div class="fig"><div class="n" data-count="81">0</div><div class="t">Expose Catalog MCP</div></div>
+          <div class="fig"><div class="n" data-count="13">0</div><div class="t">Return a barcode there</div></div>
+          <div class="fig"><div class="n up" data-count="11">0</div><div class="t">And nothing on scrape</div></div>
+        </div>
+        <p class="src">ReadyCounter UCP census, read 2026-08-31</p>
       </div>
     </section>
 
@@ -190,7 +180,7 @@
         const card = document.getElementById('c' + i);
         if (!card) return;
         card.querySelectorAll('[data-count]').forEach((el) => countUp(el, 900));
-        if (i === 3) {
+        if (i === 0) {
           const tiles = [...wall.children];
           tiles.forEach((t) => t.classList.remove('show'));
           tiles.forEach((t, n) => setTimeout(() => t.classList.add('show'), 12 * n));

@@ -1,3 +1,146 @@
+// src/server/kv.ts
+var memory = /* @__PURE__ */ new Map();
+var CONNECT_MS = 8e3;
+var KV_OP_MS = 1e4;
+var KV_LARGE_OP_MS = 2e4;
+var redisClient = null;
+var redisReady = null;
+function withTimeout(promise, ms) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("redis op timeout")), ms);
+    promise.then((v) => {
+      clearTimeout(timer);
+      resolve(v);
+    }).catch((err) => {
+      clearTimeout(timer);
+      reject(err);
+    });
+  });
+}
+function dropRedisClient(client) {
+  if (client && redisClient !== client) return;
+  redisClient = null;
+  redisReady = null;
+}
+async function connectRedis() {
+  const url = process.env.REDIS_URL?.trim();
+  if (!url) return null;
+  if (redisClient) {
+    if (redisClient.isOpen) return redisClient;
+    dropRedisClient(redisClient);
+  }
+  if (!redisReady) {
+    redisReady = withTimeout(
+      (async () => {
+        try {
+          const { createClient } = await import("redis");
+          const client = createClient({
+            url,
+            socket: {
+              connectTimeout: CONNECT_MS,
+              reconnectStrategy: () => false,
+              ...url.startsWith("rediss://") ? { tls: true } : {}
+            }
+          });
+          client.on("error", () => {
+          });
+          await client.connect();
+          redisClient = client;
+          return client;
+        } catch {
+          redisReady = null;
+          return null;
+        }
+      })(),
+      CONNECT_MS
+    ).catch(() => {
+      redisReady = null;
+      return null;
+    });
+  }
+  return redisReady;
+}
+function isClosedClientError(client, err) {
+  if (!client.isOpen) return true;
+  const name = err?.name;
+  const message = err?.message ?? "";
+  return name === "ClientClosedError" || /client is closed/i.test(message);
+}
+async function withRedis(op, ms) {
+  let client = await connectRedis();
+  if (!client) return void 0;
+  try {
+    return await withTimeout(op(client), ms);
+  } catch (err) {
+    if (!isClosedClientError(client, err)) return void 0;
+    dropRedisClient(client);
+    client = await connectRedis();
+    if (!client) return void 0;
+    try {
+      return await withTimeout(op(client), ms);
+    } catch {
+      return void 0;
+    }
+  }
+}
+async function kvGet(key, opts) {
+  const timeout = opts?.large ? KV_LARGE_OP_MS : KV_OP_MS;
+  const value = await withRedis((client) => client.get(key), timeout);
+  if (value !== void 0) return value;
+  return memory.get(key) ?? null;
+}
+async function kvSet(key, value, opts) {
+  memory.set(key, value);
+  const timeout = opts?.large ? KV_LARGE_OP_MS : KV_OP_MS;
+  await withRedis((client) => client.set(key, value), timeout);
+}
+
+// src/server/rate-limit.ts
+var buckets = /* @__PURE__ */ new Map();
+function checkRateLimit(key, max, windowMs) {
+  const now = Date.now();
+  const entry = buckets.get(key);
+  if (!entry || entry.resetAt <= now) {
+    buckets.set(key, { count: 1, resetAt: now + windowMs });
+    return { allowed: true };
+  }
+  if (entry.count >= max) {
+    return { allowed: false, retryAfterSec: Math.ceil((entry.resetAt - now) / 1e3) };
+  }
+  entry.count += 1;
+  return { allowed: true };
+}
+async function checkRateLimitAsync(key, max, windowMs) {
+  const redisKey = `rc:rl:${key}`;
+  const now = Date.now();
+  try {
+    const raw = await kvGet(redisKey);
+    let entry = null;
+    if (raw) {
+      try {
+        entry = JSON.parse(raw);
+      } catch {
+        entry = null;
+      }
+    }
+    if (!entry || entry.resetAt <= now) {
+      entry = { count: 1, resetAt: now + windowMs };
+      await kvSet(redisKey, JSON.stringify(entry));
+      buckets.set(key, entry);
+      return { allowed: true };
+    }
+    if (entry.count >= max) {
+      return { allowed: false, retryAfterSec: Math.ceil((entry.resetAt - now) / 1e3) };
+    }
+    entry.count += 1;
+    await kvSet(redisKey, JSON.stringify(entry));
+    buckets.set(key, entry);
+    return { allowed: true };
+  } catch {
+    return checkRateLimit(key, max, windowMs);
+  }
+}
+
 // src/webmcp/toolSchemas.ts
 var TOOL_SCHEMAS = {
   search_catalog: {
@@ -241,6 +384,15 @@ var MAX_GOAL = 200;
 var MAX_STEPS = 8;
 var MAX_HISTORY = 24;
 var MAX_TOOL_RESULT = 1200;
+var HOUR_MS = 60 * 60 * 1e3;
+var DAY_MS = 24 * HOUR_MS;
+var PER_IP_HOUR = Number(process.env.AGENT_STEPS_PER_IP_HOUR ?? 40);
+var GLOBAL_DAY = Number(process.env.AGENT_STEPS_GLOBAL_DAY ?? 600);
+function clientIp(req) {
+  const fwd = req.headers["x-forwarded-for"];
+  const raw = Array.isArray(fwd) ? fwd[0] : fwd;
+  return (raw ?? "").split(",")[0].trim() || "unknown";
+}
 var SYSTEM = `You are a shopping agent working inside a merchant's own web page.
 
 You can only act through the tools provided. Work toward the user's shopping
@@ -286,6 +438,16 @@ async function handler(req, res) {
       error: "agent_unconfigured",
       hint: "Set OPENAI_API_KEY (or OPENROUTER_API_KEY). Every other path in ReadyCounter works without it."
     });
+  }
+  const perIp = await checkRateLimitAsync(`agent-step:ip:${clientIp(req)}`, PER_IP_HOUR, HOUR_MS);
+  if (!perIp.allowed) {
+    res.setHeader("retry-after", String(perIp.retryAfterSec ?? 60));
+    return res.status(429).json({ error: "rate_limited", scope: "ip", retryAfterSec: perIp.retryAfterSec });
+  }
+  const global = await checkRateLimitAsync("agent-step:global", GLOBAL_DAY, DAY_MS);
+  if (!global.allowed) {
+    res.setHeader("retry-after", String(global.retryAfterSec ?? 300));
+    return res.status(429).json({ error: "rate_limited", scope: "global", retryAfterSec: global.retryAfterSec });
   }
   const body = req.body ?? {};
   const goal = typeof body.goal === "string" ? body.goal.slice(0, MAX_GOAL).trim() : "";

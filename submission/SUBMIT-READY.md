@@ -1,6 +1,6 @@
 # Oscar — 15-minute Devpost submit
 
-**Deadline:** Wed Sep 3, 2026 · **1pm PDT** (22:00 Paris)  
+**Deadline:** Thu Sep 4, 2026 · **1:00am PDT** (10:00 Paris) — fetched from webmcp.devpost.com 3 Sep 19:4x: `2026-09-04T04:00:00-04:00`  
 **Tier (EYES):** TOP-25 base · TOP-10 stretch if film v2 + native WebMCP land
 
 ---
