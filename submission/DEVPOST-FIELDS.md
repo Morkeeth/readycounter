@@ -175,7 +175,7 @@ it is the honest limit and it is on the page.
 | Live URL works when clicked | **PASS** | `readycounter.vercel.app` HTTP 200; API 78/148 on 12/12 consecutive curls |
 | Judges can access it in ChatGPT's in-app browser or Chrome+WebMCP | **YOURS TO CONFIRM** | Path B needs no flag and is verified; Path A native WebMCP I cannot test from here — open it once in ChatGPT's in-app browser before you submit |
 | WebMCP tools verified in that browser | **YOURS TO CONFIRM** | same — this is the one checklist line no script can close |
-| Demo video shows it working, has audio | **PASS** | 114s, 1920×1080, AAC stereo, mean −20.7dB; transcribed end to end against the script |
+| Demo video shows it working, has audio | **PASS** | 115.2s, 1920×1080, AAC stereo; picture 115.2s over 109.1s of voice, transcribed end to end against the script |
 | Repo public, tested in incognito | **PASS** | `visibility: PUBLIC` via `gh repo view` |
 | Open-source licence visible in About | **PASS** | GitHub reports `licenseInfo: MIT License` |
 | Description says why WebMCP fits | **PASS** | §8 above; also `WHY-WEBMCP.md` |
@@ -188,8 +188,8 @@ it is the honest limit and it is on the page.
   front door with the wall already loaded. **Your 20s intro goes in front of
   that**, which spends the 15-second budget before the product appears. Keep the
   intro short, or accept the trade knowingly.
-- *Judges are not required to watch past 3 minutes* — film is 1:54. With a 20s
-  intro, 2:14. Fine.
+- *Judges are not required to watch past 3 minutes* — film is 1:55. With a 20s
+  intro, 2:15. Fine.
 - *Start already logged in, skip setup* — there is no login to skip.
 - *Don't let AI name your project* — ReadyCounter is yours, unchanged.
 - *Don't submit an AI-generated description unedited* — §7 lists the three places
