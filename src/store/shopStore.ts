@@ -139,9 +139,17 @@ const storeLogic = (
       if (max_price !== undefined && product.price > max_price) return false;
       if (in_stock_only && !product.inStock) return false;
       if (query) {
-        const q = query.toLowerCase();
-        const hay = `${product.name} ${product.description} ${product.tags.join(' ')}`.toLowerCase();
-        if (!hay.includes(q)) return false;
+        // Match on TOKENS, not the whole phrase.
+        //
+        // Substring matching meant search_catalog("espresso beans") returned
+        // nothing from a store selling "House Espresso Blend". A real agent
+        // (Gemini 2.5 Pro) concluded the store had no espresso and told the
+        // shopper so. A more persistent one retried with a shorter query and
+        // found it. That is precisely the failure ReadyCounter exists to
+        // detect, and it was in our own demo store.
+        const hay = `${product.name} ${product.description} ${product.tags.join(' ')} ${product.category}`.toLowerCase();
+        const tokens = query.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+        if (tokens.length && !tokens.some((t) => hay.includes(t))) return false;
       }
       return true;
     });

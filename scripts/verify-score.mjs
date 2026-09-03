@@ -266,3 +266,17 @@ console.log(
     : `\nverify-score: ${failures} check(s) failed`,
 );
 process.exit(failures === 0 ? 0 : 1);
+
+// An agent that searches in natural language must find the thing.
+// search_catalog("espresso beans") used to return 0 from a store selling
+// "House Espresso Blend", and a real model gave up and told the shopper the
+// store had nothing.
+{
+  const { readFileSync } = await import('node:fs');
+  const store = readFileSync('src/store/shopStore.ts', 'utf8');
+  if (!/tokens\.some\(/.test(store)) {
+    console.error('FAIL search_catalog matches the whole phrase — natural-language queries will miss');
+    process.exit(1);
+  }
+  console.log('ok   search_catalog matches tokens, not the whole phrase');
+}
