@@ -214,8 +214,11 @@ var TOOL_MANIFEST_WITH_SCHEMAS = TOOL_MANIFEST.map((t) => ({
 }));
 
 // api/v1/agent/step.ts
-var MODELS = [{ id: "openai/gpt-5.6-terra-pro", label: "GPT-5.6 Terra Pro" }];
-var DEFAULT_MODEL = MODELS[0].id;
+var MODELS = [{ id: "gpt-5.6-terra", label: "GPT-5.6 Terra" }];
+var PROMPT_VERSION = "readycounter-shopper-v2";
+var OPENAI_MODEL = MODELS[0].id;
+var HOUR_MS = 60 * 60 * 1e3;
+var DAY_MS = 24 * HOUR_MS;
 
 // api/v1/agent/models.ts
 function handler(req, res) {
@@ -223,9 +226,12 @@ function handler(req, res) {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method not allowed" });
   }
-  res.setHeader("cache-control", "public, s-maxage=300");
+  const provider = process.env.OPENAI_API_KEY ? "openai" : process.env.OPENROUTER_API_KEY ? "openrouter" : null;
+  res.setHeader("cache-control", "public, s-maxage=60");
   return res.status(200).json({
-    configured: Boolean(process.env.OPENROUTER_API_KEY),
+    configured: provider !== null,
+    provider,
+    promptVersion: PROMPT_VERSION,
     models: MODELS
   });
 }

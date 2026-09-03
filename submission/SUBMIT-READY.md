@@ -1,6 +1,6 @@
 # Oscar — 15-minute Devpost submit
 
-**Deadline:** Wed Sep 3, 2026 · **1pm PDT** (22:00 Paris)  
+**Deadline:** Fri Sep 4, 2026 · **1am PDT** (10:00 Paris)  
 **Tier (EYES):** TOP-25 base · TOP-10 stretch if film v2 + native WebMCP land
 
 ---
@@ -52,7 +52,7 @@ URL: https://webmcp.devpost.com/
 
 ### Built with WebMCP (paste into Devpost)
 
-ReadyCounter registers **18** shopping tools via the browser-native WebMCP API. Each tool is declared in [`src/webmcp/registerTools.ts`](https://github.com/Morkeeth/readycounter/blob/main/src/webmcp/registerTools.ts) with `document.modelContext.registerTool(name, { description, inputSchema, execute })` — the same handlers power the Connect → Agent tool console (no Chrome flag) and native assistant sessions (Chrome 149+ flag). Shared Zustand state means human clicks and agent `add_to_order` land on one order; `prepare_checkout` validates and **never charges a card**.
+ReadyCounter registers **18** shopping tools via the browser-native WebMCP API. Each tool is declared in [`src/webmcp/registerTools.ts`](https://github.com/Morkeeth/readycounter/blob/main/src/webmcp/registerTools.ts) with `document.modelContext.registerTool({ name, description, inputSchema, execute })` — the same handlers power the Connect → Agent tool console (no Chrome flag) and native assistant sessions (Chrome 149+ flag). Shared Zustand state means human clicks and agent `add_to_order` land on one order; `prepare_checkout` validates and **never charges a card**.
 
 **Judge path:** https://readycounter.vercel.app/?judge=1 · **Skeptic path:** `npm run verify`
 

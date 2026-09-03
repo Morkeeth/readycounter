@@ -80,10 +80,13 @@ card** — the agent proposes, the person pays.
 
 ## A real model shops the store
 
-The page hands a language model the shopping tools and one instruction. The
-model chooses each call; a WebMCP-capable browser executes it through
-`document.modelContext`. On the default store, the journey reaches checkout and
-is stopped by its declared CAPTCHA constraint:
+The page sends one shopping goal to **GPT-5.6 Terra through OpenAI's Responses
+API**. The model chooses among eight commerce tools; the browser executes each
+call through `document.modelContext`. The server owns the transcript, verifies
+every returned call id, and writes a dated trial receipt to Render Key Value.
+The **Repeat 3×** control measures the path across three independent runs instead
+of presenting one lucky trace. On the default store, the journey reaches
+checkout and is stopped by its declared CAPTCHA constraint:
 
 ```
 → search_catalog({})                     8 products
@@ -99,8 +102,10 @@ is stopped by its declared CAPTCHA constraint:
 
 **The model is the shopper, never the judge.** The readiness score stays
 deterministic arithmetic over the crawl; model output cannot change it. The API
-key lives on the server, and the server restricts the prompt and available
-tools.
+key lives on the server. The client cannot choose the model, inject assistant
+history, change the prompt, or return a result for a call id the server did not
+issue. OpenRouter remains a deployment fallback only when direct OpenAI is not
+configured.
 
 ## 18 WebMCP tools
 
@@ -141,7 +146,8 @@ walls that matter — CAPTCHA, forced login, session-gated pricing.
 |---|---|
 | **Shopify OAuth** | Read-only Admin API for the merchant's own catalogue, barcodes and prices. No payment scopes, ever. |
 | **Shopify Catalog MCP (UCP)** | The protocol side of the scrape-vs-protocol comparison — where the eleven-brand finding came from. |
-| **Render Key Value** | Persists every audit and every live co-shop room across Vercel cold starts, plus a weekly cron re-running the field batch. `GET /api/v1/render/status`. |
+| **OpenAI Responses API** | GPT-5.6 Terra chooses the real WebMCP calls. The model is fixed server-side and never scores the store. |
+| **Render Key Value** | Persists every audit, co-shop room, and agent-trial receipt across Vercel cold starts, plus a weekly cron re-running the field batch. `GET /api/v1/render/status`. |
 
 ---
 
@@ -159,7 +165,7 @@ npm run dev            # http://localhost:5173
 Verify the claims rather than taking them:
 
 ```bash
-npm run verify         # 13 scripts: score arithmetic, citations, honest limits
+npm run verify         # 15 scripts: arithmetic, citations, limits, agent receipts
 npx playwright test    # 15 e2e tests, run against production
 ```
 
@@ -170,8 +176,11 @@ GET  /api/v1/health          service + integration status
 GET  /api/v1/rankings        the 148-store field batch
 GET  /api/v1/tools           the 18 WebMCP tool definitions
 GET  /api/v1/render/status   Render KV + cron status
+GET  /api/v1/agent/models    fixed model + active provider
+GET  /api/v1/agent/trials    recent persistent trial receipts
 POST /api/v1/audit/url       score any storefront
 POST /api/v1/audit/compare   one store against the field
+POST /api/v1/agent/step      advance one server-owned agent trial
 ```
 
 ## Honest limits
@@ -182,6 +191,8 @@ POST /api/v1/audit/compare   one store against the field
 - The field batch is 148 curated DTC brands, not a census of Shopify.
 - Presenc AI's shares are a modelled panel, quoted as an industry benchmark.
   Every line that uses one says so.
+- An agent-trial receipt proves which calls this page observed. It is not an
+  independent claim about a merchant's private checkout or the wider market.
 - We charged the forced-account-wall 24 points until 2026-08-31, when a re-read
   of the cited table found it has its own row at 15%. The weight changed and the
   note is still on the line.

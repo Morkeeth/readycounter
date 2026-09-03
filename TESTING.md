@@ -24,20 +24,23 @@ That is the whole thesis. Everything else is evidence for it.
 
 ## 20 seconds — watch a real model do it
 
-On the **Co-shop** tab, under the products: **Let a model shop the store**.
+On the **Co-shop** tab, under the products: **Test the store with a real model**.
 
-Pick a goal, press **Send the agent**, and watch the transcript. A language model
-receives the 18 tool definitions and decides the calls; this page executes them
-through `document.modelContext`. It typically searches, compares two products,
-adds one, then hits the CAPTCHA and says so in its own words.
+Pick a goal and press **Run one trial**. GPT-5.6 Terra receives eight commerce
+tool definitions and decides the calls; this page executes them through
+`document.modelContext`. It typically searches, reads a product, adds one, then
+hits the CAPTCHA and says so in its own words. Press **Repeat 3×** to compare
+three independent receipts instead of relying on one run.
 
-The API key is server-side. The client cannot pick the model, the system prompt
-or the tool list, so the endpoint is not a general-purpose LLM proxy: the goal is
-capped at 200 characters, the loop at 8 steps, and only the 8 shopping tools are
-exposed.
+The direct OpenAI API key is server-side. The client cannot pick the model,
+inject assistant history, change the system prompt or return results for unknown
+call ids. The goal is capped at 200 characters, the loop at 8 steps, and only
+the 8 shopping tools are exposed. Each receipt records store, source, model,
+prompt version, calls, blocker and timestamp in Render Key Value.
 
-If `OPENROUTER_API_KEY` is unset the endpoint returns `agent_unconfigured` and
-every other path still works.
+If `OPENAI_API_KEY` is absent, the deployment can use `OPENROUTER_API_KEY` as a
+fallback. If neither exists, the endpoint returns `agent_unconfigured` and every
+other path still works.
 
 ---
 
@@ -130,7 +133,7 @@ From a clone:
 
 ```bash
 git clone https://github.com/Morkeeth/readycounter && cd readycounter && npm ci
-npm run verify        # 13 scripts: score arithmetic, citations, honest limits
+npm run verify        # 15 scripts: arithmetic, citations, limits, agent receipts
 npx playwright test   # 15 e2e tests, against production
 ```
 

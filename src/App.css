@@ -3486,6 +3486,12 @@ samp {
   margin: var(--s3) 0 0;
 }
 
+.agent-shopper__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 700px) {
   .agent-shopper__controls {
     grid-template-columns: 1fr;
@@ -3500,6 +3506,66 @@ samp {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.agent-shopper__receipts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: var(--s3);
+}
+
+.agent-shopper__receipt {
+  border: 1px solid var(--ink);
+  padding: 0.75rem;
+  min-width: 0;
+}
+
+.agent-shopper__receipt > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: var(--t-label);
+}
+
+.agent-shopper__receipt-index,
+.agent-shopper__receipt small {
+  color: var(--soft);
+}
+
+.agent-shopper__receipt dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.3rem 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.agent-shopper__receipt dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.agent-shopper__receipt dt {
+  color: var(--soft);
+}
+
+.agent-shopper__receipt dd {
+  margin: 0;
+  font-weight: var(--w-bold);
+}
+
+.agent-shopper__receipt p {
+  margin: 0 0 0.65rem;
+  font-size: var(--t-small);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+  .agent-shopper__receipts {
+    grid-template-columns: 1fr;
+  }
 }
 
 .agent-shopper__row {

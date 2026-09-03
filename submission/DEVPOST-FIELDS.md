@@ -1,7 +1,7 @@
 # Devpost Classic — every field, ready to paste
 
 **Event:** WebMCP Challenge · <https://webmcp.devpost.com/>
-**Closes:** Wed 3 Sep 2026, 1:00pm PDT = **22:00 Paris**
+**Closes:** Fri 4 Sep 2026, 1:00am PDT = **10:00 Paris**
 **Every number below was read from the live API, not from a document.** Re-check with:
 
 ```
@@ -76,7 +76,7 @@ The 16:9 aspect fails its bottom-margin check — the source line overflows by
 | Caption file | `demo/demo-submit.srt` — 18 cues, covers your intro too |
 | Title | `ReadyCounter — WebMCP Challenge` |
 | Description | paste `submission/YOUTUBE-DESCRIPTION.txt` |
-| Visibility | Unlisted or Public — **not Private** |
+| Visibility | **Public** — the official rules require a public video |
 | Category | Science & Technology |
 
 To add your 20-second intro:
@@ -105,7 +105,7 @@ returned nothing at all, and links the old host. Use it only for spare copy.
 ```
 ReadyCounter registers 18 shopping tools on the browser-native WebMCP API. Each
 is declared in src/webmcp/registerTools.ts with
-document.modelContext.registerTool(name, {description, inputSchema, execute}).
+document.modelContext.registerTool({name, description, inputSchema, execute}).
 
 The same handlers serve two paths, so a judge never needs a Chrome flag:
   Path A — native WebMCP (Chrome 149+, chrome://flags/#enable-webmcp-testing)

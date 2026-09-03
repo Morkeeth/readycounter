@@ -41,11 +41,12 @@ Three things a merchant can do with it:
   tagged HUMAN or AGENT. `prepare_checkout` validates the total and **never
   charges a card** — the agent proposes, the person pays.
 
-**And you can watch a real model do it.** On the Co-shop tab, a language model
-is handed the 18 tool definitions and a shopping goal. It picks the calls, the
-browser executes them through `document.modelContext`, and it gets stopped by
-the same CAPTCHA a real customer's agent would hit — then explains the block in
-its own words. Nothing in that sequence is scripted.
+**And you can watch a real model do it.** On the Co-shop tab, GPT-5.6 Terra is
+handed eight commerce tools and a shopping goal through OpenAI's Responses API.
+It picks the calls, the browser executes them through `document.modelContext`,
+and it gets stopped by the same CAPTCHA a real customer's agent would hit. Each
+run leaves a dated receipt in Render Key Value. Repeat 3× shows the path across
+independent runs instead of presenting one lucky trace.
 
 Deliberately, the model is the **shopper and never the judge**. The readiness
 score is arithmetic over a crawl: reproducible between runs, auditable line by
@@ -63,7 +64,7 @@ which is what a shopper's agent reads, does not.
 React, TypeScript, Vite, Zustand for the shared order, deployed on Vercel.
 
 **WebMCP.** All 18 tools are declared in `src/webmcp/registerTools.ts` with
-`document.modelContext.registerTool(name, {description, inputSchema, execute})`.
+`document.modelContext.registerTool({name, description, inputSchema, execute})`.
 The same handlers serve two paths, so a judge never needs a Chrome flag to see
 it work: **Path A** is native WebMCP (Chrome 149+), **Path B** is the in-page
 Agent tool console, identical handlers, no flag.
@@ -80,13 +81,15 @@ pricing.
   barcodes and prices. No payment scopes, ever.
 - **Shopify Catalog MCP (UCP)** — the protocol side of the scrape-vs-protocol
   comparison. This is where the eleven-brand finding came from.
+- **OpenAI Responses API** — GPT-5.6 Terra chooses calls against the real tool
+  surface. The server owns the transcript and verifies every returned call id.
 - **Render Key Value** — persists every merchant audit and every live co-shop
-  room across Vercel cold starts, plus a weekly cron that re-runs the field
-  batch. `GET /api/v1/render/status` shows it.
+  room across Vercel cold starts, plus agent-trial receipts and a weekly cron
+  that re-runs the field batch. `GET /api/v1/render/status` shows it.
 
-**Verification.** 13 `npm run verify` scripts assert the score arithmetic, the
-source citations and the honest limits; 15 Playwright e2e tests run against
-production, not a mock.
+**Verification.** 15 `npm run verify` scripts assert the score arithmetic,
+source citations, honest limits, receipt summary and tool-result validation; 15
+Playwright e2e tests run against production, not a mock.
 
 ## Challenges we ran into
 

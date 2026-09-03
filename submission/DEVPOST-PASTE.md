@@ -66,13 +66,13 @@ Paste one subsection per Devpost criterion. Full map: [`submission/JUDGES.md`](.
 
 #### WebMCP Leverage
 
-**18** `document.modelContext.registerTool` handlers share one co-shop order store — human and agent edits land on the same lines with `HUMAN`/`AGENT` chips. `prepare_checkout` validates totals and **never charges a card** (constitution in [`src/webmcp/registerTools.ts`](./src/webmcp/registerTools.ts)). Path B works without the Chrome flag via Connect → Agent tool console; Path A is native WebMCP ([`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md)).
+**18** `document.modelContext.registerTool({name, description, inputSchema, execute})` handlers share one co-shop order store — human and agent edits land on the same lines with `HUMAN`/`AGENT` chips. GPT-5.6 Terra chooses calls through OpenAI's Responses API; every run leaves a Render-backed receipt. `prepare_checkout` validates totals and **never charges a card** (constitution in [`src/webmcp/registerTools.ts`](./src/webmcp/registerTools.ts)). Path B works without the Chrome flag via Connect → Agent tool console; Path A is native WebMCP ([`CHATGPT-JUDGE.md`](./CHATGPT-JUDGE.md)).
 
 **One click:** https://readycounter.vercel.app/?judge=1 → Co-shop tab + judge banner → `add_to_order` → `prepare_checkout`.
 
 #### Execution
 
-Shipped product, not a POC: live Vercel URL · **`npm run verify`** (13 scripts, exits non-zero on drift) · Playwright e2e (`e2e/judge-mode.spec.ts`, `e2e/stranger-pass.spec.ts`) · automated film pipeline · itemised bill UI where every point names its Presenc row.
+Shipped product, not a POC: live Vercel URL · **`npm run verify`** (15 scripts, exits non-zero on drift) · 15 Playwright production e2e tests · direct OpenAI Responses agent trials with server-owned state · persistent Render receipts · automated film pipeline · itemised bill UI where every point names its Presenc row.
 
 **One click:** `npm run verify && npm run test:e2e` · 60s judge path [`JUDGE-60s.md`](./JUDGE-60s.md).
 
