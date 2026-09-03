@@ -149,7 +149,7 @@ function App() {
       <header className="app-header">
         <div>
           <h1>ReadyCounter</h1>
-          <p className="tagline">audit · bill · preview · prove</p>
+          <p className="tagline">Paste your store. See what shopping agents can&rsquo;t read.</p>
         </div>
         <div
           className={`webmcp-badge${webmcpStatus.available ? ' webmcp-badge--live' : ''}`}
