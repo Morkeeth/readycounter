@@ -6,7 +6,7 @@ This is ColourPop, a real store doing real money. Watch what a shopping agent ca
 
 Zero out of twenty four. Fifty products, and not one barcode an agent can match to something it can buy.
 
-So we sent a real agent in. It finds the espresso, adds it to the cart, and the store stops it dead. A captcha. That single wall is a quarter of every abandoned agent cart, and the merchant never sees it happen.
+So we sent a real agent in. Not a script — a model, handed the store's own tools, deciding every move for itself. Watch it work. It searches the catalogue. It opens two products and compares them on price and stock. Every call here is real, made live against this store, and you will see where it ends up in a moment.
 
 This is not one bad store. We asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Seventy sent nothing back at all. Sixty seven sent a feed with no barcode in it. Coverage across the whole field: zero percent.
 
@@ -18,6 +18,6 @@ So we price the damage. Every point on the bill is one row of a published abando
 
 We did not build a catalogue. We read the ones that exist. Shopify OAuth for the merchant's own admin, Shopify's catalogue protocol for the barcodes a scrape cannot see, and Render Key Value holding every audit and every shared cart. Three integrations, all live.
 
-And the proof underneath it is WebMCP. Eighteen tools registered on document dot model context, the browser's own API, in Chrome with the flag on. A customer and their assistant build one cart together, tagged human and agent, and prepare checkout validates the total and never touches a card.
+And the proof underneath it is WebMCP. Eighteen tools registered on document dot model context, the browser's own API, in Chrome with the flag on. Here is that agent finishing the job: it adds the espresso to the same cart a human is using, tagged agent beside them. Then it asks to check out, and the store refuses. A captcha. One wall, a quarter of every abandoned agent cart, and the tool hands back the published share that says so. It never touches a card.
 
 ReadyCounter. Paste your store, and see what agents cannot read.

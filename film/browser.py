@@ -128,17 +128,6 @@ def main():
                     print(f"  ! paste beat: {e}")
 
             elif name == "joined":
-                # Kick the agent off here, not in its own beat. gpt-5.4 takes
-                # ~20s for the full loop and the narration for that beat is 11s,
-                # so starting it later meant the film cut away before the CAPTCHA
-                # — the exact moment the sentence describes.
-                try:
-                    pg.evaluate(
-                        "() => { const b = [...document.querySelectorAll('button')]"
-                        ".find(x => /send the agent/i.test(x.textContent||'')); if (b) b.click(); }"
-                    )
-                except Exception:
-                    pass
                 # same page, still loading: the score arrives, the tile joins, the
                 # barcode prints what it found
                 try:
@@ -154,16 +143,39 @@ def main():
                 if panel.count():
                     panel.scroll_into_view_if_needed(timeout=6000)
                     pg.wait_for_timeout(500)
-                    # already started during the previous beat; just hold on it
+                    # The panel only exists on the co-shop tab, so it cannot be
+                    # pre-started from the previous beat. And the click must wait
+                    # for React to hydrate: 1.5s after navigation the button is in
+                    # the DOM but inert, which is why the beat kept reporting
+                    # "blocked: False" while a hand-driven run reached the CAPTCHA
+                    # in 4.5 seconds.
+                    # Wait for readiness, not a fixed delay. Eight seconds of
+                    # fixed waiting left the model only ~12s of a 20s beat and it
+                    # was still mid-loop when the beat ended: 7 rows, no error,
+                    # still busy — the CAPTCHA landed just after the cut.
+                    clicked = False
+                    try:
+                        pg.wait_for_selector(".agent-shopper button", state="visible", timeout=12000)
+                        pg.get_by_role("button", name="Send the agent").first.click(timeout=5000)
+                        clicked = True
+                    except Exception as e:
+                        print(f"  ! agent beat: {e}")
+                    if not clicked:
+                        print("  ! agent beat: could not press Send the agent")
                     deadline = t0 + beats[para] - 1.0
                     while time.monotonic() < deadline:
-                        pg.wait_for_timeout(800)
+                        pg.wait_for_timeout(600)
                         try:
                             panel.scroll_into_view_if_needed(timeout=1500)
                         except Exception:
                             pass
-                    blocked = pg.evaluate("() => !!document.querySelector('.agent-shopper__blocked')")
-                    print(f"  · agent beat blocked at checkout: {blocked}")
+                    diag = pg.evaluate("""() => ({
+                        rows: document.querySelectorAll('.agent-shopper__row').length,
+                        blocked: !!document.querySelector('.agent-shopper__blocked'),
+                        err: document.querySelector('.agent-shopper__row--error')?.innerText?.slice(0,120) ?? '',
+                        busy: !!document.querySelector('button[disabled]'),
+                    })""")
+                    print(f"  · agent beat: {diag}")
                 else:
                     print("  ! agent panel missing")
 
