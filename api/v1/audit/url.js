@@ -1450,10 +1450,13 @@ function normalizeTags(tags) {
 function shopifyToProduct(row) {
   const variant = row.variants[0];
   const price = variant ? parseFloat(variant.price) : 0;
+  const barcode = variant?.barcode?.trim();
   const category = row.product_type || "merch";
   const tagsRaw = row.tags;
   return {
     id: variant?.sku ?? row.id,
+    ...row.handle ? { handle: row.handle } : {},
+    ...barcode ? { gtin: barcode } : {},
     name: row.title,
     description: row.body_html.replace(/<[^>]+>/g, " ").trim(),
     price: Number.isFinite(price) ? price : 0,
@@ -1734,6 +1737,7 @@ function shopifyProductsJsonToFeed(data) {
     store: "storefront",
     products: data.products.map((p) => ({
       id: String(p.id),
+      ...p.handle ? { handle: p.handle } : {},
       title: p.title,
       body_html: p.body_html ?? "",
       vendor: p.vendor ?? "",

@@ -12,17 +12,28 @@ import { apiRankings } from '../api/client';
  * The emptiness is the argument, so an empty tile stays empty.
  */
 
-type Klass = 'none' | 'feed' | 'ucp';
+/**
+ * Four classes, not three.
+ *
+ * "Asked, no feed" was hiding two different facts behind one grey tile. Probed
+ * 2026-09-03: of the 70 non-answering stores, 22 refuse the request outright
+ * (403/429) — and a real Chrome browser recovers 0 of them, so the block is
+ * IP reputation and we genuinely cannot see whether they are ready. Painting
+ * "we could not look" the same as "you have no data" is the exact error this
+ * product exists to catch in other people's dashboards.
+ */
+type Klass = 'blocked' | 'none' | 'feed' | 'ucp';
 
 interface Row {
   url: string;
   catalogScore: number | null;
   ucpGtinWhereCrawlZero?: boolean;
+  error?: string;
 }
 
 export interface Census {
   tiles: Klass[];
-  counts: { total: number; none: number; feed: number; ucp: number };
+  counts: { total: number; blocked: number; none: number; feed: number; ucp: number };
   ucpBrands: string[];
   at: string | null;
 }
@@ -47,10 +58,15 @@ function brandOf(url: string): string {
   return BRAND_NAMES[stem] ?? stem.charAt(0).toUpperCase() + stem.slice(1);
 }
 
+/** A refusal, not an empty answer: the store never let us ask. */
+const REFUSED = /\b(403|429|401|timeout)\b/i;
+
 function classify(rows: Row[]): Klass[] {
   return rows.map((r) => {
     if (r.ucpGtinWhereCrawlZero) return 'ucp';
-    if (r.catalogScore === null || r.catalogScore === undefined) return 'none';
+    if (r.catalogScore === null || r.catalogScore === undefined) {
+      return r.error && REFUSED.test(r.error) ? 'blocked' : 'none';
+    }
     return 'feed';
   });
 }
@@ -85,6 +101,7 @@ export function useCensus(): Census | null {
     const klasses = classify(rows);
     const counts = {
       total: klasses.length,
+      blocked: klasses.filter((k) => k === 'blocked').length,
       none: klasses.filter((k) => k === 'none').length,
       feed: klasses.filter((k) => k === 'feed').length,
       ucp: klasses.filter((k) => k === 'ucp').length,
@@ -119,11 +136,13 @@ export function FieldCensus({ census, yourTile }: FieldCensusProps) {
             key={i}
             className={`census__tile census__tile--${k}`}
             aria-label={
-              k === 'none'
-                ? 'asked, no feed'
-                : k === 'feed'
-                  ? 'feed, no barcode'
-                  : 'barcode on Catalog MCP, empty on scrape'
+              k === 'blocked'
+                ? 'refused the request — unmeasured, not failing'
+                : k === 'none'
+                  ? 'answered, but sent no catalogue'
+                  : k === 'feed'
+                    ? 'a feed, with no barcode in it'
+                    : 'barcode on Catalog MCP, empty on scrape'
             }
           />
         ))}
@@ -137,13 +156,19 @@ export function FieldCensus({ census, yourTile }: FieldCensusProps) {
         <div>
           <dt className="census__swatch census__swatch--none" />
           <dd>
-            <b>{counts.none}</b> asked, no feed
+            <b>{counts.none}</b> answered, no catalogue
+          </dd>
+        </div>
+        <div>
+          <dt className="census__swatch census__swatch--blocked" />
+          <dd>
+            <b>{counts.blocked}</b> refused us — unmeasured
           </dd>
         </div>
         <div>
           <dt className="census__swatch census__swatch--feed" />
           <dd>
-            <b>{counts.feed}</b> feed, no barcode
+            <b>{counts.feed}</b> a feed, no barcode
           </dd>
         </div>
         <div>
@@ -153,6 +178,15 @@ export function FieldCensus({ census, yourTile }: FieldCensusProps) {
           </dd>
         </div>
       </dl>
+
+      {counts.blocked > 0 ? (
+        <p className="census__caveat">
+          <b>{counts.blocked}</b> of these storefronts refuse an automated request outright. We
+          re-probed every one with a real browser on 2026-09-03 and recovered none, so the block is
+          IP reputation rather than anything we send. They are <strong>unmeasured, not failing</strong> —
+          we will not score a store we could not read.
+        </p>
+      ) : null}
 
       {ucpBrands.length > 0 ? (
         <p className="census__brands">

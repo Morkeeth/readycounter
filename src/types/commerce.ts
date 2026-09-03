@@ -8,6 +8,14 @@ export interface Product {
   category: string;
   inStock: boolean;
   gtin?: string;
+  /**
+   * The storefront's own product handle, e.g. "hair-clips-gwp".
+   *
+   * Not cosmetic: Shopify's CSV import matches rows by Handle, so a fix file
+   * without it cannot be re-imported. We were storing the SKU as `id`
+   * ("Accessory-HairClipsGWP") and never capturing the handle at all.
+   */
+  handle?: string;
   /** Simulated feed price — mismatch triggers readiness warning */
   feedPrice?: number;
 }

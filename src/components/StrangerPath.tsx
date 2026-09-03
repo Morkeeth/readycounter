@@ -6,11 +6,13 @@ import {
   type UrlAuditResponse,
 } from '../api/client';
 import { reviewAgainstField } from '../data/field-companion';
-import { registerCustomStore } from '../data/stores';
+import { registerCustomStore, type StoreDefinition } from '../data/stores';
+import type { AuditFinding } from '../lib/audit-findings';
 import { runStrangerProbes, type ToolProbeResult } from '../lib/stranger-probes';
 import { useShopStore } from '../store/shopStore';
 import { FieldReviewPanel } from './FieldReviewPanel';
 import { ToolProbePanel } from './ToolProbePanel';
+import { FixExportPanel } from './FixExportPanel';
 import { BlankBarcode } from './BlankBarcode';
 import { FieldCensus, useCensus } from './FieldCensus';
 
@@ -78,6 +80,8 @@ export function StrangerPath() {
   const [snapshot, setSnapshot] = useState<AuditSnapshot | null>(null);
   const [fieldReview, setFieldReview] = useState<FieldReviewPayload | null>(null);
   const [probes, setProbes] = useState<ToolProbeResult[]>([]);
+  const [auditedStore, setAuditedStore] = useState<StoreDefinition | null>(null);
+  const [findings, setFindings] = useState<AuditFinding[]>([]);
 
   const runAudit = useCallback(async (rawUrl: string) => {
     const target = normalizeDomain(rawUrl);
@@ -87,6 +91,8 @@ export function StrangerPath() {
     setSnapshot(null);
     setFieldReview(null);
     setProbes([]);
+    setAuditedStore(null);
+    setFindings([]);
 
     const result = await apiAuditUrl(target);
     setBusy(false);
@@ -117,6 +123,8 @@ export function StrangerPath() {
     const data = result.data;
     const store = await apiFetchServerStore(data.storeId);
     if (store) registerCustomStore(store);
+    setAuditedStore(store ?? null);
+    setFindings((data.findings as AuditFinding[] | undefined) ?? []);
     switchStore(data.storeId);
 
     const catalogBudget = data.summary?.catalogBudget ?? 24;
@@ -308,6 +316,14 @@ export function StrangerPath() {
 
           {fieldReview ? (
             <FieldReviewPanel review={fieldReview} storeLabel={snapshot.storeName} compact />
+          ) : null}
+
+          {auditedStore ? (
+            <FixExportPanel
+              storeName={snapshot.storeName}
+              products={auditedStore.products}
+              findings={findings}
+            />
           ) : null}
 
           <ToolProbePanel probes={probes} />

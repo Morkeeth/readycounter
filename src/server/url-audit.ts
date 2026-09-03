@@ -140,6 +140,7 @@ function jsonLdToProducts(nodes: Record<string, unknown>[]): Product[] {
 function shopifyProductsJsonToFeed(data: {
   products?: Array<{
     id: number;
+    handle?: string;
     title: string;
     body_html?: string;
     vendor?: string;
@@ -160,6 +161,7 @@ function shopifyProductsJsonToFeed(data: {
     store: 'storefront',
     products: data.products.map((p) => ({
       id: String(p.id),
+      ...(p.handle ? { handle: p.handle } : {}),
       title: p.title,
       body_html: p.body_html ?? '',
       vendor: p.vendor ?? '',

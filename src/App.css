@@ -3079,6 +3079,83 @@ a {
   background: #d8d8d2; /* asked, nothing came back — solid dead grey */
 }
 
+.census__tile--blocked {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px #b4b4ad;
+  position: relative;
+}
+
+/* A diagonal through the tile: we asked and were refused, which is a different
+   fact from "you sent nothing" and must not look the same. */
+.census__tile--blocked::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - 1px),
+    #b4b4ad calc(50% - 1px),
+    #b4b4ad calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+}
+
+.census__swatch--blocked {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px #b4b4ad;
+  background-image: linear-gradient(
+    to top right,
+    transparent calc(50% - 1px),
+    #b4b4ad calc(50% - 1px),
+    #b4b4ad calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+}
+
+.census__caveat {
+  margin: var(--s2) 0 0;
+  padding-top: var(--s2);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-small);
+  color: var(--soft);
+  max-width: 52ch;
+}
+
+.census__caveat b,
+.census__caveat strong {
+  color: var(--ink);
+}
+
+.fix-export {
+  margin-top: var(--s4);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--ink);
+}
+
+.fix-export h3 {
+  margin: 0.2rem 0 0.5rem;
+}
+
+.fix-export__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin: var(--s3) 0 0;
+}
+
+.fix-export__steps {
+  margin: var(--s3) 0 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: var(--t-small);
+}
+
+.fix-export__note {
+  margin-top: var(--s2);
+}
+
 .census__tile--feed {
   background: transparent; /* a feed, but no barcode in it — hollow */
   box-shadow: inset 0 0 0 1.5px #b4b4ad;

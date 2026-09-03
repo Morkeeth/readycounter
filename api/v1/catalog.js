@@ -397,6 +397,7 @@ function toShopifyCatalog(storeId) {
 function productToShopify(p, vendor) {
   return {
     id: p.id,
+    ...p.handle ? { handle: p.handle } : {},
     title: p.name,
     body_html: `<p>${p.description}</p>`,
     vendor,

@@ -150,10 +150,13 @@ export interface UrlAuditResponse {
   productCount: number;
   score: number;
   scoreNote?: string;
+  /** Per-check lines. The API already returned these; the client never read them. */
+  findings?: unknown[];
   summary?: {
     catalogScore: number;
     catalogBudget: number;
-    fullScore: number;
+    /** null whenever any line is NOT MEASURED — a crawl never yields a /100. */
+    fullScore: number | null;
     unmeasuredLineIds: string[];
   };
   meta?: {

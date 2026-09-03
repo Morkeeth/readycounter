@@ -3,6 +3,8 @@ import type { Product } from '../types/commerce';
 
 export interface ShopifyCatalogProduct {
   id: string;
+  /** Storefront handle — what Shopify's CSV import matches on. */
+  handle?: string;
   title: string;
   body_html: string;
   vendor: string;
@@ -35,6 +37,7 @@ export function toShopifyCatalog(storeId: string): ShopifyCatalogExport {
 function productToShopify(p: Product, vendor: string): ShopifyCatalogProduct {
   return {
     id: p.id,
+    ...(p.handle ? { handle: p.handle } : {}),
     title: p.name,
     body_html: `<p>${p.description}</p>`,
     vendor,
@@ -127,10 +130,13 @@ function normalizeTags(tags: string | string[] | undefined): string[] {
 function shopifyToProduct(row: ShopifyCatalogProduct): Product {
   const variant = row.variants[0];
   const price = variant ? parseFloat(variant.price) : 0;
+  const barcode = variant?.barcode?.trim();
   const category = (row.product_type || 'merch') as Product['category'];
   const tagsRaw = row.tags as string | string[] | undefined;
   return {
     id: variant?.sku ?? row.id,
+    ...(row.handle ? { handle: row.handle } : {}),
+    ...(barcode ? { gtin: barcode } : {}),
     name: row.title,
     description: row.body_html.replace(/<[^>]+>/g, ' ').trim(),
     price: Number.isFinite(price) ? price : 0,
