@@ -928,9 +928,10 @@ a {
 }
 
 .btn--primary:disabled {
-  background: var(--paper);
-  border-color: var(--rule);
-  color: var(--soft);
+  background: var(--sheet);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
@@ -1086,6 +1087,7 @@ a {
 
 .journey {
   margin: 1rem 0 1.25rem;
+  display: none; /* the tab bar below says the same thing; one nav, not two */
 }
 
 .journey__steps {
