@@ -53,3 +53,5 @@ film/__pycache__/
 
 demo/.cues.json
 demo/.subs.ass
+demo/seg-webmcp.mp4
+demo/seg-partners.mp4

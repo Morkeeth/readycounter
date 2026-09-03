@@ -32,7 +32,6 @@ BEATS = [
     (f"/?{RECORD}&view=integrations", "paste"),
     (f"/?{RECORD}&view=integrations", "joined"),
     (f"/?{RECORD}&beat=0&store=ember-oak&view=merchant", "bill"),
-    (f"/?{RECORD}&beat=7&view=shop", "webmcp"),
 ]
 
 CURSOR = """
@@ -134,21 +133,16 @@ def main():
                     print(f"  ! joined beat: {e}")
 
             elif name == "bill":
+                # Deliberately NOT clicking "Run agent journey": it completes
+                # asynchronously and switches the tab to Co-shop, which then
+                # hijacked the next beat — the partners narration played over
+                # the shop.
                 settle(pg, ".tape, .readiness-tape, [class*='tape']")
+                scroll(pg, 320, 1000)
                 scroll(pg, 300, 900)
-                maybe_click(pg, "text=Run agent journey")
-                scroll(pg, 280, 900)
-
-            elif name == "webmcp":
-                maybe_click(pg, "button:has-text('Add to order')")
-                pg.wait_for_timeout(500)
-                maybe_click(pg, "button:has-text('Add to order')")
-                pg.wait_for_timeout(500)
-                scroll(pg, 240, 700)
-                maybe_click(pg, "button:has-text('Prepare checkout')")
 
             spent_ms = int((time.monotonic() - t0) * 1000)
-            pg.wait_for_timeout(max(400, hold_ms - spent_ms))
+            pg.wait_for_timeout(max(200, hold_ms - spent_ms))
 
         video = pg.video
         ctx.close()

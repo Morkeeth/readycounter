@@ -48,7 +48,7 @@ The **first image becomes the Devpost thumbnail.**
 
 | # | File | Why it's in the gallery |
 |---|---|---|
-| 1 | `submission/brand/thumbnail-1280x720.png` | Title card, real numbers on it |
+| 1 | `submission/brand/thumbnail-1280x720.png` | Title card, real numbers on it — 1280×720, 64 KB |
 | 2 | `submission/shots/01-front-door.png` | The census wall: 148 tiles, 11 blue |
 | 3 | `submission/shots/03-store-scored.png` | colourpop.com audited live, 0/24, cited fix list |
 | 4 | `submission/shots/02-blank-barcode.png` | The blank barcode — nothing to scan |
@@ -91,15 +91,14 @@ mark or the whole film past 3:00.
 
 ## 7 · Project description — "About the project"
 
-Paste `submission/DEVPOST-PASTE.md`.
+Paste **`submission/DEVPOST-ABOUT.md`**. It is written to Devpost's own seven
+headings — Inspiration, What it does, How we built it, Challenges,
+Accomplishments, What we learned, What's next — and it is current with today's
+build.
 
-**It is stale in three places after today's rebuild — fix before pasting:**
-
-- It describes the front door as "paste your URL → compare to the field". The
-  front door is now the census wall plus the blank barcode.
-- It cites "78 opened a public feed at 0% scrape GTIN" but not the 70 that
-  returned nothing at all, which is the stronger half of the finding.
-- The live URL in it is the old host.
+`DEVPOST-PASTE.md` is the older long-form version and is **stale in three
+places**: it describes the pre-rebuild front door, omits the 70 storefronts that
+returned nothing at all, and links the old host. Use it only for spare copy.
 
 ## 8 · Why WebMCP fits (the field judges read most carefully)
 

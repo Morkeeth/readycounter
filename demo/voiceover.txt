@@ -16,6 +16,8 @@ The score lands, their tile joins the field, and the barcode prints exactly as f
 
 Every point on the bill is priced from a published abandonment share, and every line names its source. Six sandbox storefronts, six different ways to lose the sale.
 
-The proof is WebMCP. Eighteen tools live in this tab. Your customer and their assistant build one cart together, and prepare checkout validates the total and never charges a card.
+We did not build a catalogue. We read the ones that exist. Shopify OAuth for the merchant's own admin, Shopify's Catalog protocol for the barcodes a scrape cannot see, and Render Key Value holding every audit and every shared cart across cold starts. Three integrations, all live in this build.
+
+Now the proof, in Chrome with WebMCP switched on. This is not a console we wrote. Eighteen tools are registered on document dot model context, the browser's own API. The agent searches the catalogue, adds to the order, and the line is tagged agent next to the one a human added. Then prepare checkout refuses, because a captcha stands in the way, and it cites the published share that says so. It never touches a card.
 
 ReadyCounter. Agent commerce, now reviewable.
