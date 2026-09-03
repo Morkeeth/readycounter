@@ -2,10 +2,11 @@
 
 # ReadyCounter
 
-**Agent commerce. Now reviewable.**
+**Paste your store. See what shopping agents cannot read.**
 
-Score your storefront the way a shopping agent reads it — then shop it alongside
-the agent, in one cart, through 18 browser-native WebMCP tools.
+Audit the public catalogue, get an evidence-backed fix list, then let a real
+model shop the retrieved products beside you through 18 browser-native WebMCP
+tools. Human and agent share one cart; the person keeps control of checkout.
 
 **[readycounter.vercel.app](https://readycounter.vercel.app)** · no signup, no
 install, no key · **[60-second judge path](https://readycounter.vercel.app/?judge=1)**
@@ -27,8 +28,8 @@ We asked **148 real DTC storefronts** for their catalogue the way an agent asks.
 | **11** | publish barcodes to Shopify's Catalog MCP **and hide them on their own storefront** |
 
 Those eleven are Glossier, Tatcha, Brooklinen, Alo Yoga, Buffy, Mejuri, Gorjana,
-Dagne Dover, United By Blue, Stio and Away. The protocol has the data. The
-scrape — which is what a shopper's agent reads — does not.
+Dagne Dover, United By Blue, Stio and Away. The protocol has the data. Their
+public storefront scrape does not.
 
 Re-run our exact query:
 
@@ -79,9 +80,10 @@ card** — the agent proposes, the person pays.
 
 ## A real model shops the store
 
-The page hands a language model these 18 tools and one instruction. It picks the
-calls; the browser runs them through `document.modelContext`. Nothing is
-scripted — and it gets stopped by the same CAPTCHA a real customer's agent hits:
+The page hands a language model the shopping tools and one instruction. The
+model chooses each call; a WebMCP-capable browser executes it through
+`document.modelContext`. On the default store, the journey reaches checkout and
+is stopped by its declared CAPTCHA constraint:
 
 ```
 → search_catalog({})                     8 products
@@ -95,12 +97,10 @@ scripted — and it gets stopped by the same CAPTCHA a real customer's agent hit
 "The purchase was blocked due to a CAPTCHA requirement."   — the model
 ```
 
-![The agent shopper](docs/shots/08-agent-shopper.png)
-
 **The model is the shopper, never the judge.** The readiness score stays
-arithmetic over a crawl — reproducible, auditable, and impossible to talk into a
-better number by putting words on your storefront. The API key lives on the
-server; the client cannot choose the model, the prompt or the tool list.
+deterministic arithmetic over the crawl; model output cannot change it. The API
+key lives on the server, and the server restricts the prompt and available
+tools.
 
 ## 18 WebMCP tools
 
@@ -111,7 +111,7 @@ server; the client cannot choose the model, the prompt or the tool list.
 ## WebMCP, two paths
 
 All 18 tools are declared in [`src/webmcp/registerTools.ts`](src/webmcp/registerTools.ts)
-with `document.modelContext.registerTool(name, {description, inputSchema, execute})`.
+with `document.modelContext.registerTool({name, description, inputSchema, execute})`.
 The same handlers serve both paths, so nobody needs a Chrome flag to see it work.
 
 **Path A — native.** Chrome 149+, `chrome://flags/#enable-webmcp-testing` →
@@ -146,6 +146,8 @@ walls that matter — CAPTCHA, forced login, session-gated pricing.
 ---
 
 ## Run it yourself
+
+Requires Node.js 20 or newer.
 
 ```bash
 git clone https://github.com/Morkeeth/readycounter

@@ -38,7 +38,8 @@ export interface AuditScoreSummary {
   catalogScore: number;
   catalogBudget: number;
   /** Full sandbox score if all lines were measurable (demo stores). */
-  fullScore: number;
+  /** null whenever any line is NOT MEASURED — a crawl never yields a /100. */
+  fullScore: number | null;
   fullBudget: number;
   /** Lines waiting on checkout probe / OAuth / merchant attestation. */
   unmeasuredLineIds: string[];

@@ -1,4 +1,6 @@
 /** WebMCP tool catalog — shared by registerTools and /api/v1/tools */
+import { TOOL_SCHEMAS } from './toolSchemas';
+
 export const WEBMCP_TOOL_COUNT = 18;
 
 export const WEBMCP_TOOL_NAMES = [
@@ -28,6 +30,8 @@ export interface ToolManifestEntry {
   name: WebMCPToolName;
   description: string;
   readOnly?: boolean;
+  /** The tool's real parameter schema. Without it a client cannot call the tool. */
+  inputSchema?: Record<string, unknown>;
 }
 
 export const TOOL_MANIFEST: ToolManifestEntry[] = [
@@ -95,3 +99,14 @@ export const TOOL_MANIFEST: ToolManifestEntry[] = [
     readOnly: true,
   },
 ];
+
+/**
+ * The manifest every client actually reads, with parameter schemas attached.
+ *
+ * /api/v1/tools and the agent runner serve THIS, not the bare list — advertising
+ * a tool without its parameters makes it uncallable.
+ */
+export const TOOL_MANIFEST_WITH_SCHEMAS: ToolManifestEntry[] = TOOL_MANIFEST.map((t) => ({
+  ...t,
+  inputSchema: TOOL_SCHEMAS[t.name],
+}));

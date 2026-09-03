@@ -11,7 +11,8 @@ export interface AuditModeSnapshot {
   gtinPct: number;
   catalogScore: number;
   catalogBudget: number;
-  fullScore: number;
+  /** null whenever any line is NOT MEASURED — a crawl never yields a /100. */
+  fullScore: number | null;
   unmeasuredLineIds: string[];
   method?: string;
   error?: string;

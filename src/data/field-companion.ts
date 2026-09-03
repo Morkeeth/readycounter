@@ -68,7 +68,7 @@ export const PRESSING_ISSUES: PressingIssue[] = [
     rank: 3,
     id: 'captcha',
     title: 'CAPTCHA / bot walls at checkout',
-    why: 'CAPTCHA is 31% of failed agent checkouts; captcha-gated stores complete ~29%.',
+    why: 'CAPTCHA or a verification wall is the cause of 24% of abandoned agent carts (Presenc AI, read 2026-08-31) — the same weight the readiness tape charges.',
     fails: 'Agent abandons permanently after a hard challenge.',
     doThisWeek:
       'Allow-list known agent operators; prefer UCP/ACP in-chat checkout; reserve CAPTCHA for fraud.',
@@ -126,7 +126,7 @@ export const PRESSING_ISSUES: PressingIssue[] = [
     rank: 9,
     id: 'account-wall',
     title: 'Forced account walls',
-    why: '22% of agent checkout failures (Presenc).',
+    why: 'A forced account wall is the cause of 15% of abandoned agent carts (Presenc AI, read 2026-08-31) — the same weight the readiness tape charges.',
     fails: 'Agent cannot create accounts mid-funnel.',
     doThisWeek: 'Keep guest checkout; prefer protocol checkout.',
     evidence: 'Presenc checkout benchmarks',
@@ -297,7 +297,7 @@ export function reviewAgainstField(input: {
     flags.push({
       issueId: 'account-wall',
       severity: 'high',
-      note: 'Account wall set — agents fail guest checkout (~22% of agent failures).',
+      note: 'Account wall set — agents fail guest checkout (15% of abandoned agent carts, Presenc AI).',
     });
   }
   if (input.offerPct != null && input.offerPct < 20) {

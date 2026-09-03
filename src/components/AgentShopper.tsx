@@ -143,27 +143,13 @@ export function AgentShopper() {
       <p className="integrations__section-label">Prove it with a real agent</p>
       <h3>Let a model shop the store</h3>
       <p className="integrations__muted">
-        Pick a frontier model, give it a shopping goal, and it drives these 18 WebMCP tools itself.
-        The model chooses every call; this page executes them through <code>document.modelContext</code>.
-        The readiness score stays arithmetic — the model is the shopper, never the judge.
+        {models[0]?.label ?? 'A frontier model'} is given these 18 WebMCP tools and a shopping goal,
+        and drives the store itself. The model chooses every call; this page executes them through{' '}
+        <code>document.modelContext</code>. The readiness score stays arithmetic — the model is the
+        shopper, never the judge.
       </p>
 
       <div className="agent-shopper__controls">
-        <label className="integrations__shop-label">
-          Agent
-          <select
-            className="integrations__shop-input"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            disabled={busy || !models.length}
-          >
-            {models.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </label>
         <label className="integrations__shop-label">
           Shopping goal
           <select

@@ -129,8 +129,9 @@ export function ReadinessDashboard({ registeredToolCount, onGoShop }: ReadinessD
         <p className="integrations__muted" style={{ marginBottom: '1rem' }}>
           Catalog score <strong>{auditResult.summary.catalogScore}</strong> /{' '}
           {auditResult.summary.catalogBudget} pts measured from crawl.{' '}
-          {auditResult.summary.unmeasuredLineIds.length} checkout lines need Shopify OAuth or agent
-          journey — sandbox score {auditResult.summary.fullScore}/100 would overstate readiness.
+          {auditResult.summary.unmeasuredLineIds.length} checkout lines need Shopify OAuth or an
+          agent journey, so there is no /100 for this store — a full score here would overstate
+          readiness.
         </p>
       ) : null}
       {fieldReview ? (

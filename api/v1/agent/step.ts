@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { TOOL_MANIFEST } from '../../../src/webmcp/toolManifest';
+import { TOOL_MANIFEST_WITH_SCHEMAS } from '../../../src/webmcp/toolManifest';
 
 /**
  * One step of a real agent shopping the store.
@@ -15,20 +15,16 @@ import { TOOL_MANIFEST } from '../../../src/webmcp/toolManifest';
  */
 
 /**
- * Frontier models only, and a fixed whitelist.
+ * One model, one task, one evidence trail.
  *
- * The client picks from this list and nothing else — an arbitrary model string
- * would turn this endpoint into a general-purpose LLM proxy on someone else's
- * key. Each one was checked for correct tool-calling against these schemas
- * before being listed.
+ * A picker across five frontier models was built and then removed: it turned the
+ * product into a model bake-off and diluted the single claim, which is about the
+ * STORE and not about which model shops best.
+ *
+ * Pinned rather than configurable by the client — an arbitrary model string would
+ * make this a general-purpose LLM proxy on someone else's key.
  */
-export const MODELS = [
-  { id: 'openai/gpt-5.6-terra-pro', label: 'GPT-5.6 Terra Pro' },
-  { id: 'anthropic/claude-opus-5', label: 'Claude Opus 5' },
-  { id: 'anthropic/claude-sonnet-5', label: 'Claude Sonnet 5' },
-  { id: 'google/gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
-  { id: 'openai/gpt-5.6-sol', label: 'GPT-5.6 Sol' },
-] as const;
+export const MODELS = [{ id: 'openai/gpt-5.6-terra-pro', label: 'GPT-5.6 Terra Pro' }] as const;
 
 const DEFAULT_MODEL = MODELS[0].id;
 const MAX_GOAL = 200;
@@ -72,7 +68,7 @@ interface Msg {
 }
 
 function toOpenAITools() {
-  return TOOL_MANIFEST.filter((t) => ALLOWED.has(t.name)).map((t) => ({
+  return TOOL_MANIFEST_WITH_SCHEMAS.filter((t) => ALLOWED.has(t.name)).map((t) => ({
     type: 'function' as const,
     function: {
       name: t.name,

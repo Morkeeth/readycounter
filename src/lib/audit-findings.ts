@@ -209,7 +209,12 @@ export function computeAuditFindings(
   const catalogScore =
     catalogBudget === 0 ? 0 : Math.round((catalogEarned / catalogBudget) * 100);
 
-  const fullScore = readinessScore(sandboxChecks);
+  // A crawl cannot see the checkout, so it must not report a /100. We were
+  // returning summary.fullScore = 78 for colourpop.com while four checkout
+  // lines sat in unmeasuredLineIds and the product said field crawls never get
+  // a full score. Null is the honest answer, and the type says so.
+  const unmeasuredIds = unmeasured.map((u) => u.id);
+  const fullScore = unmeasuredIds.length > 0 ? null : readinessScore(sandboxChecks);
 
   return {
     findings: [...catalogLines, ...unmeasured, ...reported.map((c) => lineFromCheck(c, 'observed', ['tools']))],
@@ -218,7 +223,7 @@ export function computeAuditFindings(
       catalogBudget,
       fullScore,
       fullBudget: POINT_BUDGET,
-      unmeasuredLineIds: unmeasured.map((u) => u.id),
+      unmeasuredLineIds: unmeasuredIds,
     },
   };
 }
