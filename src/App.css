@@ -19,6 +19,7 @@
   --soft: #8a8a86;
   --rule: #dcdcd8;
   --stamp: #bf2b1a;
+  --has: #1a5cff; /* barcode present on Catalog MCP — the only hue on the wall */
   --pass: var(--ink);
 
   /* aliases: the body of this file reads these; all resolve to the six above */
@@ -182,13 +183,20 @@ a {
 
 .main-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 21rem;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
 }
 
+/* Only the co-shop tab has a second column (the shared order). Every other tab
+   used to reserve 21rem for it and render nothing there — a permanently empty
+   third of the page on Connect and Readiness. */
+.main-layout--split {
+  grid-template-columns: minmax(0, 1fr) 21rem;
+}
+
 @media (max-width: 900px) {
-  .main-layout {
+  .main-layout--split {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -2800,13 +2808,32 @@ a {
   margin: 0 0 0.5rem;
 }
 
+.stranger-path__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .stranger-path__grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}
+
 .stranger-path__title {
-  font-size: clamp(1.75rem, 4vw, 2.6rem);
-  font-weight: 600;
-  margin: 0 0 0.75rem;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  max-width: 22ch;
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+  font-weight: 800;
+  margin: 0 0 0.85rem;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  max-width: 20ch;
+}
+
+.stranger-path__title em {
+  font-style: normal;
+  color: var(--soft);
 }
 
 .stranger-path__lead {
@@ -2976,4 +3003,280 @@ a {
 .store-switcher select:focus {
   outline: 2px solid var(--ink);
   outline-offset: 1px;
+}
+
+
+/* =============================================================
+   THE CENSUS WALL — 148 real storefronts, one tile each.
+   Every class is derived from GET /api/v1/rankings. An empty
+   tile is empty because the storefront sent nothing: the
+   emptiness is the argument, so nothing fills it in.
+   ============================================================= */
+
+.census {
+  padding-top: 0.35rem;
+}
+
+.census__cap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.7rem;
+}
+
+.census__lbl {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.census__tiles {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.census__tile {
+  aspect-ratio: 1;
+  background: #d8d8d2; /* asked, nothing came back — solid dead grey */
+}
+
+.census__tile--feed {
+  background: transparent; /* a feed, but no barcode in it — hollow */
+  box-shadow: inset 0 0 0 1.5px #b4b4ad;
+}
+
+.census__tile--ucp {
+  background: var(--has);
+  box-shadow: none;
+}
+
+.census__tile--you {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--ink);
+}
+
+.census__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.35rem;
+  margin: 0.85rem 0 0;
+}
+
+.census__key div {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.census__key dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--soft);
+}
+
+.census__key dd b {
+  color: var(--ink);
+}
+
+.census__swatch {
+  width: 0.6rem;
+  height: 0.6rem;
+  margin: 0;
+  background: #d8d8d2;
+}
+
+.census__swatch--feed {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px #b4b4ad;
+}
+
+.census__swatch--ucp {
+  background: var(--has);
+}
+
+.census__brands {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 1rem 0 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--rule);
+}
+
+.census__brands .census__lbl {
+  width: 100%;
+  margin-bottom: 0.2rem;
+}
+
+.census__brand {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--has);
+  border: 1px solid var(--has);
+  padding: 0.2rem 0.45rem;
+}
+
+/* =============================================================
+   THE BLANK BARCODE — what an agent actually reads. A bar is ink
+   only where a product exposes a GTIN, so at 0% the code is grey
+   and unscannable. The picture IS the measurement.
+   ============================================================= */
+
+.barcode {
+  margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+  padding: 1.1rem 0 1.2rem;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+
+.barcode__cap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--soft);
+  margin-bottom: 0.85rem;
+}
+
+.barcode__verdict {
+  color: var(--has);
+  font-weight: 700;
+}
+
+.barcode__verdict--blank {
+  color: var(--stamp);
+  font-weight: 700;
+}
+
+.barcode__strip {
+  position: relative;
+  overflow: hidden;
+  height: 4.6rem;
+}
+
+.barcode__bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2px;
+  height: 100%;
+}
+
+.barcode__bar {
+  display: block;
+  background: #d3d3ce;
+  flex: 0 1 auto;
+}
+
+.barcode__bar--ink {
+  background: var(--ink);
+}
+
+.barcode__beam {
+  position: absolute;
+  inset-block: 0;
+  width: 2px;
+  background: var(--stamp);
+  left: 0;
+  animation: barcode-sweep 3.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes barcode-sweep {
+  0% { left: 0; opacity: 0; }
+  6% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barcode__beam { animation: none; opacity: 0; }
+}
+
+/* =============================================================
+   BUILDER CONSOLE — one door, not nine cards on the front page.
+   ============================================================= */
+
+.integrations__builders {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--ink);
+  padding-top: 0.9rem;
+}
+
+.integrations__builders > summary {
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem 1.5rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.35rem 0;
+}
+
+.integrations__builders-hint {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.integrations__builders[open] > summary {
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+
+/* The one action on the page. Disabled still reads as a button, never as dead
+   grey text on grey paper — that misread cost the front door its call to act. */
+.stranger-path__form .btn--primary {
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--ink);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding-block: 0.9rem;
+}
+
+.stranger-path__form .btn--primary:disabled {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.stranger-path__form {
+  max-width: 30rem;
+  margin-top: 1.75rem;
+}
+
+.stranger-path__ask {
+  display: flex;
+  flex-direction: column;
+}
+
+.stranger-path__form .integrations__shop-label {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--soft);
 }

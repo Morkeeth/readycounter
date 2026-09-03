@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   apiAuditUrl,
   apiFetchServerStore,
-  apiRankings,
   type FieldReviewPayload,
   type UrlAuditResponse,
 } from '../api/client';
@@ -12,6 +11,8 @@ import { runStrangerProbes, type ToolProbeResult } from '../lib/stranger-probes'
 import { useShopStore } from '../store/shopStore';
 import { FieldReviewPanel } from './FieldReviewPanel';
 import { ToolProbePanel } from './ToolProbePanel';
+import { BlankBarcode } from './BlankBarcode';
+import { FieldCensus, useCensus } from './FieldCensus';
 
 function normalizeDomain(raw: string): string {
   const t = raw.trim();
@@ -65,6 +66,7 @@ function useCountUp(target: number, active: boolean): number {
 
 export function StrangerPath() {
   const switchStore = useShopStore((s) => s.switchStore);
+  const census = useCensus();
   const [domain, setDomain] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const audit = params.get('audit_url');
@@ -76,19 +78,6 @@ export function StrangerPath() {
   const [snapshot, setSnapshot] = useState<AuditSnapshot | null>(null);
   const [fieldReview, setFieldReview] = useState<FieldReviewPayload | null>(null);
   const [probes, setProbes] = useState<ToolProbeResult[]>([]);
-  const [fieldBatch, setFieldBatch] = useState<{ crawled: number; total: number; gtin: number; ucpGap: number } | null>(null);
-
-  useEffect(() => {
-    void apiRankings().then((data) => {
-      if (!data?.shopCount) return;
-      setFieldBatch({
-        crawled: data.succeeded,
-        total: data.shopCount,
-        gtin: data.avgGtinPct,
-        ucpGap: data.ucp?.gtinWhereCrawlZero ?? 0,
-      });
-    });
-  }, []);
 
   const runAudit = useCallback(async (rawUrl: string) => {
     const target = normalizeDomain(rawUrl);
@@ -187,52 +176,96 @@ export function StrangerPath() {
 
   return (
     <section className="stranger-path" aria-label="Score your store">
-      <header className="stranger-path__hero">
-        <p className="stranger-path__kicker">Agent readiness · no login</p>
-        <h2 className="stranger-path__title">Paste your store. Get the score and the fix list.</h2>
-        <p className="stranger-path__lead">
-          {fieldBatch ? (
-            <>
-              We crawled <strong>{fieldBatch.crawled}/{fieldBatch.total}</strong> DTC brands — scrape
-              GTIN <strong>{fieldBatch.gtin}%</strong>
-              {fieldBatch.ucpGap ? (
-                <>
-                  {' '}
-                  · <strong>{fieldBatch.ucpGap}</strong> UCP gaps
-                </>
-              ) : null}
-              . Your store joins the same batch in under 60 seconds.
-            </>
-          ) : (
-            <>Measure what agents retrieve from your public catalog — not Admin settings we never opened.</>
-          )}
-        </p>
-      </header>
+      <div className="stranger-path__grid">
+        <div className="stranger-path__ask">
+        <header className="stranger-path__hero">
+          <p className="stranger-path__kicker">Agent readiness · no login</p>
+          <h2 className="stranger-path__title">
+            {census ? (
+              <>
+                {census.counts.total} storefronts asked.
+                <br />
+                {census.counts.ucp === 1 ? 'One has' : `${census.counts.ucp} have`} a barcode.
+                <br />
+                <em>Add yours.</em>
+              </>
+            ) : (
+              <>
+                Paste your store.
+                <br />
+                <em>Get the score and the fix list.</em>
+              </>
+            )}
+          </h2>
+          <p className="stranger-path__lead">
+            {census ? (
+              <>
+                Every tile is one real storefront, asked for its catalogue the way a shopping agent
+                asks. <strong>{census.counts.none}</strong> sent nothing back.{' '}
+                <strong>{census.counts.feed}</strong> sent a feed with no barcode in it. Empty means
+                empty.
+              </>
+            ) : (
+              <>
+                Measure what agents retrieve from your public catalog — not Admin settings we never
+                opened.
+              </>
+            )}
+          </p>
+        </header>
 
       <form
-        className="stranger-path__form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void runAudit(domain);
-        }}
-      >
-        <label className="integrations__shop-label">
-          Your store domain
-          <input
-            type="text"
-            className="integrations__shop-input stranger-path__input"
-            placeholder="your-store.com"
-            value={domain}
-            onChange={(e) => setDomain(e.target.value)}
-            autoComplete="url"
-            spellCheck={false}
-            disabled={busy}
+          className="stranger-path__form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void runAudit(domain);
+          }}
+        >
+          <label className="integrations__shop-label">
+            Your store domain
+            <input
+              type="text"
+              className="integrations__shop-input stranger-path__input"
+              placeholder="your-store.com"
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              autoComplete="url"
+              spellCheck={false}
+              disabled={busy}
+            />
+          </label>
+          <button type="submit" className="btn btn--primary btn--wide" disabled={!domain.trim() || busy}>
+            {busy ? 'Scoring…' : 'Score my store'}
+          </button>
+        </form>
+        </div>
+
+        {census ? (
+          <FieldCensus
+            census={census}
+            yourTile={
+              snapshot
+                ? {
+                    label: snapshot.storeName,
+                    klass: snapshot.gtinPct > 0 ? 'ucp' : 'feed',
+                  }
+                : null
+            }
           />
-        </label>
-        <button type="submit" className="btn btn--primary btn--wide" disabled={!domain.trim() || busy}>
-          {busy ? 'Scoring…' : 'Score my store'}
-        </button>
-      </form>
+        ) : null}
+      </div>
+
+      <BlankBarcode
+        gtinPct={snapshot?.gtinPct ?? 0}
+        productCount={snapshot?.productCount ?? 0}
+        label={
+          snapshot
+            ? `What an agent reads on ${snapshot.storeName}`
+            : 'What an agent reads on your product page'
+        }
+        scanning={!snapshot}
+      />
+
 
       {err ? <p className="integrations__warn">{err}</p> : null}
 

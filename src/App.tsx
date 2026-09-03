@@ -185,7 +185,7 @@ function App() {
         ))}
       </nav>
 
-      <main className="main-layout">
+      <main className={`main-layout${tab === 'shop' ? ' main-layout--split' : ''}`}>
         {tab === 'shop' ? (
           <>
             <ShopView />

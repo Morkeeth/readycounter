@@ -1,36 +1,71 @@
 1
-00:00:00,400 --> 00:00:03,510
+00:00:00,400 --> 00:00:02,900
 Agent commerce. Now reviewable. Proof.
 
 2
-00:00:03,800 --> 00:00:12,660
-Eighteen WebMCP tools. Human and agent, one cart. Prepare checkout never charges. Not Shopify's rails. Agent-side truth.
+00:00:04,150 --> 00:00:10,786
+Eighteen WebMCP tools. Human and agent, one cart. Prepare checkout never charges. Not Shopify's rails.
 
 3
-00:00:13,000 --> 00:00:21,760
-One click walks the agent journey. Blocked at captcha. Autopilot in the sandbox: seventy becomes ninety four. Live Shopify untouched.
+00:00:10,836 --> 00:00:11,950
+Agent-side truth.
 
 4
-00:00:22,500 --> 00:00:38,260
-Your store is not ready for agents. They are already shopping. Traffic up eight times year over year. Seventy eight point six percent of agent carts abandon. That is customers you never see. Merchants hear agentic commerce. They cannot see which door is locked.
+00:00:13,350 --> 00:00:19,658
+One click walks the agent journey. Blocked at captcha. Autopilot in the sandbox: seventy becomes ninety four.
 
 5
-00:00:38,500 --> 00:00:52,985
-ReadyCounter is the lighthouse. Super sleek WebMCP that gets your shop ready. Paste a URL. Before and after. We already parsed one hundred forty eight popular stores so you see the width, not a vanity score in a vacuum.
+00:00:19,708 --> 00:00:21,050
+Live Shopify untouched.
 
 6
-00:00:53,500 --> 00:01:11,085
-Compare yourself to the field. Seventy eight crawled. Zero percent barcodes in what agents scrape. Eleven brands still return GTIN on UCP while the scrape is empty. Insights you cannot get from a theme check. Ease: one paste, one receipt, one delta when you fix it.
+00:00:22,900 --> 00:00:28,543
+Your store is not ready for agents. They are already shopping. Traffic up eight times year over year.
 
 7
-00:01:11,000 --> 00:01:21,160
-This store scores seventy. Every point is a published abandonment share. Re-audit the same URL and we print the delta. Measure. Act. Re-measure. Proof.
+00:00:28,593 --> 00:00:33,504
+Seventy eight point six percent of agent carts abandon. That is customers you never see.
 
 8
-00:01:21,500 --> 00:01:31,935
-The ambition: every merchant runs this when they ship anything new. Shopify adopts the receipt. Stores go public with their score. Lighthouse for agentic commerce.
+00:00:33,554 --> 00:00:37,500
+Merchants hear agentic commerce. They cannot see which door is locked.
 
 9
-00:01:25,000 --> 00:01:34,610
-ReadyCounter is live. Open source. Shopify catalog. Render audit. WebMCP proof. Agent commerce. Now reviewable. ReadyCounter. Proof.
+00:00:38,880 --> 00:00:45,429
+ReadyCounter is the lighthouse. Super sleek WebMCP that gets your shop ready. Paste a URL. Before and after.
 
+10
+00:00:45,479 --> 00:00:52,200
+We already parsed one hundred forty eight popular stores so you see the width, not a vanity score in a vacuum.
+
+11
+00:00:53,820 --> 00:00:59,900
+Compare yourself to the field. Seventy eight crawled. Zero percent barcodes in what agents scrape.
+
+12
+00:00:59,950 --> 00:01:06,717
+Eleven brands still return GTIN on UCP while the scrape is empty. Insights you cannot get from a theme check.
+
+13
+00:01:06,767 --> 00:01:10,270
+Ease: one paste, one receipt, one delta when you fix it.
+
+14
+00:01:11,360 --> 00:01:15,673
+This store scores seventy. Every point is a published abandonment share.
+
+15
+00:01:15,723 --> 00:01:20,450
+Re-audit the same URL and we print the delta. Measure. Act. Re-measure. Proof.
+
+16
+00:01:21,850 --> 00:01:27,224
+The ambition: every merchant runs this when they ship anything new. Shopify adopts the receipt.
+
+17
+00:01:27,274 --> 00:01:31,100
+Stores go public with their score. Lighthouse for agentic commerce.
+
+18
+00:01:31,150 --> 00:01:33,800
+Agent commerce. Now reviewable. ReadyCounter. Proof.

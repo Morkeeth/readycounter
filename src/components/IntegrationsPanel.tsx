@@ -45,6 +45,7 @@ export function IntegrationsPanel({
   const [importJson, setImportJson] = useState('');
   const [importError, setImportError] = useState<string | null>(null);
   const [shopDomain, setShopDomain] = useState('');
+  const buildersOpen = new URLSearchParams(window.location.search).get('judge') === '1';
   const [shopifyStatus, setShopifyStatus] = useState<ShopifyStatus | null>(null);
   const [renderStatus, setRenderStatus] = useState<RenderPartnershipStatus | null>(null);
   const [shopifyMsg, setShopifyMsg] = useState<string | null>(null);
@@ -158,6 +159,13 @@ export function IntegrationsPanel({
       </div>
       </details>
 
+      <details className="integrations__builders" open={buildersOpen}>
+        <summary>
+          <span>For developers and judges</span>
+          <span className="integrations__builders-hint">
+            WebMCP paths · {toolCount} tools · Shopify OAuth · API · sandbox stores · launch kit
+          </span>
+        </summary>
       <div className="integrations__grid">
         <WhyWebMCP webmcpLive={webmcpLive} toolCount={toolCount} />
 
@@ -227,7 +235,7 @@ export function IntegrationsPanel({
             <code>POST /audit/url</code> · <code>/companion</code> · <code>/tools</code>
           </p>
           <p>
-            <strong className={apiUp ? 'integrations__ok' : 'integrations__warn'}>
+            <strong className={apiUp === false ? 'integrations__warn' : 'integrations__ok'}>
               {apiUp === null ? 'checking…' : apiUp ? 'live' : 'offline'}
             </strong>
           </p>
@@ -262,9 +270,10 @@ export function IntegrationsPanel({
         </details>
       </div>
 
-      <details className="launch-brief-details">
-        <summary>Launch kit — research, test cases, demo script</summary>
-        <LaunchBrief />
+        <details className="launch-brief-details">
+          <summary>Launch kit — research, test cases, demo script</summary>
+          <LaunchBrief />
+        </details>
       </details>
     </section>
   );

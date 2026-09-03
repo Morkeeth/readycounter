@@ -15,10 +15,26 @@
     }
   },
   "data": {
-    "crawled": { "value": 78, "source": "field", "at": "succeeded" },
-    "parsed": { "value": 148, "source": "field", "at": "shopCount" },
-    "scrape_gtin_pct": { "value": 0, "source": "field", "at": "avgGtinPct" },
-    "ucp_gaps": { "value": 11, "source": "field", "at": "ucp.gtinWhereCrawlZero" },
+    "crawled": {
+      "value": 78,
+      "source": "field",
+      "at": "succeeded"
+    },
+    "parsed": {
+      "value": 148,
+      "source": "field",
+      "at": "shopCount"
+    },
+    "scrape_gtin_pct": {
+      "value": 0,
+      "source": "field",
+      "at": "avgGtinPct"
+    },
+    "ucp_gaps": {
+      "value": 11,
+      "source": "field",
+      "at": "ucp.gtinWhereCrawlZero"
+    },
     "panel": {
       "source": "field",
       "values": [
@@ -48,7 +64,7 @@
   "scenes": [
     {
       "id": "title",
-      "type": "title",
+      "type": "statement",
       "seconds": 5.0,
       "step": "hook",
       "heading": "Agent commerce.",
@@ -66,7 +82,7 @@
     },
     {
       "id": "close",
-      "type": "title",
+      "type": "close",
       "seconds": 4.0,
       "step": "close",
       "heading": "ReadyCounter",

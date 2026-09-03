@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 160" width="720" height="160" role="img" aria-label="ReadyCounter">
+  <title>ReadyCounter</title>
+  <rect width="720" height="160" fill="#f7f7f5"/>
+  <g transform="translate(24,24) scale(0.4375)">
+    <rect width="256" height="256" fill="#000000"/>
+    <path fill="#f7f7f5" d="M64 40 h128 v150
+      l-10.67 10 -10.66 -10 -10.67 10 -10.66 -10 -10.67 10 -10.66 -10
+      -10.67 10 -10.66 -10 -10.67 10 -10.66 -10 -10.67 10 -10.66 -10 Z"/>
+    <g fill="#000000">
+      <rect x="84" y="72"  width="88" height="6"/><rect x="84" y="94"  width="60" height="6"/>
+      <rect x="84" y="116" width="74" height="6"/><rect x="84" y="138" width="46" height="6"/>
+    </g>
+    <rect x="84" y="160" width="88" height="18" fill="#bf2b1a"/>
+  </g>
+  <text x="152" y="90" font-family="'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="62" letter-spacing="-2" fill="#000000">ReadyCounter</text>
+  <text x="154" y="122" font-family="'JetBrains Mono',ui-monospace,Menlo,monospace" font-size="19" letter-spacing="3.4" fill="#6b6b68">AUDIT · BILL · PREVIEW · PROVE</text>
+</svg>
