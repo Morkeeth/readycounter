@@ -30,10 +30,41 @@
   --warn: var(--soft);
   --stamp-wash: transparent;
 
-  --display: 'Bricolage Grotesque', 'Archivo', 'Helvetica Neue', sans-serif;
-  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* ONE typeface. Hierarchy comes from weight and size, never from a second
+     family — two faces made the labels read as a different system from the
+     body, which is what "lacks coherence" looked like on screen. */
+  --display: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  --mono: var(--display);
+
+  /* Three weights. 600 and 650 were doing the same job as 700 and blurring it. */
+  --w-normal: 400;
+  --w-bold: 700;
+  --w-display: 800;
+
+  /* Six sizes with real jumps. There were about thirty, twenty of them inside a
+     0.3rem band, so nothing could outrank anything. */
+  --t-display: clamp(2rem, 4.6vw, 3.4rem);
+  --t-title: 1.5rem;
+  --t-lead: 1.0625rem;
+  --t-body: 0.9375rem;
+  --t-small: 0.8125rem;
+  --t-label: 0.6875rem;
+
+  /* Two more steps, for the two things that are meant to be the biggest object
+     on their screen: the wordmark, and a number that is the answer. */
+  --t-hero: 2.25rem;
+  --t-figure: 4rem;
+  --t-figure-sm: 3rem;
 
   --tape-w: 30rem;
+
+  /* One spacing scale. Vertical gaps on the front door were 48px, 40px and
+     122px — three arbitrary values doing one job. */
+  --s1: 0.5rem;
+  --s2: 1rem;
+  --s3: 1.5rem;
+  --s4: 2.5rem;
+  --s5: 4rem;
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --motion: 160ms;
 }
@@ -89,8 +120,8 @@ a {
 .app-header h1 {
   margin: 0;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 2.4rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-hero);
   letter-spacing: -0.04em;
   line-height: 1;
 }
@@ -98,13 +129,13 @@ a {
 .tagline {
   margin: 0.4rem 0 0;
   font-family: var(--display);
-  font-size: 0.85rem;
+  font-size: var(--t-body);
   color: var(--ink-soft);
 }
 
 .webmcp-badge {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--soft);
@@ -114,7 +145,7 @@ a {
 
 .webmcp-badge--live {
   color: var(--ink);
-  font-weight: 600;
+  font-weight: var(--w-bold);
 }
 
 .store-switcher {
@@ -126,7 +157,7 @@ a {
 
 .store-switcher__label {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--ink-soft);
@@ -135,7 +166,7 @@ a {
 .store-switcher select,
 .dev-panel__manual select {
   font-family: var(--display);
-  font-size: 0.9rem;
+  font-size: var(--t-body);
   max-width: 100%;
   background: var(--sheet);
   color: var(--ink);
@@ -158,7 +189,7 @@ a {
 
 .tabs__btn {
   font-family: var(--display);
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   background: var(--sheet);
@@ -168,7 +199,7 @@ a {
   padding: 0.55rem 1.1rem;
   border-radius: 0;
   transition: color var(--motion) var(--ease), background var(--motion) var(--ease);
-  font-weight: 600;
+  font-weight: var(--w-bold);
   cursor: pointer;
 }
 
@@ -249,7 +280,7 @@ a {
   border-right: 1px solid var(--rule);
   padding: 1.5rem 1.5rem 1.25rem;
   font-family: var(--display);
-  font-size: 0.82rem;
+  font-size: var(--t-body);
 }
 
 .tape__head {
@@ -260,15 +291,15 @@ a {
 .tape__head h3 {
   margin: 0;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 1.25rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-title);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .tape__head p {
   margin: 0.15rem 0 0;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -277,7 +308,7 @@ a {
 .tape__budget {
   margin: 0 0 0.9rem;
   text-align: center;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -287,7 +318,7 @@ a {
   padding: 0.5rem 0.6rem;
   border: 1px solid var(--rule);
   text-align: left;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   line-height: 1.55;
   color: var(--ink);
 }
@@ -303,7 +334,7 @@ a {
 
 .tape__section {
   margin: 0 0 0.5rem;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.11em;
   color: var(--ink-soft);
@@ -337,7 +368,7 @@ a {
   width: 0.7rem;
   text-align: right;
   color: var(--ink-soft);
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .tape__line[open] summary::after {
@@ -372,10 +403,10 @@ a {
 .tape__amount {
   flex: 0 0 auto;
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: var(--w-bold);
   white-space: pre;
   font-family: var(--mono);
-  font-size: 0.78rem;
+  font-size: var(--t-small);
 }
 
 .tape__line--fail .tape__amount {
@@ -387,7 +418,7 @@ a {
 }
 
 .tape__line[open] summary .tape__label {
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .tape__body {
@@ -401,7 +432,7 @@ a {
 .tape__rationale,
 .tape__fix {
   margin: 0 0 0.5rem;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   line-height: 1.6;
   color: var(--ink-2);
 }
@@ -411,7 +442,7 @@ a {
 }
 
 .tape__fix {
-  font-weight: 700;
+  font-weight: var(--w-bold);
   color: var(--ink);
 }
 
@@ -420,7 +451,7 @@ a {
   flex-wrap: wrap;
   gap: 0.4rem;
   margin: 0 0 0.5rem;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -441,7 +472,7 @@ a {
 .tape__basis--measured {
   border-color: var(--ink);
   color: var(--ink);
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .tape__basis--reported {
@@ -453,7 +484,7 @@ a {
 .tape__lost {
   border-color: var(--stamp);
   color: var(--stamp);
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .tape__sources {
@@ -467,19 +498,19 @@ a {
 .tape__sources li {
   display: grid;
   gap: 0.1rem;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   line-height: 1.5;
   padding: 0.5rem;
   background: var(--paper);
 }
 
 .tape__sources a {
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .tape__source-figure {
-  font-weight: 700;
-  font-size: 0.8rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-small);
   font-family: var(--mono);
 }
 
@@ -501,7 +532,7 @@ a {
   min-width: 0;
   padding-right: 1.25rem;
   margin: 0 0 1.1rem;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--ink-2);
@@ -518,16 +549,16 @@ a {
 
 .tape__total-label {
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-body);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
 .tape__total-value {
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 4.6rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-figure);
   line-height: 0.82;
   letter-spacing: -0.04em;
   margin-left: auto;
@@ -535,7 +566,7 @@ a {
 }
 
 .tape__total-of {
-  font-size: 0.9rem;
+  font-size: var(--t-body);
   color: var(--ink-soft);
 }
 
@@ -550,8 +581,8 @@ a {
 .tape__void-stamp {
   margin: 0 0 0.4rem;
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.6rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-title);
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -560,13 +591,13 @@ a {
 
 .tape__void-why {
   margin: 0 0 0.4rem;
-  font-size: 0.74rem;
+  font-size: var(--t-small);
   color: var(--ink);
 }
 
 .tape__void-cite {
   margin: 0;
-  font-size: 0.65rem;
+  font-size: var(--t-label);
   line-height: 1.55;
   color: var(--ink-2);
 }
@@ -579,7 +610,7 @@ a {
   margin: 1rem 0 0;
   padding-top: 0.7rem;
   border-top: 1px dashed var(--rule);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.04em;
   color: var(--ink-soft);
   text-align: center;
@@ -601,15 +632,15 @@ a {
 .slab h3 {
   margin: 0 0 0.5rem;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-lead);
   letter-spacing: -0.01em;
 }
 
 .slab__lead,
 .slab__empty {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   line-height: 1.6;
   color: var(--ink-2);
 }
@@ -626,7 +657,7 @@ a {
   padding: 0.5rem 0;
   border-top: 1px dotted var(--rule);
   cursor: pointer;
-  font-size: 0.84rem;
+  font-size: var(--t-body);
 }
 
 .switch input {
@@ -640,7 +671,7 @@ a {
   display: block;
   font-family: var(--display);
   font-style: normal;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   margin-top: 0.1rem;
 }
@@ -661,7 +692,7 @@ a {
   align-items: center;
   gap: 0.5rem;
   font-family: var(--mono);
-  font-size: 0.66rem;
+  font-size: var(--t-label);
 }
 
 .funnel__row code {
@@ -688,7 +719,7 @@ a {
 
 .funnel__count {
   text-align: right;
-  font-weight: 700;
+  font-weight: var(--w-bold);
   font-variant-numeric: tabular-nums;
 }
 
@@ -699,8 +730,8 @@ a {
 .integrations h2 {
   margin: 0 0 0.3rem;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 1.5rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-title);
   letter-spacing: -0.04em;
 }
 
@@ -708,7 +739,7 @@ a {
 .order-panel__hint,
 .integrations__lead {
   margin: 0 0 1.1rem;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   color: var(--ink-soft);
   max-width: 46ch;
 }
@@ -739,7 +770,7 @@ a {
   justify-content: space-between;
   gap: 0.5rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.11em;
   color: var(--ink-soft);
@@ -747,21 +778,21 @@ a {
 
 .product-card__badge {
   color: var(--stamp);
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .product-card h3 {
   margin: 0;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-lead);
   letter-spacing: -0.015em;
 }
 
 .product-card p {
   margin: 0;
   flex: 1;
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   line-height: 1.55;
   color: var(--ink-2);
 }
@@ -778,7 +809,7 @@ a {
 
 .product-card__footer strong {
   font-family: var(--mono);
-  font-size: 1rem;
+  font-size: var(--t-lead);
   font-variant-numeric: tabular-nums;
 }
 
@@ -795,7 +826,7 @@ a {
 .order-panel__empty {
   margin: 0 0 1rem;
   font-family: var(--display);
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   color: var(--ink-soft);
 }
 
@@ -808,12 +839,12 @@ a {
 .order-line {
   padding: 0.6rem 0;
   border-bottom: 1px dotted var(--rule);
-  font-size: 0.85rem;
+  font-size: var(--t-body);
 }
 
 .order-line__actor {
   font-family: var(--display);
-  font-size: 0.62rem;
+  font-size: var(--t-label);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-left: 0.4rem;
@@ -844,7 +875,7 @@ a {
 .order-line__price {
   margin-left: auto;
   font-family: var(--mono);
-  font-weight: 700;
+  font-weight: var(--w-bold);
   font-variant-numeric: tabular-nums;
 }
 
@@ -852,7 +883,7 @@ a {
   border-top: 1px solid var(--ink);
   padding-top: 0.6rem;
   font-family: var(--display);
-  font-size: 0.82rem;
+  font-size: var(--t-body);
 }
 
 .order-summary > div {
@@ -867,8 +898,8 @@ a {
   margin-top: 0.5rem;
   padding-top: 0.5rem;
   border-top: 1px dashed var(--rule);
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: var(--t-body);
+  font-weight: var(--w-bold);
 }
 
 .order-panel__blocked,
@@ -876,7 +907,7 @@ a {
   margin: 0.8rem 0 0;
   padding: 0.6rem 0.7rem;
   font-family: var(--display);
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   line-height: 1.55;
   background: var(--sheet);
 }
@@ -889,8 +920,8 @@ a {
 .order-panel__blocked strong {
   display: block;
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-lead);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--stamp);
@@ -910,8 +941,8 @@ a {
 
 .btn {
   font-family: var(--display);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: var(--t-small);
+  font-weight: var(--w-bold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   border-radius: 0;
@@ -978,13 +1009,13 @@ a {
 
 .share-bar strong {
   font-family: var(--display);
-  font-size: 0.92rem;
+  font-size: var(--t-body);
 }
 
 .share-bar p {
   margin: 0.15rem 0 0;
   font-family: var(--display);
-  font-size: 0.75rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
 }
 
@@ -997,7 +1028,7 @@ a {
 .share-bar__msg {
   margin: 0;
   font-family: var(--display);
-  font-size: 0.75rem;
+  font-size: var(--t-small);
   color: var(--ink);
 }
 
@@ -1021,14 +1052,14 @@ a {
 .integrations__card h3 {
   margin: 0 0 0.5rem;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-lead);
   letter-spacing: -0.02em;
 }
 
 .integrations__card p {
   margin: 0.3rem 0;
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   color: var(--ink-2);
 }
 
@@ -1037,7 +1068,7 @@ a {
 .funnel code,
 .dev-panel code {
   font-family: var(--mono);
-  font-size: 0.92em;
+  font-size: var(--t-small);
 }
 
 .integrations__ok {
@@ -1051,12 +1082,12 @@ a {
 .integrations__issues {
   margin: 0.5rem 0;
   padding-left: 1.1rem;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
 }
 
 .integrations__muted {
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
 }
 
@@ -1074,13 +1105,13 @@ a {
 
 .launch-brief-details > summary {
   font-family: var(--display);
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding: 0.85rem 1rem;
   cursor: pointer;
   background: var(--sheet);
-  font-weight: 600;
+  font-weight: var(--w-bold);
 }
 
 .launch-brief-details[open] > summary {
@@ -1130,7 +1161,7 @@ a {
 .journey__btn::before {
   content: counter(journey);
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--t-label);
   color: var(--soft);
 }
 
@@ -1140,7 +1171,7 @@ a {
 
 .journey__label {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--soft);
@@ -1152,7 +1183,7 @@ a {
 }
 
 .journey__step--current .journey__label {
-  font-weight: 600;
+  font-weight: var(--w-bold);
 }
 
 .journey__step--current .journey__btn::before {
@@ -1169,13 +1200,13 @@ a {
 
 .why-webmcp__lead {
   margin: 0 0 1rem;
-  font-size: 0.85rem;
+  font-size: var(--t-body);
 }
 
 .integrations__section-label {
   margin: 0 0 0.35rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1189,7 +1220,7 @@ a {
 }
 
 .audit-chip {
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   padding: 0.35rem 0.65rem;
   border: 1px solid var(--rule);
   border-radius: 0;
@@ -1199,19 +1230,19 @@ a {
 
 .audit-chip strong {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   margin-left: 0.25rem;
 }
 
 .why-webmcp__status {
   margin: 0 0 0.85rem;
-  font-size: 0.88rem;
+  font-size: var(--t-body);
 }
 
 .why-webmcp__steps {
   margin: 0;
   padding-left: 1.15rem;
-  font-size: 0.84rem;
+  font-size: var(--t-body);
   color: var(--ink-2);
 }
 
@@ -1220,7 +1251,7 @@ a {
 }
 
 .why-webmcp__steps code {
-  font-size: 0.75rem;
+  font-size: var(--t-small);
 }
 
 .why-webmcp__grid {
@@ -1243,7 +1274,7 @@ a {
 
 .why-webmcp__col h4 {
   margin: 0 0 0.5rem;
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -1251,7 +1282,7 @@ a {
 .why-webmcp__col ul {
   margin: 0;
   padding-left: 1.1rem;
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   color: var(--ink-2);
 }
 
@@ -1262,7 +1293,7 @@ a {
 
 .integrations__advanced summary {
   cursor: pointer;
-  font-weight: 700;
+  font-weight: var(--w-bold);
   margin-bottom: 0.75rem;
 }
 
@@ -1271,7 +1302,7 @@ a {
   padding: 0.75rem 1rem;
   border: 1px solid var(--rule);
   background: var(--sheet);
-  font-size: 0.82rem;
+  font-size: var(--t-body);
 }
 
 .readiness__next-link {
@@ -1279,7 +1310,7 @@ a {
   background: none;
   padding: 0;
   font: inherit;
-  font-weight: 700;
+  font-weight: var(--w-bold);
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
@@ -1288,7 +1319,7 @@ a {
 
 .landing__hint {
   margin: 0.75rem 0 0;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   font-family: var(--display);
 }
@@ -1310,7 +1341,7 @@ a {
 
 .app-footer__details summary {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   cursor: pointer;
@@ -1319,7 +1350,7 @@ a {
 }
 
 .app-footer__details p {
-  font-size: 0.75rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   margin: 0;
   max-width: 42rem;
@@ -1335,7 +1366,7 @@ a {
 
 .journey-run__score {
   margin: 0 0 0.75rem;
-  font-size: 0.9rem;
+  font-size: var(--t-body);
 }
 
 .journey-run__steps {
@@ -1343,7 +1374,7 @@ a {
   padding: 0;
   list-style: none;
   font-family: var(--mono);
-  font-size: 0.75rem;
+  font-size: var(--t-small);
 }
 
 .journey-run__steps li {
@@ -1356,7 +1387,7 @@ a {
 
 .journey-run__step--fail {
   color: var(--stamp);
-  font-weight: 600;
+  font-weight: var(--w-bold);
 }
 
 .journey-run__step--ok span {
@@ -1365,7 +1396,7 @@ a {
 
 .journey-run__rec {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
 }
 
 /* ---------- field companion ---------- */
@@ -1377,7 +1408,7 @@ a {
 .companion__kicker {
   margin: 0 0 0.25rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1387,13 +1418,13 @@ a {
   margin: 0 0 0.65rem;
   max-width: 42rem;
   color: var(--ink-2);
-  font-size: 0.92rem;
+  font-size: var(--t-body);
 }
 
 .companion__receipt {
   margin: 0 0 0.85rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
 }
 
@@ -1406,7 +1437,7 @@ a {
 
 .companion__lane {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.04em;
   text-transform: lowercase;
   padding: 0.28rem 0.55rem;
@@ -1453,19 +1484,19 @@ a {
 
 .companion__rank {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink);
   min-width: 1.25rem;
 }
 
 .companion__issue-title {
-  font-weight: 650;
-  font-size: 0.92rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-body);
 }
 
 .companion__issue-body {
   padding: 0 0 0.75rem 1.9rem;
-  font-size: 0.84rem;
+  font-size: var(--t-body);
   color: var(--ink-2);
 }
 
@@ -1488,7 +1519,7 @@ a {
   gap: 0.55rem;
   padding: 0.4rem 0;
   border-bottom: 1px solid var(--rule-soft);
-  font-size: 0.88rem;
+  font-size: var(--t-body);
 }
 
 .companion__check-mark {
@@ -1498,8 +1529,8 @@ a {
 
 .companion__headline {
   margin: 0 0 0.75rem;
-  font-size: 0.95rem;
-  font-weight: 650;
+  font-size: var(--t-body);
+  font-weight: var(--w-bold);
 }
 
 .companion__briefs {
@@ -1517,13 +1548,13 @@ a {
 
 .companion__briefs p {
   margin: 0.15rem 0 0;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   color: var(--ink-2);
 }
 
 .companion__rid {
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: var(--t-label);
   color: var(--ink);
   min-width: 1.5rem;
 }
@@ -1531,7 +1562,7 @@ a {
 .companion__proto {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   display: block;
   overflow-x: auto;
 }
@@ -1545,7 +1576,7 @@ a {
 
 .companion__proto th {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--ink-soft);
@@ -1579,7 +1610,7 @@ a {
 .audit-delta__kicker {
   margin: 0 0 0.35rem;
   font-family: var(--display);
-  font-size: 0.68rem;
+  font-size: var(--t-label);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1587,7 +1618,7 @@ a {
 
 .audit-delta__summary {
   margin: 0 0 0.65rem;
-  font-size: 0.92rem;
+  font-size: var(--t-body);
 }
 
 .audit-delta__grid {
@@ -1599,7 +1630,7 @@ a {
 
 .audit-delta__grid dt {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1612,13 +1643,13 @@ a {
 
 .audit-delta__pp {
   color: var(--ink-soft);
-  font-size: 0.85em;
+  font-size: var(--t-small);
 }
 
 .audit-delta__prior,
 .audit-delta__note {
   margin: 0.25rem 0 0;
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
 }
 
@@ -1635,7 +1666,7 @@ a {
 .lighthouse-hero__kicker {
   margin: 0 0 0.35rem;
   font-family: var(--display);
-  font-size: 0.68rem;
+  font-size: var(--t-label);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1644,7 +1675,7 @@ a {
 .lighthouse-hero__title {
   margin: 0 0 0.55rem;
   font-family: var(--display);
-  font-weight: 600;
+  font-weight: var(--w-bold);
   font-size: clamp(1.35rem, 3vw, 1.85rem);
   letter-spacing: -0.04em;
   line-height: 1.15;
@@ -1653,7 +1684,7 @@ a {
 
 .lighthouse-hero__lead {
   margin: 0 0 1rem;
-  font-size: 0.88rem;
+  font-size: var(--t-body);
   line-height: 1.55;
   color: var(--ink-2);
   max-width: 62ch;
@@ -1674,15 +1705,15 @@ a {
 
 .lighthouse-hero__num {
   font-family: var(--display);
-  font-size: 1.35rem;
-  font-weight: 600;
+  font-size: var(--t-title);
+  font-weight: var(--w-bold);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
 
 .lighthouse-hero__lbl {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1715,10 +1746,10 @@ a {
 .field-compare__kicker {
   margin: 0 0 0.75rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: var(--w-bold);
   color: var(--ink);
 }
 
@@ -1731,7 +1762,7 @@ a {
 .field-compare__col h4 {
   margin: 0 0 0.45rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1745,7 +1776,7 @@ a {
 
 .field-compare__col dt {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1754,7 +1785,7 @@ a {
 .field-compare__col dd {
   margin: 0.08rem 0 0;
   font-variant-numeric: tabular-nums;
-  font-size: 0.92rem;
+  font-size: var(--t-body);
 }
 
 .field-compare__col--you {
@@ -1787,31 +1818,31 @@ a {
 
 .field-compare__vs {
   color: var(--ink-soft);
-  font-size: 0.85em;
+  font-size: var(--t-small);
 }
 
 .field-compare__rank,
 .field-compare__ucp,
 .field-compare__ucp-gap {
   margin: 0.5rem 0 0;
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   color: var(--ink-2);
 }
 
 .field-compare__ucp-gap {
   color: var(--stamp);
-  font-weight: 600;
+  font-weight: var(--w-bold);
 }
 
 .field-compare__delta-summary {
   margin: 0 0 0.5rem;
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-size: var(--t-body);
+  font-weight: var(--w-bold);
 }
 
 .field-compare__first {
   margin: 0;
-  font-size: 0.84rem;
+  font-size: var(--t-body);
   color: var(--ink-2);
   line-height: 1.5;
 }
@@ -1838,13 +1869,13 @@ a {
 
 .field-review--clear {
   color: var(--ink-soft);
-  font-size: 0.84rem;
+  font-size: var(--t-body);
 }
 
 .field-review__kicker {
   margin: 0 0 0.35rem;
   font-family: var(--display);
-  font-size: 0.62rem;
+  font-size: var(--t-label);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--soft);
@@ -1852,13 +1883,13 @@ a {
 
 .field-review__store {
   margin: 0 0 0.25rem;
-  font-weight: 650;
-  font-size: 0.9rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-body);
 }
 
 .field-review__compare {
   margin: 0 0 0.65rem;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   color: var(--ink-2);
 }
 
@@ -1877,26 +1908,26 @@ a {
 
 .field-review__rank {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink);
   min-width: 1.1rem;
 }
 
 .field-review__note {
   margin: 0.15rem 0;
-  font-size: 0.8rem;
+  font-size: var(--t-small);
   color: var(--ink-2);
 }
 
 .field-review__do {
   margin: 0.2rem 0 0;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   color: var(--ink);
 }
 
 .field-review__foot {
   margin: 0.55rem 0 0;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   font-family: var(--display);
 }
@@ -1912,7 +1943,7 @@ a {
 }
 
 .rankings__note {
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   margin: 0 0 0.75rem;
 }
@@ -1920,7 +1951,7 @@ a {
 .rankings__filter-label {
   margin: 0.35rem 0 0.25rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -1935,7 +1966,7 @@ a {
 
 .rankings__chip {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   letter-spacing: 0.04em;
   text-transform: lowercase;
   padding: 0.28rem 0.55rem;
@@ -1958,14 +1989,14 @@ a {
 
 .rankings__filter-stat {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   margin: 0 0 0.5rem;
 }
 
 .rankings__vert {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   text-transform: lowercase;
 }
@@ -1978,7 +2009,7 @@ a {
 .rankings__table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.78rem;
+  font-size: var(--t-small);
 }
 
 .rankings__table th,
@@ -1990,7 +2021,7 @@ a {
 
 .rankings__table th {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--ink-soft);
@@ -2006,7 +2037,7 @@ a {
 
 .rankings__row--you td {
   background: color-mix(in srgb, var(--ink) 5%, transparent);
-  font-weight: 600;
+  font-weight: var(--w-bold);
 }
 
 .rankings__ucp {
@@ -2014,28 +2045,28 @@ a {
 }
 
 .rankings__ucp--gap {
-  font-weight: 600;
+  font-weight: var(--w-bold);
   color: var(--stamp);
 }
 
 .rankings__offer--low {
-  font-weight: 600;
+  font-weight: var(--w-bold);
   color: var(--stamp);
 }
 
 .rankings__ucp-n {
   opacity: 0.65;
-  font-weight: 400;
-  font-size: 0.85em;
+  font-weight: var(--w-normal);
+  font-size: var(--t-small);
 }
 
 .rankings__err {
-  font-size: 0.72rem;
+  font-size: var(--t-small);
 }
 
 .rankings__sig {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
 }
 
@@ -2050,12 +2081,12 @@ a {
 .launch-brief__header h2 {
   margin: 0 0 0.5rem;
   font-family: var(--display);
-  font-size: 1.25rem;
+  font-size: var(--t-title);
 }
 
 .launch-brief__lead {
   margin: 0 0 1.25rem;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   color: var(--ink-2);
   max-width: 42rem;
 }
@@ -2076,7 +2107,7 @@ a {
 .launch-brief__card h3 {
   margin: 0 0 0.75rem;
   font-family: var(--display);
-  font-size: 1rem;
+  font-size: var(--t-lead);
 }
 
 .launch-brief__impact,
@@ -2093,7 +2124,7 @@ a {
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--rule);
-  font-size: 0.78rem;
+  font-size: var(--t-small);
 }
 
 .launch-brief__impact li:last-child,
@@ -2107,14 +2138,14 @@ a {
 .launch-brief__impact strong {
   display: block;
   font-family: var(--display);
-  font-size: 0.95rem;
+  font-size: var(--t-body);
   color: var(--ink);
 }
 
 .launch-brief__impact span {
   display: block;
   margin: 0.2rem 0;
-  font-weight: 600;
+  font-weight: var(--w-bold);
 }
 
 .launch-brief__impact em,
@@ -2141,21 +2172,21 @@ a {
 .launch-brief__tests > li code:first-child {
   display: inline-block;
   margin-bottom: 0.25rem;
-  font-size: 0.68rem;
+  font-size: var(--t-label);
   color: var(--ink-soft);
 }
 
 .launch-brief__entry,
 .launch-brief__pass,
 .launch-brief__run {
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
 }
 
 .launch-brief__tests ol {
   margin: 0.35rem 0;
   padding-left: 1.2rem;
-  font-size: 0.72rem;
+  font-size: var(--t-small);
 }
 
 /* ---------- judge harness ---------- */
@@ -2170,7 +2201,7 @@ a {
 .judge-banner__kicker {
   margin: 0 0 0.35rem;
   font-family: var(--display);
-  font-size: 0.68rem;
+  font-size: var(--t-label);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--soft);
@@ -2178,20 +2209,20 @@ a {
 
 .judge-banner__lead {
   margin: 0 0 0.5rem;
-  font-size: 0.95rem;
+  font-size: var(--t-body);
   line-height: 1.45;
   max-width: 72ch;
 }
 
 .judge-banner__meta {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--t-small);
   color: var(--soft);
 }
 
 .judge-banner__live {
   color: var(--ink);
-  font-weight: 600;
+  font-weight: var(--w-bold);
 }
 
 .judge-banner__link {
@@ -2212,7 +2243,7 @@ a {
 
 .dev-panel > summary {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.09em;
   padding: 0.7rem 1rem;
@@ -2237,7 +2268,7 @@ a {
   align-items: flex-end;
   flex-wrap: wrap;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
 }
 
 .dev-panel__manual label {
@@ -2255,7 +2286,7 @@ a {
   color: var(--paper);
   font-family: var(--mono);
   padding: 0.85rem;
-  font-size: 0.7rem;
+  font-size: var(--t-label);
   line-height: 1.5;
   overflow: auto;
   max-height: 17rem;
@@ -2270,7 +2301,7 @@ a {
   background: var(--ink);
   color: var(--paper);
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--t-label);
   padding: 0.5rem 0.75rem;
   display: flex;
   align-items: center;
@@ -2279,7 +2310,7 @@ a {
 }
 
 .tool-toast__mark {
-  font-weight: 700;
+  font-weight: var(--w-bold);
   color: var(--sheet);
 }
 
@@ -2322,8 +2353,8 @@ a {
 .landing__copy h2 {
   margin: 0 0 0.8rem;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 2.8rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-display);
   line-height: 1.02;
   letter-spacing: -0.04em;
   max-width: 16ch;
@@ -2331,7 +2362,7 @@ a {
 
 .landing__copy p {
   margin: 0 0 1rem;
-  font-size: 0.95rem;
+  font-size: var(--t-body);
   line-height: 1.6;
   max-width: 42ch;
   color: var(--ink-2);
@@ -2344,7 +2375,7 @@ a {
   display: grid;
   gap: 0.4rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   border-top: 1px solid var(--ink);
   padding-top: 0.7rem;
 }
@@ -2357,7 +2388,7 @@ a {
 }
 
 .landing__facts b {
-  font-size: 0.85rem;
+  font-size: var(--t-body);
   font-variant-numeric: tabular-nums;
   font-family: var(--mono);
 }
@@ -2377,7 +2408,7 @@ a {
   padding-top: 1rem;
   border-top: 1px solid var(--rule);
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   line-height: 1.6;
   color: var(--ink-soft);
   max-width: 62ch;
@@ -2399,7 +2430,7 @@ a {
   }
 
   .app-header h1 {
-    font-size: 2rem;
+    font-size: var(--t-title);
   }
 
   .store-switcher,
@@ -2421,7 +2452,7 @@ a {
 
   .tape__sheet {
     padding: 1.1rem 0.9rem 1rem;
-    font-size: 0.72rem;
+    font-size: var(--t-small);
   }
 
   .tape__label {
@@ -2433,11 +2464,11 @@ a {
   }
 
   .tape__total-value {
-    font-size: 3.6rem;
+    font-size: var(--t-figure-sm);
   }
 
   .landing__copy h2 {
-    font-size: 1.9rem;
+    font-size: var(--t-title);
   }
 }
 
@@ -2457,18 +2488,18 @@ a {
   gap: 0 0.6rem;
   align-items: baseline;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   padding-top: 0.45rem;
   border-top: 1px dotted var(--rule);
 }
 
 .register a {
-  font-weight: 700;
+  font-weight: var(--w-bold);
   min-width: 0;
 }
 
 .register b {
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   white-space: nowrap;
 }
 
@@ -2499,14 +2530,14 @@ a {
 .autopilot h3 {
   margin: 0 0 0.4rem;
   font-family: var(--display);
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-lead);
 }
 
 .autopilot h4 {
   margin: 0 0 0.4rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.11em;
   color: var(--ink-soft);
@@ -2515,7 +2546,7 @@ a {
 .autopilot__sandbox {
   margin: 0 0 0.5rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--stamp);
@@ -2527,7 +2558,7 @@ a {
 .autopilot__lead,
 .autopilot__rec {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--t-small);
   line-height: 1.6;
   color: var(--ink-2);
 }
@@ -2549,13 +2580,13 @@ a {
   gap: 0.8rem;
   padding: 0.65rem 0.75rem;
   background: var(--sheet);
-  font-size: 0.85rem;
+  font-size: var(--t-body);
 }
 
 .autopilot__impact {
   display: block;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   margin-top: 0.1rem;
 }
@@ -2573,7 +2604,7 @@ a {
   display: grid;
   gap: 0.2rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
 }
 
 .autopilot__journey li {
@@ -2591,7 +2622,7 @@ a {
 
 .autopilot__step--fail {
   color: var(--stamp);
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .landing__actions,
@@ -2607,7 +2638,7 @@ a {
 
 .shop__tagline {
   margin: 0.3rem 0 1rem;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   color: var(--ink-soft);
   max-width: 46ch;
 }
@@ -2615,13 +2646,13 @@ a {
 .dev-panel__hint {
   margin: 0 0 0.75rem;
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   line-height: 1.6;
   color: var(--ink-soft);
 }
 
 .btn--quiet {
-  font-size: 0.65rem;
+  font-size: var(--t-label);
   border-color: var(--rule);
   color: var(--ink-soft);
   background: transparent;
@@ -2636,7 +2667,7 @@ a {
   flex-direction: column;
   gap: 0.35rem;
   margin: 0.75rem 0;
-  font-size: 0.85rem;
+  font-size: var(--t-body);
 }
 
 .integrations__shop-input {
@@ -2646,7 +2677,7 @@ a {
   background: var(--sheet);
   color: var(--ink);
   font-family: var(--display);
-  font-size: 0.95rem;
+  font-size: var(--t-body);
 }
 
 .integrations__import {
@@ -2654,7 +2685,7 @@ a {
   margin: 0.5rem 0;
   padding: 0.6rem;
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   border-radius: 0;
   border: 1px solid var(--ink);
   background: var(--sheet);
@@ -2672,7 +2703,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  font-size: 0.85rem;
+  font-size: var(--t-body);
 }
 
 .crawl-oauth__row input {
@@ -2680,7 +2711,7 @@ a {
   border: 1px solid var(--ink);
   background: var(--sheet);
   font-family: var(--display);
-  font-size: 0.8rem;
+  font-size: var(--t-small);
 }
 
 .crawl-oauth__result {
@@ -2696,7 +2727,7 @@ a {
   padding: 0.75rem 1rem 1rem;
   background: var(--sheet);
   border-top: 2px solid var(--ink);
-  font-size: 0.85rem;
+  font-size: var(--t-body);
   max-height: 40vh;
   overflow-y: auto;
 }
@@ -2715,12 +2746,12 @@ a {
 .film-guide__header span {
   color: var(--ink-soft);
   font-family: var(--display);
-  font-size: 0.75rem;
+  font-size: var(--t-small);
 }
 
 .film-guide__toggle {
   margin-left: auto;
-  font-size: 0.75rem;
+  font-size: var(--t-small);
   text-decoration: underline;
   background: none;
   border: none;
@@ -2729,7 +2760,7 @@ a {
 }
 
 .film-guide__action {
-  font-weight: 600;
+  font-weight: var(--w-bold);
   margin: 0 0 0.35rem;
 }
 
@@ -2771,23 +2802,23 @@ a {
 }
 
 .sandbox-showcase__emoji {
-  font-size: 1.25rem;
+  font-size: var(--t-title);
 }
 
 .sandbox-showcase__score {
   font-family: var(--display);
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: var(--t-body);
+  font-weight: var(--w-bold);
 }
 
 .sandbox-showcase__card em {
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   color: var(--ink-soft);
   font-style: normal;
 }
 
 .sandbox-showcase__card small {
-  font-size: 0.7rem;
+  font-size: var(--t-label);
   color: var(--ink-soft);
 }
 
@@ -2801,7 +2832,7 @@ a {
 
 .stranger-path__kicker {
   font-family: var(--display);
-  font-size: 0.72rem;
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--soft);
@@ -2824,7 +2855,7 @@ a {
 
 .stranger-path__title {
   font-size: clamp(2rem, 4.6vw, 3.4rem);
-  font-weight: 800;
+  font-weight: var(--w-display);
   margin: 0 0 0.85rem;
   line-height: 0.96;
   letter-spacing: -0.045em;
@@ -2850,7 +2881,7 @@ a {
 }
 
 .stranger-path__input {
-  font-size: 1.05rem;
+  font-size: var(--t-lead);
   border-radius: 0;
   border: 1px solid var(--ink);
   background: var(--sheet);
@@ -2873,8 +2904,8 @@ a {
 
 .stranger-path__score-num {
   font-family: var(--display);
-  font-size: 4rem;
-  font-weight: 600;
+  font-size: var(--t-figure);
+  font-weight: var(--w-bold);
   line-height: 1;
   color: var(--ink);
   letter-spacing: -0.04em;
@@ -2884,7 +2915,7 @@ a {
 
 .stranger-path__score-denom {
   font-family: var(--display);
-  font-size: 1.1rem;
+  font-size: var(--t-lead);
   color: var(--ink-soft);
   margin-left: 0.35rem;
 }
@@ -2917,8 +2948,8 @@ a {
 
 .stranger-path__fix-rank {
   font-family: var(--mono);
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-lead);
   min-width: 1.5rem;
   color: var(--ink);
 }
@@ -2931,8 +2962,8 @@ a {
 
 .integrations__advanced-stranger > summary {
   cursor: pointer;
-  font-weight: 600;
-  font-size: 0.78rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-small);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0.85rem 0;
@@ -2951,7 +2982,7 @@ a {
 .tool-probes__table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.82rem;
+  font-size: var(--t-body);
   margin-top: 0.75rem;
   display: block;
   overflow-x: auto;
@@ -2969,7 +3000,7 @@ a {
 
 .tool-probes__table th {
   font-family: var(--display);
-  font-size: 0.7rem;
+  font-size: var(--t-label);
   text-transform: uppercase;
   background: var(--paper);
 }
@@ -2982,7 +3013,7 @@ a {
 .tool-probes__detail {
   display: block;
   color: var(--ink-soft);
-  font-size: 0.78rem;
+  font-size: var(--t-small);
   margin-top: 0.2rem;
 }
 
@@ -3027,7 +3058,7 @@ a {
 
 .census__lbl {
   font-family: var(--mono);
-  font-size: 0.64rem;
+  font-size: var(--t-label);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--soft);
@@ -3079,7 +3110,7 @@ a {
 .census__key dd {
   margin: 0;
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: var(--t-label);
   color: var(--soft);
 }
 
@@ -3119,8 +3150,8 @@ a {
 }
 
 .census__brand {
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: var(--t-small);
+  font-weight: var(--w-bold);
   color: var(--has);
   border: 1px solid var(--has);
   padding: 0.2rem 0.45rem;
@@ -3145,7 +3176,7 @@ a {
   align-items: baseline;
   gap: 1rem;
   font-family: var(--mono);
-  font-size: 0.66rem;
+  font-size: var(--t-label);
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--soft);
@@ -3154,12 +3185,12 @@ a {
 
 .barcode__verdict {
   color: var(--has);
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .barcode__verdict--blank {
   color: var(--stamp);
-  font-weight: 700;
+  font-weight: var(--w-bold);
 }
 
 .barcode__strip {
@@ -3224,15 +3255,15 @@ a {
   justify-content: space-between;
   gap: 0.6rem 1.5rem;
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: var(--w-bold);
+  font-size: var(--t-lead);
   padding: 0.35rem 0;
 }
 
 .integrations__builders-hint {
   font-family: var(--mono);
-  font-weight: 400;
-  font-size: 0.68rem;
+  font-weight: var(--w-normal);
+  font-size: var(--t-label);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--soft);
@@ -3244,18 +3275,23 @@ a {
 }
 
 
-/* The one action on the page. Disabled still reads as a button, never as dead
-   grey text on grey paper — that misread cost the front door its call to act. */
-.stranger-path__form .btn--primary {
+/* Primary actions, everywhere. A disabled primary stays a button — outlined,
+   full contrast — instead of dissolving into grey text on grey paper. It read
+   as dead on the front door, on "Audit storefront" and on "Prepare checkout". */
+.btn--primary {
   background: var(--ink);
   color: var(--paper);
   border: 1px solid var(--ink);
-  font-weight: 700;
+  font-weight: var(--w-bold);
   letter-spacing: 0.08em;
+}
+
+.stranger-path__form .btn--primary {
   padding-block: 0.9rem;
 }
 
-.stranger-path__form .btn--primary:disabled {
+.btn--primary:disabled,
+.btn--secondary:disabled {
   background: var(--paper);
   color: var(--ink);
   border: 1px solid var(--ink);
@@ -3275,7 +3311,7 @@ a {
 
 .stranger-path__form .integrations__shop-label {
   font-family: var(--mono);
-  font-size: 0.64rem;
+  font-size: var(--t-label);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--soft);
@@ -3295,4 +3331,128 @@ a {
 .order-panel__blocked > *:first-child,
 .tape__void > *:first-child {
   color: var(--stamp);
+}
+
+
+/* =============================================================================
+   THE TYPE SYSTEM — the authority.
+
+   One family. Three weights. Eight sizes. Scattered descendant rules like
+   `.integrations h2` used to set sizes too, and won on specificity: the front
+   door's headline rendered at 24px while the wordmark sat at 36px, so the logo
+   outranked the sentence the page exists to say. Everything below is stated
+   once, here, and it wins.
+
+   RANK          SIZE            WEIGHT     USED FOR
+   display       t-display       800        the one sentence a screen is about
+   figure        t-figure        700        a number that IS the answer
+   hero          t-hero          800        the wordmark
+   title         t-title         700        section headings
+   lead          t-lead          400        the paragraph under a display line
+   body          t-body          400        everything else
+   small         t-small         400        secondary and inline code
+   label         t-label         700        uppercase, tracked, --soft
+   ============================================================================= */
+
+body,
+button,
+input,
+select,
+textarea,
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--display);
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-size: var(--t-small);
+  font-weight: var(--w-bold);
+  letter-spacing: -0.01em;
+}
+
+/* the front door: the headline outranks the wordmark */
+.stranger-path .stranger-path__title {
+  font-size: var(--t-display);
+  font-weight: var(--w-display);
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+}
+
+.stranger-path .stranger-path__lead {
+  font-size: var(--t-lead);
+  font-weight: var(--w-normal);
+  line-height: 1.5;
+}
+
+.app-header h1 {
+  font-size: var(--t-hero);
+  font-weight: var(--w-display);
+  letter-spacing: -0.04em;
+}
+
+/* one label voice — every small tracked caps line in the app */
+.census__lbl,
+.barcode__cap,
+.integrations__builders-hint,
+.stranger-path__kicker,
+.stranger-path__form .integrations__shop-label,
+.integrations__section-label {
+  font-size: var(--t-label);
+  font-weight: var(--w-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--soft);
+  line-height: 1.4;
+}
+
+/* one figure voice — the score, the total, the counts */
+.stranger-path__score-num,
+.tape__total-value {
+  font-size: var(--t-figure);
+  font-weight: var(--w-bold);
+  letter-spacing: -0.05em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.census__key dd,
+.census__brand,
+.barcode__verdict {
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* The front door reads as one grid: both columns run the full width of their
+   track, and every vertical gap comes off the same scale. */
+.stranger-path__form {
+  max-width: none;
+  margin-top: var(--s4);
+  gap: var(--s2);
+}
+
+.stranger-path .stranger-path__lead {
+  margin-bottom: 0;
+}
+
+.stranger-path .barcode {
+  margin-top: var(--s4);
+  padding-block: var(--s3);
+}
+
+.stranger-path__grid {
+  row-gap: var(--s4);
+}
+
+.census__brands {
+  margin-top: var(--s3);
+  padding-top: var(--s2);
+}
+
+.census__key {
+  margin-top: var(--s2);
 }

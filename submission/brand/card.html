@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f7f7f5;--ink:#000;--soft:#6b6b68;--rule:#dcdcd8;--stamp:#bf2b1a}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--paper)}
+.card{width:var(--w);height:var(--h);background:var(--paper);color:var(--ink);
+  font-family:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  display:grid;grid-template-rows:auto 1fr auto;padding:var(--pad);gap:var(--gap)}
+.top{display:flex;align-items:flex-start;justify-content:space-between;
+  border-bottom:1px solid var(--ink);padding-bottom:calc(var(--pad)*.42)}
+.brand{display:flex;align-items:center;gap:calc(var(--pad)*.42)}
+.brand svg{width:var(--mark);height:var(--mark);display:block}
+.name{font-weight:800;font-size:var(--fname);letter-spacing:-.035em;line-height:.95}
+.kick{font-weight:700;font-size:var(--fkick);
+  letter-spacing:.22em;color:var(--soft);text-transform:uppercase;margin-top:.35em}
+.badge{font-weight:700;font-size:var(--fkick);
+  letter-spacing:.16em;border:1px solid var(--ink);padding:.5em .8em;white-space:nowrap}
+.mid{display:grid;align-content:center;gap:calc(var(--pad)*.34)}
+h1{font-weight:800;font-size:var(--fh1);letter-spacing:-.04em;line-height:.94}
+h1 em{font-style:normal;color:var(--soft)}
+.sub{font-size:var(--fsub);color:var(--soft);line-height:1.34;max-width:24ch}
+.tape{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border-top:1px solid var(--ink)}
+.cell{padding:calc(var(--pad)*.4) 0;border-right:1px solid var(--rule)}
+.cell:last-child{border-right:0}
+.cell .n{font-family:inherit;font-weight:700;
+  font-size:var(--fnum);letter-spacing:-.05em;line-height:1}
+.cell .l{font-weight:700;font-size:var(--fkick);
+  letter-spacing:.14em;color:var(--soft);text-transform:uppercase;margin-top:.6em}
+.cell.stamp .n{color:var(--stamp)}
+</style></head><body>
+<div class="card" id="c">
+  <div class="top">
+    <div class="brand">
+      <svg viewBox="0 0 256 256"><rect width="256" height="256" fill="#000"/>
+        <path fill="#f7f7f5" d="M64 40 h128 v150 l-10.67 10 -10.66 -10 -10.67 10 -10.66 -10 -10.67 10 -10.66 -10 -10.67 10 -10.66 -10 -10.67 10 -10.66 -10 -10.67 10 -10.66 -10 Z"/>
+        <g fill="#000"><rect x="84" y="72" width="88" height="6"/><rect x="84" y="94" width="60" height="6"/><rect x="84" y="116" width="74" height="6"/><rect x="84" y="138" width="46" height="6"/></g>
+        <rect x="84" y="160" width="88" height="18" fill="#bf2b1a"/></svg>
+      <div><div class="name">ReadyCounter</div><div class="kick">audit · bill · preview · prove</div></div>
+    </div>
+    <div class="badge">WEBMCP CHALLENGE</div>
+  </div>
+  <div class="mid">
+    <h1>Agent commerce.<br><em>Now reviewable.</em></h1>
+    <p class="sub">Paste your store. Get the score, the fix list, and the receipt that cites its source.</p>
+  </div>
+  <div class="tape">
+    <div class="cell"><div class="n">78/148</div><div class="l">DTC brands crawled</div></div>
+    <div class="cell stamp"><div class="n">0%</div><div class="l">GTIN in scrape</div></div>
+    <div class="cell"><div class="n">11</div><div class="l">UCP-only gaps</div></div>
+    <div class="cell"><div class="n">18</div><div class="l">WebMCP tools</div></div>
+  </div>
+</div></body></html>
