@@ -317,9 +317,11 @@ async function handler(req, res) {
         ...api.headers
       },
       body: JSON.stringify({
+        // gpt-5.x rejects max_tokens ("use max_completion_tokens instead") and
+        // only accepts the default temperature. OpenRouter still wants the old
+        // spelling, so the two differ here rather than everywhere else.
+        ...api.name === "openai" ? { max_completion_tokens: 700 } : { max_tokens: 500, temperature: 0 },
         model: api.model,
-        max_tokens: 500,
-        temperature: 0,
         messages: [
           { role: "system", content: SYSTEM },
           { role: "user", content: goal },
