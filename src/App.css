@@ -3480,7 +3480,7 @@ samp {
 
 .agent-shopper__controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) auto;
   gap: var(--s2);
   align-items: end;
   margin: var(--s3) 0 0;

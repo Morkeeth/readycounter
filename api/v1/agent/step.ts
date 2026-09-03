@@ -9,12 +9,28 @@ import { TOOL_MANIFEST } from '../../../src/webmcp/toolManifest';
  * posts the result back here for the next step. Model on the outside, the
  * deterministic instrument on the inside.
  *
- * The API key stays on the server. The client cannot choose the model, the
- * system prompt or the tool list, so this endpoint cannot be turned into a
- * general-purpose LLM proxy.
+ * The API key stays on the server. The client picks a model only from a fixed
+ * whitelist and cannot touch the system prompt or the tool list, so this
+ * endpoint cannot be turned into a general-purpose LLM proxy.
  */
 
-const MODEL = 'openai/gpt-4o-mini';
+/**
+ * Frontier models only, and a fixed whitelist.
+ *
+ * The client picks from this list and nothing else — an arbitrary model string
+ * would turn this endpoint into a general-purpose LLM proxy on someone else's
+ * key. Each one was checked for correct tool-calling against these schemas
+ * before being listed.
+ */
+export const MODELS = [
+  { id: 'openai/gpt-5.6-terra-pro', label: 'GPT-5.6 Terra Pro' },
+  { id: 'anthropic/claude-opus-5', label: 'Claude Opus 5' },
+  { id: 'anthropic/claude-sonnet-5', label: 'Claude Sonnet 5' },
+  { id: 'google/gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
+  { id: 'openai/gpt-5.6-sol', label: 'GPT-5.6 Sol' },
+] as const;
+
+const DEFAULT_MODEL = MODELS[0].id;
 const MAX_GOAL = 200;
 const MAX_STEPS = 8;
 const MAX_HISTORY = 24;
@@ -80,9 +96,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const body = (req.body ?? {}) as { goal?: unknown; history?: unknown };
+  const body = (req.body ?? {}) as { goal?: unknown; history?: unknown; model?: unknown };
   const goal = typeof body.goal === 'string' ? body.goal.slice(0, MAX_GOAL).trim() : '';
   if (!goal) return res.status(400).json({ error: 'goal_required' });
+
+  const asked = typeof body.model === 'string' ? body.model : '';
+  const model = MODELS.some((m) => m.id === asked) ? asked : DEFAULT_MODEL;
 
   const raw = Array.isArray(body.history) ? (body.history as Msg[]) : [];
   if (raw.length > MAX_HISTORY) return res.status(400).json({ error: 'history_too_long' });
@@ -107,6 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       done: true,
       message: 'Stopping — this demo caps the agent at eight steps.',
       steps,
+      model,
     });
   }
 
@@ -120,8 +140,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'X-Title': 'ReadyCounter',
       },
       body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 400,
+        model,
+        max_tokens: 500,
         temperature: 0,
         messages: [
           { role: 'system', content: SYSTEM },
@@ -146,7 +166,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     res.setHeader('cache-control', 'no-store');
     return res.status(200).json({
-      model: MODEL,
+      model,
       steps: steps + 1,
       message: message.content ?? null,
       toolCalls: calls.map((c) => ({ id: c.id, name: c.function.name, arguments: c.function.arguments })),

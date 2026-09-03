@@ -9,11 +9,11 @@ Probed on Chrome 152: --enable-features=WebMCP exposes document.modelContext
 with registerTool / getTools / executeTool. Arguments go in as a JSON STRING;
 passing an object fails with "Failed to parse input arguments".
 """
-import json
 import pathlib
 import shutil
 import subprocess
 import sys
+import time
 
 from playwright.sync_api import sync_playwright
 
@@ -58,7 +58,7 @@ PANEL = """
 
 def main() -> int:
     plan = load()
-    hold_ms = int(plan["beats"][PARAGRAPH] * 1000)
+    hold = plan["beats"][PARAGRAPH]
 
     if TMP.exists():
         shutil.rmtree(TMP)
@@ -82,40 +82,34 @@ def main() -> int:
             b.close()
             return 1
 
-        pg.evaluate(PANEL)
         count = pg.evaluate("async () => (await document.modelContext.getTools()).length")
-        pg.evaluate("(n) => window.__mcp_line(n + ' tools registered', 'head')", str(count))
-        pg.wait_for_timeout(1100)
+        print(f"  · {count} tools on native document.modelContext")
 
-        steps = [
-            ("search_catalog", {"query": "espresso"}, "good"),
-            ("add_to_order", {"product_id": "sku-espresso", "quantity": 1}, "good"),
-            ("prepare_checkout", {}, "bad"),
-        ]
-        for name, args, tone in steps:
-            pg.evaluate("(t) => window.__mcp_line('→ ' + t, 'head')", name)
-            res = pg.evaluate(
-                """async ([n, a]) => {
-                     const tools = await document.modelContext.getTools();
-                     const t = tools.find(x => x.name === n);
-                     return await document.modelContext.executeTool(t, a);
-                   }""",
-                [name, json.dumps(args)],
-            )
+        # Hand it to a real model. The agent picks the calls; this page runs them
+        # through document.modelContext. Nothing here is scripted.
+        panel = pg.locator(".agent-shopper").first
+        if not panel.count():
+            print("  ! the agent shopper panel is not on the page")
+        else:
+            panel.scroll_into_view_if_needed(timeout=6000)
+            pg.wait_for_timeout(700)
             try:
-                obj = json.loads(res)
-            except Exception:
-                obj = {"raw": str(res)[:120]}
-            if name == "search_catalog":
-                line = f"   {obj.get('count', '?')} product · {obj.get('products', [{}])[0].get('name', '')}"
-            elif name == "add_to_order":
-                line = f"   ok · line tagged AGENT"
-            else:
-                line = "   " + str(obj.get("reason", ""))[:118]
-            pg.evaluate("([t,tone]) => window.__mcp_line(t, tone)", [line, tone])
-            pg.wait_for_timeout(1500)
+                pg.get_by_role("button", name="Send the agent").first.click(timeout=8000)
+            except Exception as e:
+                print(f"  ! could not start the agent: {e}")
 
-        pg.wait_for_timeout(max(600, hold_ms - 9000))
+        # Let the loop play out on camera for the rest of the beat.
+        end = time.monotonic() + max(3.0, hold - 7.0)
+        while time.monotonic() < end:
+            pg.wait_for_timeout(900)
+            try:
+                panel.scroll_into_view_if_needed(timeout=2000)
+            except Exception:
+                pass
+        rows = pg.evaluate("() => document.querySelectorAll('.agent-shopper__row').length")
+        blocked = pg.evaluate("() => !!document.querySelector('.agent-shopper__blocked')")
+        print(f"  · agent produced {rows} log rows · blocked at checkout: {blocked}")
+        pg.wait_for_timeout(1200)
         video = pg.video
         ctx.close()
         b.close()

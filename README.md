@@ -77,6 +77,31 @@ card** — the agent proposes, the person pays.
 
 ![Co-shop](docs/shots/05-coshop-one-cart.png)
 
+## A real model shops the store
+
+The page hands a language model these 18 tools and one instruction. It picks the
+calls; the browser runs them through `document.modelContext`. Nothing is
+scripted — and it gets stopped by the same CAPTCHA a real customer's agent hits:
+
+```
+→ search_catalog({})                     8 products
+→ get_product({"id":"sku-espresso"})     detail
+→ get_product({"id":"sku-cold-brew"})    compares
+→ add_to_order({"id":"sku-espresso"})    {"ok":true,"lineId":"line-…"}
+→ prepare_checkout({})                   {"ok":false,"blocked":true,
+                                          "reason":"CAPTCHA required. 24% of
+                                          abandoned agent carts stop at a
+                                          CAPTCHA (Presenc AI, read 2026-08-31)"}
+"The purchase was blocked due to a CAPTCHA requirement."   — the model
+```
+
+![The agent shopper](docs/shots/08-agent-shopper.png)
+
+**The model is the shopper, never the judge.** The readiness score stays
+arithmetic over a crawl — reproducible, auditable, and impossible to talk into a
+better number by putting words on your storefront. The API key lives on the
+server; the client cannot choose the model, the prompt or the tool list.
+
 ## 18 WebMCP tools
 
 ![The tool console](docs/shots/06-webmcp-tools.png)

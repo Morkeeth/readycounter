@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { invokeToolLocally } from '../webmcp/registerTools';
 
 /**
@@ -44,6 +44,11 @@ const GOALS = [
 
 const MAX_TURNS = 8;
 
+interface ModelOption {
+  id: string;
+  label: string;
+}
+
 function isBlocked(body: string): boolean {
   try {
     const o = JSON.parse(body) as { blocked?: boolean; ok?: boolean };
@@ -57,12 +62,25 @@ export function AgentShopper() {
   const [goal, setGoal] = useState(GOALS[0]);
   const [log, setLog] = useState<Entry[]>([]);
   const [busy, setBusy] = useState(false);
-  const [model, setModel] = useState<string | null>(null);
+  const [ran, setRan] = useState<string | null>(null);
+  const [models, setModels] = useState<ModelOption[]>([]);
+  const [model, setModel] = useState('');
+
+  useEffect(() => {
+    void fetch('/api/v1/agent/models')
+      .then((r) => r.json())
+      .then((d: { models?: ModelOption[] }) => {
+        if (!d.models?.length) return;
+        setModels(d.models);
+        setModel((m) => m || d.models![0].id);
+      })
+      .catch(() => undefined);
+  }, []);
 
   const run = useCallback(async () => {
     setBusy(true);
     setLog([]);
-    setModel(null);
+    setRan(null);
 
     const history: Record<string, unknown>[] = [];
     const push = (e: Entry) => setLog((l) => [...l, e]);
@@ -72,7 +90,7 @@ export function AgentShopper() {
         const res = await fetch('/api/v1/agent/step', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ goal, history }),
+          body: JSON.stringify({ goal, model, history }),
         });
         const data = (await res.json()) as StepResponse;
 
@@ -80,7 +98,7 @@ export function AgentShopper() {
           push({ kind: 'error', body: data.hint ?? data.error ?? `HTTP ${res.status}` });
           break;
         }
-        if (data.model) setModel(data.model);
+        if (data.model) setRan(data.model);
 
         history.push({
           role: 'assistant',
@@ -118,19 +136,34 @@ export function AgentShopper() {
     } finally {
       setBusy(false);
     }
-  }, [goal]);
+  }, [goal, model]);
 
   return (
     <section className="agent-shopper" aria-label="Watch a real agent shop this store">
       <p className="integrations__section-label">Prove it with a real agent</p>
       <h3>Let a model shop the store</h3>
       <p className="integrations__muted">
-        A language model is given these WebMCP tools and a shopping goal. It picks the calls; this
-        page runs them through <code>document.modelContext</code>. The score stays arithmetic — the
-        model is the shopper, never the judge.
+        Pick a frontier model, give it a shopping goal, and it drives these 18 WebMCP tools itself.
+        The model chooses every call; this page executes them through <code>document.modelContext</code>.
+        The readiness score stays arithmetic — the model is the shopper, never the judge.
       </p>
 
       <div className="agent-shopper__controls">
+        <label className="integrations__shop-label">
+          Agent
+          <select
+            className="integrations__shop-input"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            disabled={busy || !models.length}
+          >
+            {models.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </label>
         <label className="integrations__shop-label">
           Shopping goal
           <select
@@ -176,7 +209,7 @@ export function AgentShopper() {
         </ol>
       ) : null}
 
-      {model ? <p className="integrations__muted agent-shopper__model">Model: {model}</p> : null}
+      {ran ? <p className="integrations__muted agent-shopper__model">Ran on {ran}</p> : null}
     </section>
   );
 }

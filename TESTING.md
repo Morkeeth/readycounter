@@ -22,6 +22,25 @@ That is the whole thesis. Everything else is evidence for it.
 
 ---
 
+## 20 seconds — watch a real model do it
+
+On the **Co-shop** tab, under the products: **Let a model shop the store**.
+
+Pick a goal, press **Send the agent**, and watch the transcript. A language model
+receives the 18 tool definitions and decides the calls; this page executes them
+through `document.modelContext`. It typically searches, compares two products,
+adds one, then hits the CAPTCHA and says so in its own words.
+
+The API key is server-side. The client cannot pick the model, the system prompt
+or the tool list, so the endpoint is not a general-purpose LLM proxy: the goal is
+capped at 200 characters, the loop at 8 steps, and only the 8 shopping tools are
+exposed.
+
+If `OPENROUTER_API_KEY` is unset the endpoint returns `agent_unconfigured` and
+every other path still works.
+
+---
+
 ## Native WebMCP (Path A)
 
 The tool console above uses the same handlers with no flag. To exercise the

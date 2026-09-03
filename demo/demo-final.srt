@@ -31,10 +31,10 @@ Every point on the bill is priced from a published abandonment share, and every 
 We did not build a catalogue. We read the ones that exist. Shopify OAuth for the merchant's own admin, Shopify's Catalog protocol for the barcodes a scrape cannot see, and Render Key Value holding every audit and every shared cart across cold starts. Three integrations, all live in this build.
 
 9
-00:01:31,375 --> 00:01:53,200
-Now the proof, in Chrome with WebMCP switched on. This is not a console we wrote. Eighteen tools are registered on document dot model context, the browser's own API. The agent searches the catalogue, adds to the order, and the line is tagged agent next to the one a human added. Then prepare checkout refuses, because a captcha stands in the way, and it cites the published share that says so. It never touches a card.
+00:01:31,375 --> 00:02:02,650
+Now the proof, in Chrome with WebMCP switched on. Eighteen tools are registered on document dot model context, the browser's own API. And this is not us clicking. A language model gets the tools and one instruction: buy a bag of espresso under twenty dollars. It searches, it compares two products, it adds one to the cart, and the line is tagged agent beside the one a human added. Then it tries to check out, and the store stops it. A captcha. The tool hands back the published share that says a quarter of agent carts die exactly there, and the model says so in its own words. No card is ever touched.
 
 10
-00:01:53,750 --> 00:01:56,850
+00:02:03,200 --> 00:02:06,300
 ReadyCounter. Agent commerce, now reviewable.
 

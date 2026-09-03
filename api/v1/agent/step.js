@@ -62,7 +62,14 @@ var TOOL_MANIFEST = [
 ];
 
 // api/v1/agent/step.ts
-var MODEL = "openai/gpt-4o-mini";
+var MODELS = [
+  { id: "openai/gpt-5.6-terra-pro", label: "GPT-5.6 Terra Pro" },
+  { id: "anthropic/claude-opus-5", label: "Claude Opus 5" },
+  { id: "anthropic/claude-sonnet-5", label: "Claude Sonnet 5" },
+  { id: "google/gemini-2.5-pro", label: "Gemini 2.5 Pro" },
+  { id: "openai/gpt-5.6-sol", label: "GPT-5.6 Sol" }
+];
+var DEFAULT_MODEL = MODELS[0].id;
 var MAX_GOAL = 200;
 var MAX_STEPS = 8;
 var MAX_HISTORY = 24;
@@ -116,6 +123,8 @@ async function handler(req, res) {
   const body = req.body ?? {};
   const goal = typeof body.goal === "string" ? body.goal.slice(0, MAX_GOAL).trim() : "";
   if (!goal) return res.status(400).json({ error: "goal_required" });
+  const asked = typeof body.model === "string" ? body.model : "";
+  const model = MODELS.some((m) => m.id === asked) ? asked : DEFAULT_MODEL;
   const raw = Array.isArray(body.history) ? body.history : [];
   if (raw.length > MAX_HISTORY) return res.status(400).json({ error: "history_too_long" });
   const history = raw.filter((m) => m && (m.role === "assistant" || m.role === "tool")).map(
@@ -130,7 +139,8 @@ async function handler(req, res) {
     return res.status(200).json({
       done: true,
       message: "Stopping \u2014 this demo caps the agent at eight steps.",
-      steps
+      steps,
+      model
     });
   }
   try {
@@ -143,8 +153,8 @@ async function handler(req, res) {
         "X-Title": "ReadyCounter"
       },
       body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 400,
+        model,
+        max_tokens: 500,
         temperature: 0,
         messages: [
           { role: "system", content: SYSTEM },
@@ -164,7 +174,7 @@ async function handler(req, res) {
     const calls = (message.tool_calls ?? []).filter((c) => ALLOWED.has(c.function?.name));
     res.setHeader("cache-control", "no-store");
     return res.status(200).json({
-      model: MODEL,
+      model,
       steps: steps + 1,
       message: message.content ?? null,
       toolCalls: calls.map((c) => ({ id: c.id, name: c.function.name, arguments: c.function.arguments })),
@@ -175,6 +185,7 @@ async function handler(req, res) {
   }
 }
 export {
+  MODELS,
   handler as default
 };
 //# sourceMappingURL=step.js.map

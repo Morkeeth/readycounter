@@ -41,6 +41,17 @@ Three things a merchant can do with it:
   tagged HUMAN or AGENT. `prepare_checkout` validates the total and **never
   charges a card** — the agent proposes, the person pays.
 
+**And you can watch a real model do it.** On the Co-shop tab, a language model
+is handed the 18 tool definitions and a shopping goal. It picks the calls, the
+browser executes them through `document.modelContext`, and it gets stopped by
+the same CAPTCHA a real customer's agent would hit — then explains the block in
+its own words. Nothing in that sequence is scripted.
+
+Deliberately, the model is the **shopper and never the judge**. The readiness
+score is arithmetic over a crawl: reproducible between runs, auditable line by
+line, and impossible to talk into a better number by putting words on your
+storefront. Model on the outside, deterministic instrument on the inside.
+
 One finding surprised us enough to put it on the front page: **eleven brands
 publish barcodes to Shopify's Catalog MCP and hide them on their own
 storefront** — Glossier, Tatcha, Brooklinen, Alo Yoga, Buffy, Mejuri, Gorjana,
@@ -99,6 +110,15 @@ script printed that exact warning and exited 0, so nobody read it. Every
 duration is now derived from the rendered audio, the checks are fatal, and a
 separate verifier checks the file that actually ships rather than the parts it
 was made from.
+
+**Our own tools trapped an agent.** Pointing a real model at the tool surface
+found something no test had: `get_product` takes `id`, but `add_to_order` took
+`product_id`. The model called `get_product({id})`, got a product back, carried
+`id` forward — and looped six times on `Product not found:` with an empty value.
+On a product whose whole thesis is making stores legible to agents, we would
+have shipped a tool surface that confuses agents. Every product-taking tool now
+reads `product_id`, `id` or `sku`, the schemas say so, and an empty id returns
+an error that tells the agent what to pass instead.
 
 **A permanently empty third of the page.** The layout reserved 21rem for a
 sidebar that only exists on one tab, so two of three tabs rendered a blank
