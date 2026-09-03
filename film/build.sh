@@ -26,7 +26,7 @@ render_parts() {
   echo "· voiceover parts (Kokoro, one per paragraph)"
   python3 film/split_voice.py
   for f in demo/.vo-parts/p*.txt; do
-    "$VO_DIR/kvenv/bin/python" "$VO_DIR/vo.py" "$f" -o "${f%.txt}.mp3" --preset demo --speed 1.2
+    "$VO_DIR/kvenv/bin/python" "$VO_DIR/vo.py" "$f" -o "${f%.txt}.mp3" --preset demo --speed 1.32
   done
   echo "· measure the voice — every picture duration derives from this"
   (cd film && python3 cues.py)
@@ -47,7 +47,10 @@ fi
 echo "1/5 · voice parts + timing plan"
 render_parts
 
-echo "2/5 · flipbook title cards (outro held to the closing paragraph)"
+echo "2/5 · intro deck (animated cards, one per paragraph)"
+(cd film && python3 intro.py)
+
+echo "   · outro card (held to the closing paragraph)"
 python3 film/slides.py
 
 echo "3/5 · browser segment (live prod, one beat per paragraph)"
@@ -71,9 +74,20 @@ fi
 
 echo "5/5 · mux (fails if voice and picture disagree)"
 render_voice
+# Each recorded segment carries a few frames of encoder padding, so the joined
+# picture always runs a little past the voice. Cut it to the voice plus the
+# planned tail — the film then ends when the sentence does, every time.
+PIC_END=$(python3 -c "import json;d=json.load(open('demo/.cues.json'));print(round(d['voice_end']+d['tail'],3))")
 ffmpeg -y -loglevel error -i demo/.picture.mp4 -i demo/voiceover.mp3 \
-  -map 0:v -map 1:a -c:v copy -c:a aac -b:a 160k demo/demo-final.mp4
+  -map 0:v -map 1:a -t "$PIC_END" \
+  -c:v libx264 -preset medium -crf 21 -pix_fmt yuv420p \
+  -c:a aac -b:a 160k -movflags +faststart demo/demo-final.mp4
 rm -f demo/.picture.mp4 demo/.intro30.mp4 demo/.browser30.mp4 demo/.outro30.mp4 demo/.seg30.txt
+
+(cd film && python3 verify_film.py)
+
+echo "· burning captions in"
+./film/burn-subs.sh demo/demo-final.mp4 demo/demo-final.srt
 
 DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 demo/demo-final.mp4)
 echo

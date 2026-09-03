@@ -76,6 +76,9 @@ def main():
             f"picture is {pic_dur:.1f}s but the voice runs {vo_dur:.1f}s — "
             f"the last {vo_dur - pic_dur:.1f}s would play over a dead frame"
         )
+    # The mirror of that check lives in film/verify_film.py, which runs on the
+    # muxed file — the mux trims the picture to the voice, so checking the
+    # untrimmed picture here would fail on padding that never ships.
 
     if fatal:
         for f in fatal:

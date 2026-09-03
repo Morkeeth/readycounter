@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ReadyCounter — intro cards</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Same tokens as the app. One typeface, three weights. */
+      :root {
+        --paper: #f7f7f5;
+        --ink: #000;
+        --soft: #8a8a86;
+        --rule: #dcdcd8;
+        --stamp: #bf2b1a;
+        --has: #1a5cff;
+        --display: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+      }
+      * { box-sizing: border-box; margin: 0; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--display);
+        font-weight: 400;
+      }
+      .card {
+        position: absolute;
+        inset: 0;
+        padding: 96px 112px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .card.on { opacity: 1; }
+
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: 2px solid var(--ink);
+        padding-bottom: 20px;
+      }
+      .wordmark { font-weight: 800; font-size: 34px; letter-spacing: -0.04em; }
+      .lbl {
+        font-weight: 700; font-size: 15px; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--soft);
+      }
+
+      .mid { display: grid; align-content: center; gap: 30px; }
+      h1 {
+        font-weight: 800;
+        font-size: 104px;
+        line-height: 0.93;
+        letter-spacing: -0.05em;
+        max-width: 20ch;
+      }
+      h1 em { font-style: normal; color: var(--soft); }
+      h1 b { font-weight: 800; color: var(--stamp); }
+      h1 u { text-decoration: none; color: var(--has); }
+      .sub { font-size: 30px; line-height: 1.4; color: var(--soft); max-width: 46ch; }
+
+      /* the figure row — one voice, tabular */
+      .figs { display: flex; gap: 0; border-top: 2px solid var(--ink); }
+      .fig { flex: 1; padding: 26px 0 0; border-right: 1px solid var(--rule); }
+      .fig:last-child { border-right: 0; padding-right: 0; }
+      .fig .n {
+        font-weight: 700; font-size: 76px; line-height: 1;
+        letter-spacing: -0.05em; font-variant-numeric: tabular-nums;
+      }
+      .fig .n.up { color: var(--has); }
+      .fig .n.bad { color: var(--stamp); }
+      .fig .t {
+        font-weight: 700; font-size: 15px; letter-spacing: 0.15em;
+        text-transform: uppercase; color: var(--soft); margin-top: 14px;
+      }
+      .src {
+        font-size: 15px; color: var(--soft); margin-top: 22px;
+        border-top: 1px solid var(--rule); padding-top: 14px;
+      }
+
+      /* card 4 — the wall builds itself */
+      .wall { display: grid; grid-template-columns: repeat(28, 1fr); gap: 6px; }
+      .wall i { display: block; aspect-ratio: 1; background: #d8d8d2; opacity: 0; }
+      .wall i.feed { background: transparent; box-shadow: inset 0 0 0 2px #b4b4ad; }
+      .wall i.ucp { background: var(--has); box-shadow: none; }
+      .wall i.show { opacity: 1; }
+    </style>
+  </head>
+  <body>
+    <!-- 1 · the market arrived -->
+    <section class="card" id="c0">
+      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The shift</span></div>
+      <div class="mid">
+        <h1>AI shoppers arrived<br /><em>this year.</em></h1>
+        <p class="sub">Not a forecast. Traffic that is already in your store, buying.</p>
+      </div>
+      <div>
+        <div class="figs">
+          <div class="fig"><div class="n up" data-count="8" data-suffix="×">0×</div><div class="t">AI-referred sessions, YoY</div></div>
+          <div class="fig"><div class="n up" data-count="13" data-suffix="×">0×</div><div class="t">AI-referred orders, YoY</div></div>
+        </div>
+        <p class="src">Shopify Enterprise, published 2026-05-11 · read 2026-08-30</p>
+      </div>
+    </section>
+
+    <!-- 2 · and it turned profitable -->
+    <section class="card" id="c1">
+      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The money turned</span></div>
+      <div class="mid">
+        <h1>Last March it lost money.<br /><em>This March it makes it.</em></h1>
+        <p class="sub">Agent traffic went from your worst channel to your best in twelve months.</p>
+      </div>
+      <div>
+        <div class="figs">
+          <div class="fig"><div class="n bad">−38%</div><div class="t">Conversion, March 2025</div></div>
+          <div class="fig"><div class="n up" data-count="42" data-prefix="+" data-suffix="%">+0%</div><div class="t">Conversion, March 2026</div></div>
+        </div>
+        <p class="src">Adobe Digital Insights, published 2026-04-16 · read 2026-08-30</p>
+      </div>
+    </section>
+
+    <!-- 3 · the catch, and what the fix is worth -->
+    <section class="card" id="c2">
+      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The catch</span></div>
+      <div class="mid">
+        <h1>Four in five agent carts<br /><b>never reach checkout.</b></h1>
+        <p class="sub">
+          And a catalogue an agent can read converts twice as well as a page it has to scrape —
+          Shopify's own number, from the earnings call.
+        </p>
+      </div>
+      <div>
+        <div class="figs">
+          <div class="fig"><div class="n bad" data-count="78.6" data-suffix="%">0%</div><div class="t">Agent carts abandoned</div></div>
+          <div class="fig"><div class="n up" data-count="2" data-suffix="×">0×</div><div class="t">Conversion, catalogue vs scrape</div></div>
+        </div>
+        <p class="src">Presenc AI · Shopify Q1 2026 earnings call (Harley Finkelstein) · read 2026-08-30</p>
+      </div>
+    </section>
+
+    <!-- 4 · nobody has done it -->
+    <section class="card" id="c3">
+      <div class="top"><span class="wordmark">ReadyCounter</span><span class="lbl">The field, measured</span></div>
+      <div class="mid">
+        <h1>So we asked <u>148</u> real storefronts.</h1>
+        <div class="wall" id="wall"></div>
+      </div>
+      <div>
+        <div class="figs">
+          <div class="fig"><div class="n" data-count="70">0</div><div class="t">Sent nothing back</div></div>
+          <div class="fig"><div class="n" data-count="67">0</div><div class="t">A feed, no barcode</div></div>
+          <div class="fig"><div class="n bad">0%</div><div class="t">Barcode coverage</div></div>
+        </div>
+        <p class="src">ReadyCounter field batch, read 2026-09-02 · GET /api/v1/rankings</p>
+      </div>
+    </section>
+
+    <script>
+      // 148 tiles, the real split: 70 silent, 67 feed-no-barcode, 11 UCP-only.
+      const wall = document.getElementById('wall');
+      const cls = [...Array(70).fill(''), ...Array(67).fill('feed'), ...Array(11).fill('ucp')];
+      let sd = 20260902;
+      const rnd = () => ((sd = (sd * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+      for (let i = cls.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [cls[i], cls[j]] = [cls[j], cls[i]]; }
+      cls.forEach((c) => { const el = document.createElement('i'); if (c) el.className = c; wall.appendChild(el); });
+
+      function countUp(el, ms) {
+        const target = parseFloat(el.dataset.count);
+        const dec = (el.dataset.count.split('.')[1] || '').length;
+        const pre = el.dataset.prefix || '';
+        const suf = el.dataset.suffix || '';
+        const t0 = performance.now();
+        const tick = (t) => {
+          const p = Math.min(1, (t - t0) / ms);
+          const e = 1 - Math.pow(1 - p, 3);
+          el.textContent = pre + (target * e).toFixed(dec) + suf;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }
+
+      window.__show = (i) => {
+        document.querySelectorAll('.card').forEach((c, n) => c.classList.toggle('on', n === i));
+        const card = document.getElementById('c' + i);
+        if (!card) return;
+        card.querySelectorAll('[data-count]').forEach((el) => countUp(el, 900));
+        if (i === 3) {
+          const tiles = [...wall.children];
+          tiles.forEach((t) => t.classList.remove('show'));
+          tiles.forEach((t, n) => setTimeout(() => t.classList.add('show'), 12 * n));
+        }
+      };
+      window.__show(0);
+    </script>
+  </body>
+</html>

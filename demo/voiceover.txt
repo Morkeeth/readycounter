@@ -1,21 +1,21 @@
 @voice am_michael
 @lang b
-@pause 260
+@pause 200
 
-Your store is not ready for agents. They are already shopping.
+AI shoppers arrived this year. Sessions to Shopify storefronts are up eight times year over year. Orders, nearly thirteen.
 
-Agent traffic to Shopify storefronts is up eight times year over year, and seventy eight point six percent of agent carts are abandoned. That is a customer who never reaches you, and no dashboard shows you which door was locked.
+And the money turned. Last March, agent traffic converted thirty eight percent worse than everything else. This March, forty two percent better. Your worst channel became your best one in twelve months.
 
-So we asked one hundred and forty eight real storefronts for their catalogue, the way a shopping agent asks. Seventy sent nothing back at all. Sixty seven sent a feed with no barcode in it. Every tile on this wall is one real shop, and empty means empty.
+Here is the catch. Four in five agent carts never reach checkout. And Shopify's own earnings call says a catalogue an agent can read converts twice as well as a page it has to scrape. That is the whole prize, and it is sitting behind a data problem.
 
-Eleven of them do have barcodes. Glossier, Tatcha, Brooklinen, Alo Yoga, Away. They publish to Shopify's Catalog protocol, and their own storefront hides it. Your shopper's agent reads the storefront.
+So we asked one hundred and forty eight real storefronts for their catalogue, the way an agent asks. Seventy sent nothing back. Sixty seven sent a feed with no barcode in it. Coverage across the field: zero percent.
 
-This is what that agent reads on your product page. Not one bar is scannable. There is nothing to scan, and nothing to match to a product an agent can actually buy.
+This is ReadyCounter. A merchant types their domain, and that is the whole setup. No install, no account, no code on the storefront.
 
-Six sandbox storefronts, each broken a different way. A CAPTCHA on checkout. A forced account login. A price that disagrees with the feed. Out of stock only at the till. Paste your own domain and your tile joins the wall in under a minute.
+The score lands, their tile joins the field, and the barcode prints exactly as far as their data goes. For this store, and for most, that is nowhere.
 
-This store scores seventy out of one hundred. Every point on the bill is priced from a published abandonment share, and every line names its source. Fix one thing, re-audit the same URL, and we print the delta.
+Every point on the bill is priced from a published abandonment share, and every line names its source. Six sandbox storefronts, six different ways to lose the sale.
 
-The proof is WebMCP. Eighteen tools registered on document dot model context, in this open tab. Your assistant adds to the same order you are looking at, human and agent in one cart, and prepare checkout validates the total and never charges a card.
+The proof is WebMCP. Eighteen tools live in this tab. Your customer and their assistant build one cart together, and prepare checkout validates the total and never charges a card.
 
 ReadyCounter. Agent commerce, now reviewable.

@@ -91,9 +91,9 @@ def main():
     from cues import load
 
     plan = load()
-    png_to_mp4(SHOTS / "f0.png", 1.2, OUT_INTRO)
+    # The intro is film/intro.py now — animated cards, not a still.
     png_to_mp4(SHOTS / "f3.png", plan["beats"][-1], OUT_OUTRO)
-    print("WROTE", OUT_INTRO, OUT_OUTRO, f"(outro {plan['beats'][-1]}s)")
+    print("WROTE", OUT_OUTRO, f"(outro {plan['beats'][-1]}s)")
 
 
 if __name__ == "__main__":

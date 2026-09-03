@@ -7,6 +7,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
+import time
 
 from cues import load
 
@@ -17,28 +18,19 @@ TMP = ROOT / "demo" / ".browser-raw"
 
 RECORD = "film=1&record=1&cues=0"
 
-# One beat per narration paragraph, p00..p07. The closing paragraph p08 plays
-# over the outro card, so the browser records eight beats, not nine.
+# The demo half: paragraphs p04..p07. The intro deck carries p00..p03 and the
+# outro card carries p08, so this records four beats, not nine.
 #
-# Beat DURATIONS are not written here — they come from film/cues.py, which
-# measures the rendered voice. A beat is exactly as long as the sentence that
-# describes it.
+# Every beat DOES something. The old film narrated over static pages and Oscar
+# called it: "we're not doing a lot of moves". Now the domain gets typed, the
+# score ticks up, the tile joins the wall, items land in the cart and a tool is
+# fired. The demo shows; the narration stops explaining what is on screen.
+FIRST_PARAGRAPH = 4
+
 BEATS = [
-    # p00 · the hook, on the front door with the wall already on screen
-    (f"/?{RECORD}&view=integrations", "hook"),
-    # p01 · the problem: 8x traffic, 78.6% abandoned
-    (f"/?{RECORD}&view=integrations", "problem"),
-    # p02 · the census wall — 148 asked, 70 silent, 67 hollow
-    (f"/?{RECORD}&view=integrations", "wall"),
-    # p03 · the eleven who have it and hide it
-    (f"/?{RECORD}&view=integrations", "brands"),
-    # p04 · the blank barcode
-    (f"/?{RECORD}&view=integrations", "barcode"),
-    # p05 · the stores, each broken a different way
-    (f"/?{RECORD}&view=integrations&judge=1", "stores"),
-    # p06 · the bill, priced from a published share
+    (f"/?{RECORD}&view=integrations", "paste"),
+    (f"/?{RECORD}&view=integrations", "joined"),
     (f"/?{RECORD}&beat=0&store=ember-oak&view=merchant", "bill"),
-    # p07 · WebMCP proof: one cart, 18 tools
     (f"/?{RECORD}&beat=7&view=shop", "webmcp"),
 ]
 
@@ -105,33 +97,56 @@ def main():
         plan = load()
         beats = plan["beats"]
 
+        last_path = None
         for i, (path, name) in enumerate(BEATS):
-            hold_ms = int(beats[i] * 1000)
-            pg.goto(BASE + path, wait_until="domcontentloaded", timeout=60000)
-            pg.evaluate(CURSOR)
-            pg.wait_for_timeout(1600)  # let the live rankings land before we film
+            hold_ms = int(beats[FIRST_PARAGRAPH + i] * 1000)
+            t0 = time.monotonic()
+            if path != last_path:
+                pg.goto(BASE + path, wait_until="domcontentloaded", timeout=60000)
+                pg.evaluate(CURSOR)
+                pg.wait_for_timeout(1500)
+            last_path = path
 
-            if name in ("hook", "problem"):
-                settle(pg, ".census__tiles")
-            elif name == "wall":
-                settle(pg, ".census__key")
-            elif name == "brands":
-                settle(pg, ".census__brands")
-            elif name == "barcode":
-                settle(pg, ".barcode__strip")
-            elif name == "stores":
-                settle(pg, ".sandbox-showcase, [class*='sandbox']")
-                scroll(pg, 220, 600)
+            if name == "paste":
+                # type it like a person and submit; the score lands in the next beat,
+                # which is exactly what the next sentence is about
+                try:
+                    box = pg.locator("input.stranger-path__input, .stranger-path__form input").first
+                    box.scroll_into_view_if_needed(timeout=4000)
+                    box.click(timeout=4000)
+                    box.type("colourpop.com", delay=55)
+                    pg.wait_for_timeout(300)
+                    pg.get_by_role("button", name="Score my store").first.click(timeout=5000)
+                except Exception as e:
+                    print(f"  ! paste beat: {e}")
+
+            elif name == "joined":
+                # same page, still loading: the score arrives, the tile joins, the
+                # barcode prints what it found
+                try:
+                    pg.wait_for_selector(".stranger-path__result", timeout=20000)
+                    settle(pg, ".stranger-path__score")
+                    pg.wait_for_timeout(700)
+                    settle(pg, ".barcode__strip")
+                except Exception as e:
+                    print(f"  ! joined beat: {e}")
+
             elif name == "bill":
                 settle(pg, ".tape, .readiness-tape, [class*='tape']")
-                scroll(pg, 260, 700)
+                scroll(pg, 300, 900)
+                maybe_click(pg, "text=Run agent journey")
+                scroll(pg, 280, 900)
+
             elif name == "webmcp":
                 maybe_click(pg, "button:has-text('Add to order')")
-                maybe_click(pg, "button:has-text('ADD TO ORDER')")
-                scroll(pg, 260, 700)
+                pg.wait_for_timeout(500)
+                maybe_click(pg, "button:has-text('Add to order')")
+                pg.wait_for_timeout(500)
+                scroll(pg, 240, 700)
+                maybe_click(pg, "button:has-text('Prepare checkout')")
 
-            spent = 1600 + 700
-            pg.wait_for_timeout(max(600, hold_ms - spent))
+            spent_ms = int((time.monotonic() - t0) * 1000)
+            pg.wait_for_timeout(max(400, hold_ms - spent_ms))
 
         video = pg.video
         ctx.close()
