@@ -5,9 +5,13 @@ Written for you to work through alone, in order. Everything referenced is in
 
 **Deadline: Friday 4 September, 01:00 PDT = 10:00 Paris.** Confirmed from the
 Devpost page's own HTML (`2026-09-04T04:00:00-04:00`), not from our notes — the
-22:00 in older docs was stale.
+22:00 / 1pm lines in older docs were stale.
 
-**Entry is currently a DRAFT.** Nothing below counts until step 9.
+**Public entry status (re-checked 2026-09-03 cloud):** https://devpost.com/software/readycounter
+shows **Submitted to** The WebMCP Challenge (YouTube `zyOK7XLKY8I`, repo
+`Morkeeth/readycounter`). If your owner view still says `submission_draft`,
+press Submit — that is the seal. Otherwise skip to eligibility checks in
+`SUBMIT-READY.md`.
 
 ---
 

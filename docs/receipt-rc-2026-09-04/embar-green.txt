@@ -1,0 +1,2 @@
+verify-embarrassment: no stale judge-facing copy
+green_exit=0

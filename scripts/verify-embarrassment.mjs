@@ -17,6 +17,7 @@ const PATTERNS = [
   { re: /Start live session/i, label: 'Start live session (removed — Copy cart link)' },
   { re: /\b57\/100\b/, label: '57/100 (current neon-matcha: 65/100 per verify-stores)' },
   { re: /\b71\/100\b/, label: '71/100 (current neon-matcha: 65/100 per verify-stores)' },
+  { re: /\b1pm PDT\b/, label: '1pm PDT (live Devpost deadline is 1:00am PDT Sep 4)' },
 ];
 
 const FILES = [
@@ -24,6 +25,7 @@ const FILES = [
   'DEVPOST.md',
   'submission/DEVPOST-PASTE.md',
   'submission/SUBMIT-READY.md',
+  'submission/README.md',
   'submission/JUDGES.md',
   'JUDGE-60s.md',
   'DEPLOY.md',
@@ -37,7 +39,7 @@ const FILES = [
 ];
 
 const SKIP_LINE =
-  /do not claim|don't claim|not claim|❌|stale|removed|it's \*\*18\*\*|16 tools \(it's|wrong|NIGHTRUN|hack\.md|LOG|historical|57–|57 →|→ 71|wave 2|WAVE 2|sandboxScore|57–100|57–83/i;
+  /do not claim|don't claim|not claim|❌|stale|removed|it's \*\*18\*\*|16 tools \(it's|wrong|NIGHTRUN|hack\.md|LOG|historical|57–|57 →|→ 71|wave 2|WAVE 2|sandboxScore|57–100|57–83|Trust a deadline|live HTML is|live Devpost deadline/i;
 
 function listFiles(rel) {
   const abs = path.join(root, rel);

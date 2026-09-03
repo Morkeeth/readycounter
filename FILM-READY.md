@@ -1,7 +1,7 @@
 # Film-ready checklist
 
 **Goal:** Record `DEMO.md` / `demo/FILM-AND-SUBMIT.md` (~110s) for Devpost  
-**Deadline:** Wed Sep 3, 2026 · 1pm PDT  
+**Deadline:** Thu Sep 4, 2026 · **1:00am PDT** (seal — see `submission/SUBMIT-READY.md`)  
 **Line:** Agent commerce. Now reviewable. Proof.
 
 ---
@@ -69,4 +69,4 @@ https://readycounter.vercel.app/?film=1&view=integrations&demo=1
 ## After recording
 
 - [ ] Upload video (<3 min) YouTube unlisted · incognito-check
-- [ ] Paste `DEVPOST.md` · submit before **Sep 3, 1pm PDT**
+- [ ] Paste `DEVPOST.md` · seal before **Sep 4, 1:00am PDT**

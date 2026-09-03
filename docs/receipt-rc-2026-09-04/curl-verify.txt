@@ -1,0 +1,59 @@
+### curl -sI judge=1
+HTTP/2 200 
+accept-ranges: bytes
+access-control-allow-origin: *
+age: 250
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-type: text/html; charset=utf-8
+date: Thu, 03 Sep 2026 23:54:33 GMT
+
+### rankings jq
+{
+  "succeeded": 78,
+  "shopCount": 148,
+  "avgGtinPct": 0,
+  "ucp": 11,
+  "at": "2026-09-02T21:53:59.805Z",
+  "rowCount": 148
+}
+
+### tools
+{
+  "toolCount": 18,
+  "version": "1"
+}
+
+### health.kv
+{
+  "ok": true,
+  "kv": {
+    "backend": "redis",
+    "redisOk": true
+  },
+  "shopify": {
+    "configured": true
+  }
+}
+
+### demo-final ffprobe
+duration=141.266667
+size=9103586
+
+### ls
+-rw-r--r-- 1 ubuntu ubuntu 9103586 Sep  3 23:37 demo/demo-final.mp4
+-rw-r--r-- 1 ubuntu ubuntu    2945 Sep  3 23:37 submission/SUBMIT-READY.md
+
+### Devpost deadline
+data-iso-date="2026-09-04T04:00:00-04:00"
+Deadline: Sep  4, 2026 @  1:00am PDT
+data-iso-date="2026-09-04T04:00:00-04:00"
+Deadline: Sep  4, 2026 @  1:00am PDT
+
+### Devpost software Submitted to
+youtube.com/embed/zyOK7XLKY8I
+github.com/Morkeeth/readycounter
+github.com/Morkeeth/readycounter
+Submitted to
+webmcp.devpost.com
+webmcp.devpost.com

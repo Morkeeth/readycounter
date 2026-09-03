@@ -1,0 +1,5 @@
+FAIL submission/SUBMIT-READY.md:94 — 1pm PDT (live Devpost deadline is 1:00am PDT Sep 4)
+     BADLINE: submit before 1pm PDT
+
+verify-embarrassment: 1 failure(s)
+red_exit=1

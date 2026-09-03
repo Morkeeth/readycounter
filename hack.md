@@ -90,17 +90,19 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**RC-WIN wave (2026-09-01):** Criteria-max Devpost + judge UX — per-criterion evidence in `submission/DEVPOST-PASTE.md`, embarrassment grep in verify, `e2e/judge-mode.spec.ts`.
+**WAVE 2026-09-04 · submit-pack truth only** — confirm `/?judge=1`, rankings, SUBMIT-READY, demo film; fix broken submit-path docs; write cloud receipt. No outward acts.
 
 ```text
 Done-when:
-  test -f submission/JUDGES.md && test -f submission/DEVPOST-PASTE.md → exit 0
-  npm run verify → exit 0 (includes verify-embarrassment.mjs)
-  npm run test:e2e → exit 0 (judge-mode + stranger-pass green)
-  node scripts/check-numbers.mjs → exit 0
+  test -f docs/CLOUD-RECEIPT-rc-2026-09-04.md → exit 0
+  SUBMIT-READY deadline line matches live Devpost HTML (1:00am PDT / 2026-09-04T04:00:00-04:00)
+  Oscar 15-min steps listed only in submission/SUBMIT-READY.md (seal, not cold submit)
+  npm run verify → exit 0  (includes verify-embarrassment 1pm PDT control)
 ```
 
 ## LOG
+
+- 2026-09-04 cloud · **submit-pack truth.** `/?judge=1` HTTP 200 + Playwright Co-shop/banner green on prod. Rankings re-derived **78/148/0/11**. Film on disk **141.3s**. Devpost HTML deadline **1:00am PDT** (`2026-09-04T04:00:00-04:00`). Found SUBMIT-READY / README / FILM-READY still saying **1pm PDT** under a correct header — naive header check would have greened; embarrassment control now fails on `1pm PDT` (proven RED→GREEN). Receipt: `docs/CLOUD-RECEIPT-rc-2026-09-04.md`. Oscar: seal checklist in `submission/SUBMIT-READY.md`.
 
 - 2026-09-04 , **SUBMITTED.** https://devpost.com/software/readycounter
   Renamed to `readycounter`. The front door became the census wall plus the

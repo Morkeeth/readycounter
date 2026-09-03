@@ -12,8 +12,9 @@
 | **60-second judge path** | [`../JUDGE-60s.md`](../JUDGE-60s.md) |
 | **Morning pitch** | [`../demo/PITCH-TOMORROW.md`](../demo/PITCH-TOMORROW.md) |
 
-- **Deadline:** Wed Sep 3, 2026 · **1pm PDT**
-- **Devpost:** https://webmcp.devpost.com/
+- **Deadline:** Thu Sep 4, 2026 · **1:00am PDT** (10:00 Paris) — `2026-09-04T04:00:00-04:00` on webmcp.devpost.com
+- **Seal checklist:** [`SUBMIT-READY.md`](./SUBMIT-READY.md)
+- **Devpost:** https://webmcp.devpost.com/ · entry https://devpost.com/software/readycounter
 - **Live:** https://readycounter.vercel.app
 - **Repo:** https://github.com/Morkeeth/readycounter
 
@@ -22,11 +23,11 @@
 ## Live probe (re-check before film / submit)
 
 ```bash
-curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp}'
-# expect: succeeded 78, shopCount 148, avgGtinPct 0, ucp.gtinWhereCrawlZero 11
+curl -s https://readycounter.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,avgGtinPct,ucp:.ucp.gtinWhereCrawlZero}'
+# re-derive at the object — do not carry figures from this file
 
-curl -s https://readycounter.vercel.app/api/v1/tools | jq 'length'
-# expect: 18
+curl -s https://readycounter.vercel.app/api/v1/tools | jq '{toolCount}'
+# expect: {"toolCount":18} — jq 'length' on the object is 4 keys, not the tool count
 ```
 
 | Probe | Expect |
@@ -72,7 +73,7 @@ Beat deep links: [`../FILM-READY.md`](../FILM-READY.md)
 2. [ ] Upload **unlisted** YouTube · incognito-check URL plays
 3. [ ] Paste [`DEVPOST-PASTE.md`](./DEVPOST-PASTE.md) into Devpost
 4. [ ] Attach video URL · live URL · repo URL
-5. [ ] Submit before **Sep 3, 1pm PDT**
+5. [ ] Seal before **Sep 4, 1:00am PDT** — follow [`SUBMIT-READY.md`](./SUBMIT-READY.md)
 
 ---
 
