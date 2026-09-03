@@ -60,6 +60,12 @@ The **first image becomes the Devpost thumbnail.**
 Logos, if a field asks: `submission/brand/logo-mark.svg`, `logo-512.png`,
 `logo-1024.png`, `logo-wordmark.svg`, `wordmark-1440.png`.
 
+**Flipbook** (17s, silent, for X / LinkedIn — not for the Devpost video field):
+`submission/flipbook/readycounter-1x1.mp4` (square) and
+`readycounter-9x16.mp4` (vertical). Both pass the flipbook audit on every frame.
+The 16:9 aspect fails its bottom-margin check — the source line overflows by
+16px — so it is not included; use the square one for feeds.
+
 ## 6 · Demo video
 
 | Field | Value |
