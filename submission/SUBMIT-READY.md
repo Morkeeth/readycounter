@@ -54,9 +54,12 @@ URL: https://webmcp.devpost.com/ → My projects → ReadyCounter
 | Live / Try it | `https://readycounter.vercel.app/?judge=1` |
 | Repo | `https://github.com/Morkeeth/readycounter` |
 | Demo video | YouTube above |
-| Deadline | before **1:00am PDT** Sep 4 — not 1pm |
+| **Built with** | Fix live typo **`shopfiy` → `shopify`** (confirmed on public entry HTML 2026-09-03) |
+| Deadline | before **1:00am PDT** Sep 4 — not midday 1pm |
 
 If fields need a last edit, paste from `submission/DEVPOST-ABOUT.md` / `submission/DEVPOST-UPDATE-GUIDE.md`. Prefer UPDATE-GUIDE over older `DEVPOST-PASTE.md`.
+
+Census copy on the entry (48 answered empty · 22 refused · 67 feed/no barcode · 11 UCP-only) **re-derived from live rankings rows** matches — do not “correct” it to `succeeded=78` (that is feed+ucp combined).
 
 ---
 
