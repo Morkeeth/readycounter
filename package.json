@@ -22,7 +22,9 @@
     "audit:oauth-pairs": "npx tsx scripts/oauth-pairs.mjs",
     "audit:journey": "npx tsx scripts/journey-batch.mjs",
     "preview": "vite preview",
-    "check:numbers": "node scripts/check-numbers.mjs"
+    "check:numbers": "node scripts/check-numbers.mjs",
+    "check:embarrassment": "node scripts/check-embarrassment.mjs",
+    "check:judge": "npm run check:numbers && npm run check:embarrassment"
   },
   "dependencies": {
     "react": "^19.2.8",

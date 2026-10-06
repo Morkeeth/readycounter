@@ -72,7 +72,7 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 **Philosophy:** Ship continuously toward production. Devpost Wed runs in parallel; it does not pause the build queue. Stranger replies are a signal, not a gate.
 
-**Already shipped:** co-shop · readiness tape · 16 tools · REST API · import + `?co=` share · sandbox-honest UI · Vercel live
+**Already shipped:** co-shop · readiness tape · **18** tools · REST API · import + `?co=` share · sandbox-honest UI · Vercel live · KV redis
 
 | # | Slice | Done when | Size | Risk |
 |---|-------|-----------|------|------|
@@ -90,20 +90,26 @@ Ship as a **merchant readiness sandbox** with co-shop as the proof mechanism, no
 
 ## NOW
 
-**Night wave RC-C (2026-08-31):** Partner-grade narrative — `LIGHTHOUSE-VISION.md`, `SHOPIFY-PARTNER-BRIEF.md`, README stranger hero, `audits/STRANGER-PASS-2026-08-31.md`, DEVPOST sync.
+**Night wave RC-JUDGE (2026-10-06):** Native WebMCP judge path + doc sync.
 
-**Slice 1 (this run):** Lighthouse narrative + stranger audit on live URL.
+**Slice 1 (this run):** Rewrite judge-facing docs so a 5-minute click proves humans+agents together; Path A native + Path B console; submission pack Oscar checklist; embarrassment grep.
 
 ```text
-Done-when (ran 2026-08-31T21:31Z):
-  test -f LIGHTHOUSE-VISION.md && test -f SHOPIFY-PARTNER-BRIEF.md && test -f audits/STRANGER-PASS-2026-08-31.md → exit 0
+Done-when (ran 2026-10-06):
+  test -f JUDGE-60s.md && test -f CHATGPT-JUDGE.md && test -f submission/SUBMIT-READY.md → exit 0
   npm run verify → exit 0
-  npm run build → exit 0
-  PLAYWRIGHT_BASE_URL=https://tooltruth-webmcp.vercel.app npx playwright test e2e/stranger-pass.spec.ts → 1 passed
-  curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{shopCount,succeeded,ucp}' → 148, 78, gtinWhereCrawlZero 11
+  npm run check:numbers → exit 0
+  npm run check:embarrassment → exit 0
+  curl -s https://tooltruth-webmcp.vercel.app/api/v1/rankings | jq '{succeeded,shopCount,ucp:.ucp.gtinWhereCrawlZero}' → 78, 148, 11
+  curl -s https://tooltruth-webmcp.vercel.app/api/v1/tools | jq '.toolCount' → 18
+  curl -s https://tooltruth-webmcp.vercel.app/api/v1/health | jq '.kv.backend' → redis
+  Live UI walk (computer): Co-shop HUMAN+AGENT · prepare_checkout refuse · 70→94 · UCP filter 11
+  Embarrassment grep: judge-path hits fixed; historical LOG/research hits documented in audits/EMBARRASSMENT-GREP-2026-10-06.md
 ```
 
 ## LOG
+
+- 2026-10-06 — **RC-JUDGE:** `JUDGE-60s.md` rewritten to live Connect/Co-shop/Readiness path (no “Start shopping”). `CHATGPT-JUDGE.md` Path A/B + FILM-READY deep links. Submission pack: O1✅ O3✅ · O2/O4 Oscar-only in `SUBMIT-READY.md`. Path B console gained `get_order` + `prepare_checkout` samples. Embarrassment fixes in DEVPOST/DEPLOY/DEMO-SCRIPT/FILM-CUES. Live badge truth: **WebMCP live · 18 tools** (not “Assistant tools active · 16 connected”).
 
 - 2026-08-30 — ReadyCounter ruled. Duet/Tooltruth killed.
 - 2026-08-30 — Slices 1–2 shipped: co-shop core, merchant readiness.
