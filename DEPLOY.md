@@ -17,9 +17,9 @@ curl -sI https://tooltruth-webmcp.vercel.app | head -5
 
 Manual stranger test:
 
-1. Open URL → **Start shopping**
-2. Add item → refresh → order remains
-3. **Copy co-shop link** → incognito → same order
+1. Open URL → **Co-shop** tab (`/?view=shop`) — there is no “Start shopping” button
+2. **Add to order** → refresh → order remains
+3. **Copy cart link** (`?co=`) → incognito → same order
 4. `?store=neon-matcha` → different catalog, account-wall readiness
 
 ## Optional env (Vercel → Settings → Environment Variables)

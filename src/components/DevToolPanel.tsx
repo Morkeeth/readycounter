@@ -21,6 +21,16 @@ const SAMPLE_CALLS = [
     args: { product_id: '__FIRST__', quantity: 1 },
   },
   {
+    label: 'get_order',
+    tool: 'get_order',
+    args: {},
+  },
+  {
+    label: 'prepare_checkout',
+    tool: 'prepare_checkout',
+    args: {},
+  },
+  {
     label: 'simulate_agent_journey',
     tool: 'simulate_agent_journey',
     args: {},

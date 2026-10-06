@@ -7,9 +7,10 @@ sentence in [`research.md`](./research.md). `npm run verify` fails the build if 
 cited figure loses its source. Scores and catalog counts are *measured* off the
 shipped fixtures and cite nothing.
 
-**Oscar: film + Devpost submit remain.** Prod deployed 2026-09-01 with lighthouse UI,
-share link, Offer/ACP on audit API. Use `demo/FILM-AND-SUBMIT.md` + `demo/voiceover.mp3`. Deadline
-Wed Sep 3, 2026 1pm PDT.
+**Film:** v1 automated cut + **v2** co-shop-first (`demo/demo-final.mp4`, ~94.6s) on disk —
+RC-FILM owns further edits. **Oscar still owns:** YouTube upload (O2) + Devpost submit (O4).
+Prod deployed 2026-09-01 with lighthouse UI, share link, Offer/ACP on audit API, KV restored.
+Deadline Wed Sep 3, 2026 1pm PDT. Judge path: [`JUDGE-60s.md`](../JUDGE-60s.md) · [`CHATGPT-JUDGE.md`](../CHATGPT-JUDGE.md).
 
 ---
 
@@ -83,7 +84,7 @@ Merchants are told agents are coming. Nobody tells them **which door is locked**
    defines none of them, so every line prints its own test beside the published
    weight, and the tape says `published weight · our stated test` on each one.
    A check with no published price is **reported and charged nothing** rather
-   than given a weight we made up: the 16-tool surface is printed as the
+   than given a weight we made up: the 18-tool surface is printed as the
    instrument the six lines are measured through, worth zero.
 3. **Co-shop.** 18 WebMCP tools; a human and an agent edit the same order in the
    same tab. `prepare_checkout` validates and returns totals — it never charges.
@@ -238,8 +239,9 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 
 1. **The tape** — landing screen shows Ember & Oak at **70/100** with a
    CHECKOUT VOID stamp. Click any line: arithmetic, fix, source, dates.
-2. **Co-shop** — *Start shopping* → add an item → **Connect → Agent tool
-   console** → `add_to_order`, then `get_order`. One order, `HUMAN`/`AGENT` chips.
+2. **Co-shop** — open `/?view=shop` (or **Co-shop** tab) → **Add to order** →
+   **Connect → Agent tool console** → `add_to_order`, then `get_order`.
+   One order, `HUMAN`/`AGENT` chips.
 3. **The refusal** — *Prepare checkout*. It refuses and cites Presenc AI.
 4. **The fix** — **Readiness** → uncheck CAPTCHA (or use Readiness autopilot) →
    **70 → 94**, a delta of exactly 24.
@@ -250,7 +252,7 @@ Fast path: [`JUDGE-60s.md`](./JUDGE-60s.md).
 ### Optional: native WebMCP
 
 Chrome 149+ → `chrome://flags/#enable-webmcp-testing` → the header badge reads
-**Assistant tools active · 16 connected**.
+**WebMCP live · 18 tools**. Flag off: use Path B (**Agent tool console** under Connect).
 
 ---
 

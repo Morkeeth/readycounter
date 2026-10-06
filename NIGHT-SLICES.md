@@ -125,13 +125,13 @@
 
 ## O · Oscar gates (cloud MUST NOT)
 
-| ID | Slice | Owner | Done when |
-|----|-------|-------|-----------|
-| **O1** | Film | ✅ | `demo/demo-final.mp4` v2 · 94.6s · co-shop @12s |
-| **O2** | Upload YouTube | Oscar | `submission/SUBMIT-READY.md` |
-| **O3** | `vercel --prod` | Oscar | ✅ 2026-09-01 · KV restored |
-| **O4** | Devpost submit | Oscar | Before Sep 3 1pm PDT |
-| **O5** | Connect Shopify OAuth | Oscar | Enables E1 |
+| ID | Slice | Owner | Done when | Status |
+|----|-------|-------|-----------|--------|
+| **O1** | Film | Oscar / RC-FILM | `demo/demo-final.mp4` on disk | ✅ v2 · 94.6s · co-shop @12s (RC-FILM may land another cut) |
+| **O2** | Upload YouTube | Oscar | Unlisted upload + incognito play · [`submission/SUBMIT-READY.md`](./submission/SUBMIT-READY.md) Step 1 | ⬜ Oscar-only |
+| **O3** | `vercel --prod` + KV | Oscar | Prod live · `GET /api/v1/health` → `kv.backend: redis` | ✅ 2026-09-01 · KV restored (re-checked 2026-10-06) |
+| **O4** | Devpost submit | Oscar | Paste pack + video + submit before Sep 3 1pm PDT · [`submission/SUBMIT-READY.md`](./submission/SUBMIT-READY.md) Step 2 | ⬜ Oscar-only |
+| **O5** | Connect Shopify OAuth | Oscar | Enables E1 | ⬜ |
 
 ---
 

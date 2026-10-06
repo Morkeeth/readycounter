@@ -22,7 +22,7 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | Landing → **Start shopping** → add one bag |
+| Screen | Landing → **Co-shop** (`/?view=shop`) → **Add to order** on one bag |
 | Say | "No signup. One tab. Under ten seconds." |
 | Proof | Order panel shows line in <10s |
 
@@ -84,8 +84,8 @@ Full spine: [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
 
 | Cue | Action |
 |-----|--------|
-| Screen | `src/webmcp/registerTools.ts` OR the header badge — it reads "Assistant tools active · 16 connected" with the flag on, "Assistant tools ready · open Connect to test" without |
-| Say | "Sixteen structured tools, and they are the instrument the whole score is read through — worth zero points on the bill, because no published row prices a tool surface. Fork your catalog in five minutes." |
+| Screen | `src/webmcp/registerTools.ts` OR the header badge — **WebMCP live · 18 tools** with the flag on, **Tools ready · Connect to test** without |
+| Say | "Eighteen structured tools, and they are the instrument the whole score is read through — worth zero points on the bill, because no published row prices a tool surface. Fork your catalog in five minutes." |
 | Point | [`FORK.md`](./FORK.md) in repo |
 
 ---

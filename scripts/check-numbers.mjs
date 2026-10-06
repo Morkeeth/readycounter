@@ -39,6 +39,7 @@ try {
 
 const DOC_FILES = [
   'JUDGE-60s.md',
+  'CHATGPT-JUDGE.md',
   'DEMO.md',
   'README.md',
   'SUBMISSION-PACK.md',
@@ -49,6 +50,9 @@ const DOC_FILES = [
   'demo/FILM-AND-SUBMIT.md',
   'audits/stranger-runs-2026-08-31.md',
   'audits/STRANGER-PASS-2026-08-31.md',
+  'submission/DEVPOST-PASTE.md',
+  'submission/SUBMIT-READY.md',
+  'submission/README.md',
 ];
 
 const SKIP_LINE =
