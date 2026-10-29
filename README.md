@@ -1,3 +1,25 @@
+# ReadyCounter
+
+## TLDR
+
+Inspect the public catalogue of a storefront and see what a shopping agent can read.<br>
+For merchants and developers deciding which product-data problems to fix first.<br>
+The audit and shared-cart demo keep the person in control of checkout; source measurements retain their dated scope.
+
+[readycounter.vercel.app](https://readycounter.vercel.app) · [60-second judge path](https://readycounter.vercel.app/?judge=1)
+
+## The problem and approach
+
+We asked 148 real DTC storefronts for their catalogue the way an agent asks: 70 sent nothing back, and average barcode (GTIN) coverage was 0%.
+Paste a domain, get an evidence-backed audit and fix list, then watch a real model shop the retrieved products beside you through 18 browser-native WebMCP tools; human and agent share one cart and the person keeps checkout.
+No signup, install or key: try it at the link below, or take the 60-second judge path.
+
+## Review and pick up the work
+
+[research.md](research.md) · [Agent guide](AGENTS.md)
+
+Start with the linked source, setup and evidence. Recorded demos and sample data keep their original scope; use the repository instructions for a fresh run.
+
 ![ReadyCounter](docs/shots/00-cover.png)
 
 # ReadyCounter
@@ -44,7 +66,7 @@ curl -s https://readycounter.vercel.app/api/v1/rankings \
 
 ## The front door
 
-Every tile is one real storefront. Empty means empty — the emptiness is the
+Every tile is one real storefront. Empty means empty ;  the emptiness is the
 measurement, not a placeholder.
 
 ![The census wall](docs/shots/01-front-door.png)
@@ -58,7 +80,7 @@ unscannable.
 
 ## Paste a domain, get a receipt
 
-A live audit of `colourpop.com` — 50 SKUs, 0% scrape GTIN, scored 0 out of 24
+A live audit of `colourpop.com` ;  50 SKUs, 0% scrape GTIN, scored 0 out of 24
 catalogue points, with a fix list that names its source on every line.
 
 ![A real store scored](docs/shots/03-store-scored.png)
@@ -74,7 +96,7 @@ states, with the publisher and the date we read it printed on the line.
 
 A person's click and an agent's `add_to_order` land on the same order, tagged
 `HUMAN` or `AGENT`. `prepare_checkout` validates the total and **never charges a
-card** — the agent proposes, the person pays.
+card** ;  the agent proposes, the person pays.
 
 ![Co-shop](docs/shots/05-coshop-one-cart.png)
 
@@ -114,7 +136,7 @@ All 18 tools are declared in [`src/webmcp/registerTools.ts`](src/webmcp/register
 with `document.modelContext.registerTool({name, description, inputSchema, execute})`.
 The same handlers serve both paths, so nobody needs a Chrome flag to see it work.
 
-**Path A — native.** Chrome 149+, `chrome://flags/#enable-webmcp-testing` →
+**Path A ;  native.** Chrome 149+, `chrome://flags/#enable-webmcp-testing` →
 Enabled → relaunch. The header reads **WebMCP live · 18 tools**. Verified on
 Chrome 152:
 
@@ -125,22 +147,22 @@ await document.modelContext.executeTool(t, '{"query":"espresso"}');
 ```
 
 > Arguments go in as a **JSON string**. Passing an object fails with
-> `Failed to parse input arguments` — that cost us an hour, so it is written down.
+> `Failed to parse input arguments` ;  that cost us an hour, so it is written down.
 
-**Path B — no flag.** Connect → *For developers and judges* → Agent tool
+**Path B ;  no flag.** Connect → *For developers and judges* → Agent tool
 console. Identical handlers.
 
 **Why the browser API and not a hosted MCP server:** the thing being measured is
 what an agent retrieves *in the shopper's own session*. A server-side MCP would
 read the catalogue with our credentials, not theirs, and would miss exactly the
-walls that matter — CAPTCHA, forced login, session-gated pricing.
+walls that matter ;  CAPTCHA, forced login, session-gated pricing.
 
 ## Integrations
 
 | | |
 |---|---|
 | **Shopify OAuth** | Read-only Admin API for the merchant's own catalogue, barcodes and prices. No payment scopes, ever. |
-| **Shopify Catalog MCP (UCP)** | The protocol side of the scrape-vs-protocol comparison — where the eleven-brand finding came from. |
+| **Shopify Catalog MCP (UCP)** | The protocol side of the scrape-vs-protocol comparison ;  where the eleven-brand finding came from. |
 | **Render Key Value** | Persists every audit and every live co-shop room across Vercel cold starts, plus a weekly cron re-running the field batch. `GET /api/v1/render/status`. |
 
 ---
@@ -177,7 +199,7 @@ POST /api/v1/audit/compare   one store against the field
 ## Honest limits
 
 - Field crawls score the **catalogue budget only** (0–24). Checkout lines stay
-  `NOT MEASURED` until Shopify OAuth — the full `/100` appears on sandbox stores
+  `NOT MEASURED` until Shopify OAuth ;  the full `/100` appears on sandbox stores
   where checkout is declared.
 - The field batch is 148 curated DTC brands, not a census of Shopify.
 - Presenc AI's shares are a modelled panel, quoted as an industry benchmark.
@@ -188,11 +210,15 @@ POST /api/v1/audit/compare   one store against the field
 
 ## The film
 
-`demo/demo-final.mp4` is built end to end by `./film/build.sh` — the intro cards,
+`demo/demo-final.mp4` is built end to end by `./film/build.sh` ;  the intro cards,
 the live browser beats, the native-WebMCP segment in real Chrome, the Kokoro
 voiceover and the captions. Every duration derives from the rendered audio, and
 `film/verify_film.py` checks the file that actually ships.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE).
+MIT ;  see [LICENSE](LICENSE).
+
+## License and data boundaries
+
+Code terms: [LICENSE](LICENSE). Data, provider responses, media, fonts and other third-party assets may have separate terms. Repository access alone does not grant rights to those materials. 
