@@ -116,7 +116,7 @@ is stopped by its declared CAPTCHA constraint:
                                           "reason":"CAPTCHA required. 24% of
                                           abandoned agent carts stop at a
                                           CAPTCHA (Presenc AI, read 2026-08-31)"}
-"The purchase was blocked due to a CAPTCHA requirement."   ;  the model
+"The purchase was blocked due to a CAPTCHA requirement."   — the model
 ```
 
 **The model is the shopper, never the judge.** The readiness score stays
