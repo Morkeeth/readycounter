@@ -10,7 +10,6 @@ The audit and shared-cart demo keep the person in control of checkout; source me
 
 ## The problem and approach
 
-**ReadyCounter scores your storefront the way a shopping agent reads it, so you can see what agents cannot buy and fix it.**
 We asked 148 real DTC storefronts for their catalogue the way an agent asks: 70 sent nothing back, and average barcode (GTIN) coverage was 0%.
 Paste a domain, get an evidence-backed audit and fix list, then watch a real model shop the retrieved products beside you through 18 browser-native WebMCP tools; human and agent share one cart and the person keeps checkout.
 No signup, install or key: try it at the link below, or take the 60-second judge path.
