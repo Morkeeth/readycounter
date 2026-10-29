@@ -2,11 +2,12 @@
 
 # ReadyCounter
 
-**Paste your store. See what shopping agents cannot read.**
+**ReadyCounter scores your storefront the way a shopping agent reads it, so you can see what agents cannot buy and fix it.**
 
-Audit the public catalogue, get an evidence-backed fix list, then let a real
-model shop the retrieved products beside you through 18 browser-native WebMCP
-tools. Human and agent share one cart; the person keeps control of checkout.
+We asked 148 real DTC storefronts for their catalogue the way an agent asks: 70 sent nothing back, and average barcode (GTIN) coverage was 0%.
+For store owners and the people who build their storefronts.
+Paste a domain, get an evidence-backed audit and fix list, then watch a real model shop the retrieved products beside you through 18 browser-native WebMCP tools; human and agent share one cart and the person keeps checkout.
+No signup, install or key: try it at the link below, or take the 60-second judge path.
 
 **[readycounter.vercel.app](https://readycounter.vercel.app)** · no signup, no
 install, no key · **[60-second judge path](https://readycounter.vercel.app/?judge=1)**
